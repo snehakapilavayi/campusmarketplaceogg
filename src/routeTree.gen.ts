@@ -15,6 +15,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CategoriesRouteImport } from './routes/categories'
 import { Route as MarketRouteImport } from './routes/market'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as AuthenticatedCartRouteImport } from './routes/_authenticated/cart'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedSellRouteImport } from './routes/_authenticated/sell'
 import { Route as AuthenticatedWishlistRouteImport } from './routes/_authenticated/wishlist'
@@ -49,6 +50,11 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
   path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedCartRoute = AuthenticatedCartRouteImport.update({
+  id: '/cart',
+  path: '/cart',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
@@ -76,6 +82,7 @@ export interface FileRoutesByFullPath {
   '/categories': typeof CategoriesRoute
   '/market': typeof MarketRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/cart': typeof AuthenticatedCartRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/sell': typeof AuthenticatedSellRoute
   '/wishlist': typeof AuthenticatedWishlistRoute
@@ -87,6 +94,7 @@ export interface FileRoutesByTo {
   '/categories': typeof CategoriesRoute
   '/market': typeof MarketRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/cart': typeof AuthenticatedCartRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/sell': typeof AuthenticatedSellRoute
   '/wishlist': typeof AuthenticatedWishlistRoute
@@ -100,6 +108,7 @@ export interface FileRoutesById {
   '/categories': typeof CategoriesRoute
   '/market': typeof MarketRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/_authenticated/cart': typeof AuthenticatedCartRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/sell': typeof AuthenticatedSellRoute
   '/_authenticated/wishlist': typeof AuthenticatedWishlistRoute
@@ -113,6 +122,7 @@ export interface FileRouteTypes {
     | '/categories'
     | '/market'
     | '/reset-password'
+    | '/cart'
     | '/onboarding'
     | '/sell'
     | '/wishlist'
@@ -124,6 +134,7 @@ export interface FileRouteTypes {
     | '/categories'
     | '/market'
     | '/reset-password'
+    | '/cart'
     | '/onboarding'
     | '/sell'
     | '/wishlist'
@@ -136,6 +147,7 @@ export interface FileRouteTypes {
     | '/categories'
     | '/market'
     | '/reset-password'
+    | '/_authenticated/cart'
     | '/_authenticated/onboarding'
     | '/_authenticated/sell'
     | '/_authenticated/wishlist'
@@ -196,6 +208,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/cart': {
+      id: '/_authenticated/cart'
+      path: '/cart'
+      fullPath: '/cart'
+      preLoaderRoute: typeof AuthenticatedCartRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/onboarding': {
       id: '/_authenticated/onboarding'
       path: '/onboarding'
@@ -228,12 +247,14 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedCartRoute: typeof AuthenticatedCartRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedSellRoute: typeof AuthenticatedSellRoute
   AuthenticatedWishlistRoute: typeof AuthenticatedWishlistRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedCartRoute: AuthenticatedCartRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
   AuthenticatedSellRoute: AuthenticatedSellRoute,
   AuthenticatedWishlistRoute: AuthenticatedWishlistRoute,
