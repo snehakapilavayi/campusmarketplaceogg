@@ -6,7 +6,7 @@ import { useAuth } from "@/lib/auth";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-export function AppHeader({ title }: { title?: string }) {
+export function AppHeader({ title }: { title?: string | undefined }) {
   const { userId } = useAuth();
   const { data: unread = 0 } = useQuery({
     queryKey: ["unread-notifications", userId],
@@ -113,7 +113,7 @@ export function AppShell({
   header = true,
 }: {
   children: React.ReactNode;
-  title?: string;
+  title?: string | undefined;
   header?: boolean;
 }) {
   return (
