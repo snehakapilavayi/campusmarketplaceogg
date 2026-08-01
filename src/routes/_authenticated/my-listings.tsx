@@ -1,0 +1,122 @@
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/lib/auth";
+import { AppShell } from "@/components/app-shell";
+import { currency, EmptyState } from "@/components/brand";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
+export const Route = createFileRoute("/_authenticated/my-listings")({
+  head: () => ({
+    meta: [
+      { title: "My listings — SwapSpace" },
+      { name: "description", content: "Track your live, pending and completed campus listings." },
+      { property: "og:title", content: "My listings — SwapSpace" },
+      { property: "og:description", content: "Track your live, pending and completed listings." },
+    ],
+  }),
+  component: MyListings,
+});
+
+const statusStyles: Record<string, string> = {
+  approved: "bg-success text-success-foreground",
+  pending: "bg-primary text-primary-foreground",
+  rejected: "bg-destructive text-destructive-foreground",
+  completed: "bg-secondary text-secondary-foreground",
+  archived: "bg-muted text-muted-foreground",
+  draft: "bg-muted text-muted-foreground",
+};
+
+function MyListings() {
+  const { userId } = useAuth();
+  const queryClient = useQueryClient();
+
+  const { data: listings = [] } = useQuery({
+    queryKey: ["my-listings", userId],
+    enabled: !!userId,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("listings")
+        .select("id,title,price,type,rent_period,status,listing_images(url,sort_order)")
+        .eq("seller_id", userId!)
+        .order("created_at", { ascending: false });
+      return data ?? [];
+    },
+  });
+
+  async function updateStatus(id: string, status: "completed" | "archived") {
+    const { error } = await supabase.from("listings").update({ status }).eq("id", id);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    queryClient.invalidateQueries({ queryKey: ["my-listings"] });
+    toast.success(status === "completed" ? "Marked as sold 🎉" : "Listing archived");
+  }
+
+  return (
+    <AppShell title="My listings">
+      <div className="space-y-3 pt-4">
+        {listings.length === 0 ? (
+          <EmptyState
+            variant="idea"
+            title="You haven't listed anything"
+            description="That old cycle or last semester's textbook could be someone's find today."
+            action={
+              <Button asChild className="mt-2 rounded-full">
+                <Link to="/sell">List an item</Link>
+              </Button>
+            }
+          />
+        ) : (
+          listings.map((l) => {
+            const image = [...(l.listing_images ?? [])].sort((a, b) => a.sort_order - b.sort_order)[0]?.url;
+            return (
+              <div key={l.id} className="flex gap-3 rounded-2xl border border-border bg-card p-3 shadow-[var(--shadow-soft)]">
+                <Link to="/listing/$id" params={{ id: l.id }} className="h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-muted">
+                  {image && <img src={image} alt="" className="h-full w-full object-cover" />}
+                </Link>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-start justify-between gap-2">
+                    <p className="line-clamp-1 font-semibold">{l.title}</p>
+                    <span
+                      className={cn(
+                        "shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase",
+                        statusStyles[l.status] ?? "bg-muted",
+                      )}
+                    >
+                      {l.status}
+                    </span>
+                  </div>
+                  <p className="font-display font-bold text-primary">
+                    {currency(l.price)}
+                    {l.type === "rent" && (
+                      <span className="text-xs text-muted-foreground">/{l.rent_period ?? "day"}</span>
+                    )}
+                  </p>
+                  {(l.status === "approved" || l.status === "pending") && (
+                    <div className="mt-2 flex gap-2">
+                      <Button size="sm" variant="outline" className="h-8 rounded-full" onClick={() => updateStatus(l.id, "completed")}>
+                        Mark sold
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-8 rounded-full text-muted-foreground"
+                        onClick={() => updateStatus(l.id, "archived")}
+                      >
+                        Archive
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+    </AppShell>
+  );
+}
