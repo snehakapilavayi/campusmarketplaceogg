@@ -11,6 +11,7 @@ import { useAuth } from "@/lib/auth";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { CategoryIcon } from "@/components/category-icon";
 
 export const Route = createFileRoute("/market")({
   head: () => ({
@@ -149,7 +150,8 @@ function Market() {
             {categories.map((c) => (
               <CategoryChip
                 key={c.id}
-                label={`${c.icon ?? ""} ${c.name}`.trim()}
+                label={c.name}
+                icon={c.icon}
                 active={category === c.id}
                 onClick={() => setCategory(category === c.id ? null : c.id)}
               />
@@ -203,15 +205,26 @@ function Market() {
   );
 }
 
-function CategoryChip({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
+function CategoryChip({
+  label,
+  active,
+  onClick,
+  icon,
+}: {
+  label: string;
+  active: boolean;
+  onClick: () => void;
+  icon?: string | null;
+}) {
   return (
     <button
       onClick={onClick}
       className={cn(
-        "shrink-0 rounded-full border px-4 py-2 text-sm font-medium transition-colors",
+        "flex shrink-0 items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium transition-colors",
         active ? "border-transparent bg-primary text-primary-foreground" : "border-border bg-card hover:bg-muted",
       )}
     >
+      {icon !== undefined && <CategoryIcon name={icon} className="h-4 w-4" />}
       {label}
     </button>
   );

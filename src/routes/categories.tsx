@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/app-shell";
+import { CategoryIcon } from "@/components/category-icon";
 
 export const Route = createFileRoute("/categories")({
   head: () => ({
@@ -40,7 +41,9 @@ function Categories() {
             to="/market"
             className="group flex flex-col justify-between rounded-3xl border border-border bg-card p-5 shadow-[var(--shadow-soft)] transition-all hover:-translate-y-0.5 hover:shadow-[var(--shadow-lift)]"
           >
-            <span className="grid h-12 w-12 place-items-center rounded-2xl bg-accent text-2xl">{c.icon ?? "📦"}</span>
+            <span className="grid h-12 w-12 place-items-center rounded-2xl bg-accent">
+              <CategoryIcon name={c.icon} className="h-6 w-6 text-accent-foreground" />
+            </span>
             <div className="mt-6">
               <p className="font-display text-base font-bold">{c.name}</p>
               <p className="text-xs text-muted-foreground">{c.count} listings</p>

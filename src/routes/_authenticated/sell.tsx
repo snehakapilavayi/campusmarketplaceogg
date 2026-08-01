@@ -274,7 +274,7 @@ function SellPage() {
             <SelectContent>
               {categories.map((c) => (
                 <SelectItem key={c.id} value={c.id}>
-                  {c.icon} {c.name}
+                  {c.name}
                 </SelectItem>
               ))}
             </SelectContent>

@@ -157,7 +157,7 @@ function ListingDetail() {
         <div className="flex flex-wrap gap-2">
           <Tag>{listing.type === "rent" ? "For rent" : "For sale"}</Tag>
           <Tag>{conditionLabels[listing.condition] ?? listing.condition}</Tag>
-          {listing.categories && <Tag>{`${listing.categories.icon ?? ""} ${listing.categories.name}`}</Tag>}
+          {listing.categories && <Tag>{listing.categories.name}</Tag>}
         </div>
 
         {listing.description && (
