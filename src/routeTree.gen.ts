@@ -15,6 +15,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CategoriesRouteImport } from './routes/categories'
 import { Route as MarketRouteImport } from './routes/market'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedCartRouteImport } from './routes/_authenticated/cart'
 import { Route as AuthenticatedMyListingsRouteImport } from './routes/_authenticated/my-listings'
 import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
@@ -54,6 +55,11 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedCartRoute = AuthenticatedCartRouteImport.update({
   id: '/cart',
@@ -113,6 +119,7 @@ export interface FileRoutesByFullPath {
   '/categories': typeof CategoriesRoute
   '/market': typeof MarketRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/cart': typeof AuthenticatedCartRoute
   '/my-listings': typeof AuthenticatedMyListingsRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
@@ -130,6 +137,7 @@ export interface FileRoutesByTo {
   '/categories': typeof CategoriesRoute
   '/market': typeof MarketRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/cart': typeof AuthenticatedCartRoute
   '/my-listings': typeof AuthenticatedMyListingsRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
@@ -149,6 +157,7 @@ export interface FileRoutesById {
   '/categories': typeof CategoriesRoute
   '/market': typeof MarketRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/cart': typeof AuthenticatedCartRoute
   '/_authenticated/my-listings': typeof AuthenticatedMyListingsRoute
   '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
@@ -168,6 +177,7 @@ export interface FileRouteTypes {
     | '/categories'
     | '/market'
     | '/reset-password'
+    | '/admin'
     | '/cart'
     | '/my-listings'
     | '/notifications'
@@ -185,6 +195,7 @@ export interface FileRouteTypes {
     | '/categories'
     | '/market'
     | '/reset-password'
+    | '/admin'
     | '/cart'
     | '/my-listings'
     | '/notifications'
@@ -203,6 +214,7 @@ export interface FileRouteTypes {
     | '/categories'
     | '/market'
     | '/reset-password'
+    | '/_authenticated/admin'
     | '/_authenticated/cart'
     | '/_authenticated/my-listings'
     | '/_authenticated/notifications'
@@ -268,6 +280,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/reset-password'
       preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/cart': {
       id: '/_authenticated/cart'
@@ -343,6 +362,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedCartRoute: typeof AuthenticatedCartRoute
   AuthenticatedMyListingsRoute: typeof AuthenticatedMyListingsRoute
   AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
@@ -355,6 +375,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedCartRoute: AuthenticatedCartRoute,
   AuthenticatedMyListingsRoute: AuthenticatedMyListingsRoute,
   AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
