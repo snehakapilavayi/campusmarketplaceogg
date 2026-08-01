@@ -51,11 +51,18 @@ function ListingDetail() {
     queryFn: async () => {
       const { data } = await supabase
         .from("ratings")
-        .select("id,tomatoes,review,created_at,profiles!ratings_reviewer_id_fkey(full_name)")
+        .select("id,tomatoes,review,created_at,reviewer_id")
         .eq("reviewed_id", listing!.seller_id)
         .order("created_at", { ascending: false })
         .limit(3);
-      return data ?? [];
+      const rows = data ?? [];
+      if (rows.length === 0) return [];
+      const { data: reviewers } = await supabase
+        .from("profiles")
+        .select("id,full_name")
+        .in("id", rows.map((r) => r.reviewer_id));
+      const names = new Map((reviewers ?? []).map((p) => [p.id, p.full_name]));
+      return rows.map((r) => ({ ...r, reviewer_name: names.get(r.reviewer_id) ?? "Student" }));
     },
   });
 
@@ -188,7 +195,7 @@ function ListingDetail() {
                     <div className="flex items-center gap-2">
                       <TomatoRating value={r.tomatoes} showValue={false} className="text-[10px]" />
                       <span className="text-xs font-medium text-muted-foreground">
-                        {r.profiles?.full_name ?? "Student"}
+                        {r.reviewer_name}
                       </span>
                     </div>
                     {r.review && <p className="mt-0.5 text-muted-foreground">{r.review}</p>}
