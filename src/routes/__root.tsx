@@ -19,9 +19,11 @@ import { Mascot, Logo } from "@/components/brand";
 
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-5">
-      <div className="flex max-w-md flex-col items-center text-center">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background px-5">
+      <div className="brand-pattern-subtle pointer-events-none absolute inset-0" aria-hidden />
+      <div className="relative flex max-w-md flex-col items-center text-center">
         <Logo className="mb-8" />
+
         <Mascot variant="sad" size="md" halo float alt="" />
         <h1 className="mt-6 font-display text-6xl font-extrabold text-primary">404</h1>
         <h2 className="mt-2 text-xl font-semibold text-foreground">This page swapped out</h2>

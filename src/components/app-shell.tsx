@@ -119,10 +119,17 @@ export function AppShell({
   header?: boolean;
 }) {
   return (
-    <div className="min-h-screen bg-background pb-24">
-      {header && <AppHeader title={title} />}
-      <main className="mx-auto max-w-5xl px-4">{children}</main>
+    <div className="relative min-h-screen bg-background pb-24">
+      <div
+        className="brand-pattern-subtle pointer-events-none absolute inset-x-0 top-0 h-[420px]"
+        aria-hidden
+      />
+      <div className="relative">
+        {header && <AppHeader title={title} />}
+        <main className="mx-auto max-w-5xl px-4">{children}</main>
+      </div>
       <BottomNav />
     </div>
   );
 }
+

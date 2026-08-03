@@ -77,8 +77,9 @@
   --secondary: oklch(0.33 0.023 226);
   --secondary-foreground: oklch(0.985 0.005 95);
 
-  --muted: oklch(0.968 0 0);
-  --muted-foreground: oklch(0.52 0.017 226);
+  --muted: oklch(0.965 0.003 95);
+  --muted-foreground: oklch(0.46 0.019 226);
+
 
   --accent: oklch(0.96 0.02 88);
   --accent-foreground: oklch(0.33 0.023 226);
@@ -89,9 +90,10 @@
   --success: oklch(0.62 0.13 155);
   --success-foreground: oklch(0.99 0.005 95);
 
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.78 0.155 78);
+  --border: oklch(0.9 0.004 226);
+  --input: oklch(0.88 0.005 226);
+  --ring: oklch(0.7 0.16 72);
+
 
   --sidebar: oklch(0.33 0.023 226);
   --sidebar-foreground: oklch(0.93 0.008 95);
@@ -104,27 +106,28 @@
 }
 
 .dark {
-  --background: oklch(0.24 0.02 226);
-  --foreground: oklch(0.96 0.006 95);
-  --card: oklch(0.29 0.022 226);
-  --card-foreground: oklch(0.96 0.006 95);
-  --popover: oklch(0.29 0.022 226);
-  --popover-foreground: oklch(0.96 0.006 95);
-  --primary: oklch(0.78 0.155 78);
-  --primary-foreground: oklch(0.24 0.02 226);
-  --secondary: oklch(0.35 0.022 226);
-  --secondary-foreground: oklch(0.96 0.006 95);
-  --muted: oklch(0.33 0.02 226);
-  --muted-foreground: oklch(0.72 0.015 226);
-  --accent: oklch(0.36 0.035 80);
-  --accent-foreground: oklch(0.96 0.006 95);
-  --destructive: oklch(0.62 0.19 25);
+  --background: oklch(0.21 0.018 226);
+  --foreground: oklch(0.97 0.006 95);
+  --card: oklch(0.27 0.021 226);
+  --card-foreground: oklch(0.97 0.006 95);
+  --popover: oklch(0.27 0.021 226);
+  --popover-foreground: oklch(0.97 0.006 95);
+  --primary: oklch(0.8 0.155 78);
+  --primary-foreground: oklch(0.21 0.018 226);
+  --secondary: oklch(0.33 0.022 226);
+  --secondary-foreground: oklch(0.97 0.006 95);
+  --muted: oklch(0.31 0.02 226);
+  --muted-foreground: oklch(0.79 0.014 226);
+  --accent: oklch(0.36 0.04 80);
+  --accent-foreground: oklch(0.97 0.006 95);
+  --destructive: oklch(0.65 0.19 25);
   --destructive-foreground: oklch(0.99 0.005 95);
-  --success: oklch(0.66 0.13 155);
-  --success-foreground: oklch(0.2 0.02 226);
-  --border: oklch(1 0 0 / 12%);
-  --input: oklch(1 0 0 / 16%);
-  --ring: oklch(0.78 0.155 78);
+  --success: oklch(0.7 0.13 155);
+  --success-foreground: oklch(0.19 0.02 226);
+  --border: oklch(1 0 0 / 18%);
+  --input: oklch(1 0 0 / 22%);
+  --ring: oklch(0.8 0.155 78);
+
 }
 
 @layer base {
@@ -148,21 +151,44 @@
   }
 }
 
+/* Brand pattern: one shared tiled layer + gradient wash. GPU-friendly —
+   no fixed attachment, no repaint on scroll, single decoded 256px webp. */
 @utility brand-pattern {
+  position: relative;
+  isolation: isolate;
   background-image:
-    linear-gradient(to bottom, oklch(0.78 0.155 78 / 0.14), transparent 70%),
-    url("/__l5e/assets-v1/fb35d2c3-a49c-48e2-ae4c-65d95234f63b/pattern.png");
+    radial-gradient(120% 90% at 50% 0%, oklch(0.78 0.155 78 / 0.22), transparent 70%),
+    url("/__l5e/assets-v1/6da28651-ead1-4f56-bb5e-22f11f56508d/pattern-tile.webp");
   background-size:
     100% 100%,
-    260px 260px;
+    230px 230px;
   background-repeat: no-repeat, repeat;
-  opacity: 0.18;
-  mask-image: linear-gradient(to bottom, black, transparent 80%);
+  background-position: center top, center top;
+  opacity: 0.1;
+  mask-image: linear-gradient(to bottom, black, transparent 85%);
+  transform: translateZ(0);
+  will-change: auto;
+  contain: paint;
+}
+
+@utility brand-pattern-subtle {
+  background-image: url("/__l5e/assets-v1/6da28651-ead1-4f56-bb5e-22f11f56508d/pattern-tile.webp");
+  background-size: 190px 190px;
+  background-repeat: repeat;
+  opacity: 0.07;
+  mask-image: radial-gradient(120% 100% at 50% 0%, black, transparent 75%);
+  transform: translateZ(0);
+  contain: paint;
 }
 
 .dark .brand-pattern {
-  opacity: 0.12;
+  opacity: 0.055;
 }
+
+.dark .brand-pattern-subtle {
+  opacity: 0.06;
+}
+
 
 
 @utility no-scrollbar {
