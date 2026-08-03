@@ -11,17 +11,26 @@ import { openConversation, useCart, useWishlist } from "@/lib/marketplace";
 import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 
+const SITE = "https://college-swap-link.lovable.app";
+
 export const Route = createFileRoute("/listing/$id")({
-  head: () => ({
+  head: ({ params }) => ({
     meta: [
       { title: "Listing — SwapSpace" },
       { name: "description", content: "See item details, condition and seller rating before you meet on campus." },
       { property: "og:title", content: "Listing — SwapSpace" },
       { property: "og:description", content: "See item details and seller rating on SwapSpace." },
+      { property: "og:type", content: "product" },
+      { property: "og:url", content: `${SITE}/listing/${params.id}` },
+      { property: "og:image", content: `${SITE}/og-image.jpg` },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: `${SITE}/og-image.jpg` },
     ],
+    links: [{ rel: "canonical", href: `${SITE}/listing/${params.id}` }],
   }),
   component: ListingDetail,
 });
+
 
 function ListingDetail() {
   const { id } = Route.useParams();

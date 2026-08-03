@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { AppShell } from "@/components/app-shell";
 import { currency, EmptyState } from "@/components/brand";
+import { ListSkeleton } from "@/components/skeletons";
 import { Button } from "@/components/ui/button";
 import { openConversation, useCart } from "@/lib/marketplace";
 
@@ -36,7 +37,7 @@ function CartPage() {
   const cart = useCart();
   const navigate = useNavigate();
 
-  const { data: items = [] } = useQuery({
+  const { data: items = [], isLoading } = useQuery({
     queryKey: ["cart", userId],
     enabled: !!userId,
     queryFn: async () => {
@@ -63,8 +64,11 @@ function CartPage() {
   return (
     <AppShell title="Cart">
       <div className="space-y-4 pt-4">
-        {items.length === 0 ? (
+        {isLoading ? (
+          <ListSkeleton count={3} />
+        ) : items.length === 0 ? (
           <EmptyState
+            variant="sad"
             title="Your cart is empty"
             description="Add items you want to pick up, then message the sellers together."
             action={
@@ -80,7 +84,7 @@ function CartPage() {
               return (
                 <div
                   key={item.id}
-                  className="flex gap-3 rounded-2xl border border-border bg-card p-3 shadow-[var(--shadow-soft)]"
+                  className="flex gap-3 rounded-2xl border border-border bg-card p-2.5 shadow-[var(--shadow-soft)] sm:p-3"
                 >
                   <Link to="/listing/$id" params={{ id: item.id }} className="h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-muted">
                     {image && <img src={image} alt="" className="h-full w-full object-cover" />}
@@ -93,7 +97,7 @@ function CartPage() {
                         <span className="text-xs text-muted-foreground">/{item.rent_period ?? "day"}</span>
                       )}
                     </p>
-                    <div className="mt-2 flex gap-2">
+                    <div className="mt-2 flex flex-wrap gap-2">
                       <Button size="sm" variant="outline" className="h-8 rounded-full" onClick={() => contact(item)}>
                         <MessageCircle className="mr-1 h-3.5 w-3.5" /> Message
                       </Button>

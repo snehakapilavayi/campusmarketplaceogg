@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ImagePlus, X } from "lucide-react";
+import { Loader2, UploadCloud, X } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
@@ -40,6 +40,11 @@ const schema = z.object({
   deposit: z.coerce.number().min(0).max(1000000).optional(),
 });
 
+const BUCKET = "listing-photos";
+const MAX_PHOTOS = 5;
+const MAX_SIZE = 5 * 1024 * 1024;
+const SIGNED_TTL = 60 * 60 * 24 * 365 * 10;
+
 const conditions = [
   { value: "brand_new", label: "Brand New" },
   { value: "like_new", label: "Like New" },
@@ -61,9 +66,11 @@ function SellPage() {
   const [rentPeriod, setRentPeriod] = useState<"day" | "week" | "month">("day");
   const [condition, setCondition] = useState<string>("good");
   const [categoryId, setCategoryId] = useState<string>("");
-  const [imageUrls, setImageUrls] = useState<string[]>([]);
-  const [imageInput, setImageInput] = useState("");
+  const [images, setImages] = useState<{ url: string; path: string }[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const [dragging, setDragging] = useState(false);
   const [busy, setBusy] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data: categories = [] } = useQuery({
     queryKey: ["categories"],
@@ -73,19 +80,46 @@ function SellPage() {
     },
   });
 
-  function addImage() {
-    const url = imageInput.trim();
-    if (!url) return;
-    if (!/^https?:\/\//i.test(url)) {
-      toast.error("Paste a valid image link (https://…)");
+  async function handleFiles(fileList: FileList | null) {
+    if (!fileList || fileList.length === 0) return;
+    const files = Array.from(fileList);
+    const room = MAX_PHOTOS - images.length;
+    if (room <= 0) {
+      toast.error(`Up to ${MAX_PHOTOS} photos`);
       return;
     }
-    if (imageUrls.length >= 5) {
-      toast.error("Up to 5 photos");
-      return;
+    setUploading(true);
+    const uploaded: { url: string; path: string }[] = [];
+    for (const file of files.slice(0, room)) {
+      if (!file.type.startsWith("image/")) {
+        toast.error(`${file.name} isn't an image`);
+        continue;
+      }
+      if (file.size > MAX_SIZE) {
+        toast.error(`${file.name} is over 5 MB`);
+        continue;
+      }
+      const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
+      const path = `${userId}/${crypto.randomUUID()}.${ext}`;
+      const { error } = await supabase.storage.from(BUCKET).upload(path, file, {
+        cacheControl: "31536000",
+        upsert: false,
+      });
+      if (error) {
+        toast.error(error.message);
+        continue;
+      }
+      const { data: signed } = await supabase.storage.from(BUCKET).createSignedUrl(path, SIGNED_TTL);
+      if (signed?.signedUrl) uploaded.push({ url: signed.signedUrl, path });
     }
-    setImageUrls([...imageUrls, url]);
-    setImageInput("");
+    if (uploaded.length) setImages((prev) => [...prev, ...uploaded]);
+    setUploading(false);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  }
+
+  async function removeImage(path: string) {
+    setImages((prev) => prev.filter((i) => i.path !== path));
+    await supabase.storage.from(BUCKET).remove([path]);
   }
 
   async function submit(e: React.FormEvent) {
@@ -123,10 +157,10 @@ function SellPage() {
       return;
     }
 
-    if (imageUrls.length) {
+    if (images.length) {
       await supabase
         .from("listing_images")
-        .insert(imageUrls.map((url, i) => ({ listing_id: data.id, url, sort_order: i })));
+        .insert(images.map((img, i) => ({ listing_id: data.id, url: img.url, sort_order: i })));
     }
 
     setBusy(false);
@@ -282,30 +316,74 @@ function SellPage() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="image">Photos</Label>
-          <div className="flex gap-2">
-            <Input
-              id="image"
-              value={imageInput}
-              onChange={(e) => setImageInput(e.target.value)}
-              placeholder="Paste an image link"
-            />
-            <Button type="button" variant="outline" onClick={addImage} className="shrink-0">
-              <ImagePlus className="h-4 w-4" />
-            </Button>
+          <Label htmlFor="photos">Photos</Label>
+          <input
+            ref={fileInputRef}
+            id="photos"
+            type="file"
+            accept="image/*"
+            multiple
+            className="sr-only"
+            onChange={(e) => handleFiles(e.target.files)}
+          />
+          <div
+            role="button"
+            tabIndex={0}
+            onClick={() => fileInputRef.current?.click()}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                fileInputRef.current?.click();
+              }
+            }}
+            onDragOver={(e) => {
+              e.preventDefault();
+              setDragging(true);
+            }}
+            onDragLeave={() => setDragging(false)}
+            onDrop={(e) => {
+              e.preventDefault();
+              setDragging(false);
+              handleFiles(e.dataTransfer.files);
+            }}
+            className={cn(
+              "flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed px-4 py-8 text-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+              dragging ? "border-primary bg-accent" : "border-border bg-card hover:bg-muted/60",
+            )}
+          >
+            {uploading ? (
+              <Loader2 className="h-6 w-6 animate-spin text-primary" />
+            ) : (
+              <UploadCloud className="h-6 w-6 text-primary" />
+            )}
+            <p className="text-sm font-semibold">
+              {uploading ? "Uploading…" : "Drag photos here or tap to browse"}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Up to {MAX_PHOTOS} photos · JPG or PNG · 5 MB each
+            </p>
           </div>
-          {imageUrls.length > 0 && (
-            <div className="flex gap-2 overflow-x-auto pb-1">
-              {imageUrls.map((url, i) => (
-                <div key={url} className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-border">
-                  <img src={url} alt="" className="h-full w-full object-cover" />
+
+          {images.length > 0 && (
+            <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
+              {images.map((img, i) => (
+                <div
+                  key={img.path}
+                  className="group relative aspect-square overflow-hidden rounded-xl border border-border bg-muted"
+                >
+                  <img src={img.url} alt="" className="h-full w-full object-cover" />
+                  {i === 0 && (
+                    <span className="absolute bottom-1 left-1 rounded-full bg-background/90 px-1.5 py-0.5 text-[9px] font-bold uppercase">
+                      Cover
+                    </span>
+                  )}
                   <button
                     type="button"
-                    onClick={() => setImageUrls(imageUrls.filter((_, idx) => idx !== i))}
-                    className="absolute right-1 top-1 grid h-5 w-5 place-items-center rounded-full bg-background/90"
+                    onClick={() => removeImage(img.path)}
+                    className="absolute right-1 top-1 grid h-6 w-6 place-items-center rounded-full bg-background/90 shadow-[var(--shadow-soft)]"
                     aria-label="Remove photo"
                   >
-                    <X className="h-3 w-3" />
+                    <X className="h-3.5 w-3.5" />
                   </button>
                 </div>
               ))}
@@ -313,7 +391,7 @@ function SellPage() {
           )}
         </div>
 
-        <Button type="submit" size="lg" disabled={busy} className="w-full rounded-full">
+        <Button type="submit" size="lg" disabled={busy || uploading} className="w-full rounded-full">
           {busy ? "Submitting…" : "Submit for review"}
         </Button>
       </form>
