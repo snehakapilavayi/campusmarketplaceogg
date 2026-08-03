@@ -24,9 +24,14 @@ export function AppHeader({ title }: { title?: string | undefined }) {
 
   return (
     <header className="sticky top-0 z-30 border-b border-border/70 bg-background/85 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4">
-        {title ? <h1 className="font-display text-lg font-bold">{title}</h1> : <Logo />}
-        <div className="flex items-center gap-0.5">
+      <div className="mx-auto flex h-16 max-w-5xl items-center justify-between gap-2 px-3 sm:px-4">
+        {title ? (
+          <h1 className="min-w-0 truncate font-display text-lg font-bold">{title}</h1>
+        ) : (
+          <Logo />
+        )}
+        <div className="flex shrink-0 items-center gap-0.5">
+
           <ThemeToggle />
           <Link
             to="/notifications"
