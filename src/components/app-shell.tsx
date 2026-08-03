@@ -63,15 +63,15 @@ export function BottomNav() {
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border/70 bg-background/95 backdrop-blur-md">
-      <div className="mx-auto grid max-w-5xl grid-cols-5 items-end px-2 pb-[env(safe-area-inset-bottom)]">
+      <div className="mx-auto grid max-w-5xl grid-cols-5 items-end px-1 pb-[max(env(safe-area-inset-bottom),0.25rem)] sm:px-2">
         {navItems.slice(0, 2).map((item) => (
           <NavLink key={item.to} {...item} active={pathname === item.to} />
         ))}
-        <div className="flex justify-center">
+        <div className="flex min-w-0 justify-center">
           <Link
             to="/sell"
             aria-label="Add item"
-            className="-mt-6 grid h-14 w-14 place-items-center rounded-full bg-primary text-primary-foreground shadow-[var(--shadow-amber)] transition-transform hover:scale-105 active:scale-95"
+            className="-mt-6 grid h-14 w-14 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground shadow-[var(--shadow-amber)] transition-transform hover:scale-105 active:scale-95"
           >
             <Plus className="h-6 w-6" strokeWidth={2.5} />
           </Link>
@@ -99,15 +99,16 @@ function NavLink({
     <Link
       to={to}
       className={cn(
-        "flex flex-col items-center gap-1 py-2.5 text-[11px] font-medium transition-colors",
+        "flex min-w-0 flex-col items-center gap-1 px-0.5 py-2.5 text-[10px] font-medium transition-colors sm:text-[11px]",
         active ? "text-foreground" : "text-muted-foreground hover:text-foreground",
       )}
     >
-      <Icon className={cn("h-5 w-5", active && "text-primary")} strokeWidth={active ? 2.4 : 2} />
-      {label}
+      <Icon className={cn("h-5 w-5 shrink-0", active && "text-primary")} strokeWidth={active ? 2.4 : 2} />
+      <span className="w-full truncate text-center leading-tight">{label}</span>
     </Link>
   );
 }
+
 
 export function AppShell({
   children,
