@@ -86,7 +86,7 @@ function Landing() {
             </div>
             <div className="mt-8 flex items-center gap-6 text-sm text-muted-foreground">
               <div>
-                <p className="font-display text-xl font-bold text-foreground">8</p>
+                <p className="font-display text-xl font-bold text-foreground">7</p>
                 <p>categories</p>
               </div>
               <div className="h-8 w-px bg-border" />
