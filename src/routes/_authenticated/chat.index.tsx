@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { AppShell } from "@/components/app-shell";
 import { EmptyState } from "@/components/brand";
+import { ConversationSkeleton } from "@/components/skeletons";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated/chat/")({
@@ -21,7 +22,7 @@ export const Route = createFileRoute("/_authenticated/chat/")({
 function ChatList() {
   const { userId } = useAuth();
 
-  const { data: conversations = [] } = useQuery({
+  const { data: conversations = [], isLoading } = useQuery({
     queryKey: ["conversations", userId],
     enabled: !!userId,
     queryFn: async () => {
@@ -41,8 +42,11 @@ function ChatList() {
   return (
     <AppShell title="Messages">
       <div className="space-y-2 pt-4">
-        {conversations.length === 0 ? (
+        {isLoading ? (
+          <ConversationSkeleton count={4} />
+        ) : conversations.length === 0 ? (
           <EmptyState
+            variant="wave"
             title="No conversations yet"
             description="Message a seller from any listing and it'll appear here."
             action={
