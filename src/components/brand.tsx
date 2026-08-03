@@ -49,13 +49,14 @@ export function Logo({
         />
       </span>
       {withWordmark && (
-        <span
-          className="font-display font-extrabold leading-none tracking-[-0.035em] text-foreground"
-          style={{ fontSize: Math.round(size * 0.62) }}
-        >
-          Swap<span className="text-primary">Space</span>
-        </span>
+        <img
+          src={wordmark.url}
+          alt="SwapSpace"
+          className="block w-auto select-none object-contain"
+          style={{ height: Math.round(size * 0.6) }}
+        />
       )}
+
     </Link>
   );
 }
