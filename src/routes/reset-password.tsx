@@ -55,7 +55,7 @@ function ResetPassword() {
         </div>
         <div className="rounded-3xl border border-border bg-card p-6 shadow-[var(--shadow-lift)] sm:p-8">
           <div className="mb-6 text-center">
-            <Mascot variant="idea" className="mx-auto h-24 w-auto" alt="" />
+            <Mascot variant="idea" size="sm" halo alt="" />
             <h1 className="mt-3 font-display text-2xl font-extrabold">Set a new password</h1>
             <p className="mt-1 text-sm text-muted-foreground">Make it something you'll remember.</p>
           </div>
