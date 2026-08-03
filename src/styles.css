@@ -164,7 +164,7 @@
     230px 230px;
   background-repeat: no-repeat, repeat;
   background-position: center top, center top;
-  opacity: 0.16;
+  opacity: 0.1;
   mask-image: linear-gradient(to bottom, black, transparent 85%);
   transform: translateZ(0);
   will-change: auto;
