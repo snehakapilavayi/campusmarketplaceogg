@@ -5,6 +5,7 @@ import { useAuth } from "@/lib/auth";
 import { AppShell } from "@/components/app-shell";
 import { ListingCard, type ListingCardData } from "@/components/listing-card";
 import { EmptyState } from "@/components/brand";
+import { ListingGridSkeleton } from "@/components/skeletons";
 import { Button } from "@/components/ui/button";
 import { useWishlist } from "@/lib/marketplace";
 
@@ -24,7 +25,7 @@ function WishlistPage() {
   const { userId } = useAuth();
   const wishlist = useWishlist();
 
-  const { data: items = [] } = useQuery({
+  const { data: items = [], isLoading } = useQuery({
     queryKey: ["wishlist", userId],
     enabled: !!userId,
     queryFn: async () => {
@@ -42,8 +43,11 @@ function WishlistPage() {
   return (
     <AppShell title="Wishlist">
       <div className="pt-4">
-        {items.length === 0 ? (
+        {isLoading ? (
+          <ListingGridSkeleton count={4} />
+        ) : items.length === 0 ? (
           <EmptyState
+            variant="idea"
             title="Nothing saved yet"
             description="Tap the heart on any listing to keep an eye on it."
             action={
