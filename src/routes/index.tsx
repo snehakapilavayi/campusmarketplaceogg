@@ -18,7 +18,13 @@ export const Route = createFileRoute("/")({
         property: "og:description",
         content: "Buy, rent and sell inside your campus. Verified students only.",
       },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://college-swap-link.lovable.app/" },
+      { property: "og:image", content: "https://college-swap-link.lovable.app/og-image.jpg" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "https://college-swap-link.lovable.app/og-image.jpg" },
     ],
+    links: [{ rel: "canonical", href: "https://college-swap-link.lovable.app/" }],
   }),
   component: Landing,
 });

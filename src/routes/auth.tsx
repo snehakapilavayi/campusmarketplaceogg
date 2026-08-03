@@ -22,7 +22,13 @@ export const Route = createFileRoute("/auth")({
       { name: "description", content: "Sign in with your Vishnu college email to buy, rent and sell on campus." },
       { property: "og:title", content: "Log in or join — SwapSpace" },
       { property: "og:description", content: "Sign in with your Vishnu college email to start swapping." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://college-swap-link.lovable.app/auth" },
+      { property: "og:image", content: "https://college-swap-link.lovable.app/og-image.jpg" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "https://college-swap-link.lovable.app/og-image.jpg" },
     ],
+    links: [{ rel: "canonical", href: "https://college-swap-link.lovable.app/auth" }],
   }),
   component: AuthPage,
 });

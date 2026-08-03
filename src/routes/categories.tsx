@@ -11,7 +11,13 @@ export const Route = createFileRoute("/categories")({
       { name: "description", content: "Books, electronics, fashion, hostel gear and more — browse by category." },
       { property: "og:title", content: "Categories — SwapSpace" },
       { property: "og:description", content: "Browse campus listings by category." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://college-swap-link.lovable.app/categories" },
+      { property: "og:image", content: "https://college-swap-link.lovable.app/og-image.jpg" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "https://college-swap-link.lovable.app/og-image.jpg" },
     ],
+    links: [{ rel: "canonical", href: "https://college-swap-link.lovable.app/categories" }],
   }),
   component: Categories,
 });
