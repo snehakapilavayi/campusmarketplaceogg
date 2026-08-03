@@ -159,7 +159,7 @@ function Conversation() {
 
       <div className="sticky bottom-0 border-t border-border bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-md">
         <div className="mx-auto max-w-3xl px-3 py-3">
-          {messages.length === 0 && (
+          {!isLoading && messages.length === 0 && (
             <div className="no-scrollbar mb-2 flex gap-2 overflow-x-auto">
               {quickReplies.map((q) => (
                 <button
