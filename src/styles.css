@@ -148,21 +148,44 @@
   }
 }
 
+/* Brand pattern: one shared tiled layer + gradient wash. GPU-friendly —
+   no fixed attachment, no repaint on scroll, single decoded 256px webp. */
 @utility brand-pattern {
+  position: relative;
+  isolation: isolate;
   background-image:
-    linear-gradient(to bottom, oklch(0.78 0.155 78 / 0.14), transparent 70%),
-    url("/__l5e/assets-v1/fb35d2c3-a49c-48e2-ae4c-65d95234f63b/pattern.png");
+    radial-gradient(120% 90% at 50% 0%, oklch(0.78 0.155 78 / 0.22), transparent 70%),
+    url("/__l5e/assets-v1/6da28651-ead1-4f56-bb5e-22f11f56508d/pattern-tile.webp");
   background-size:
     100% 100%,
-    260px 260px;
+    230px 230px;
   background-repeat: no-repeat, repeat;
-  opacity: 0.18;
-  mask-image: linear-gradient(to bottom, black, transparent 80%);
+  background-position: center top, center top;
+  opacity: 0.16;
+  mask-image: linear-gradient(to bottom, black, transparent 85%);
+  transform: translateZ(0);
+  will-change: auto;
+  contain: paint;
+}
+
+@utility brand-pattern-subtle {
+  background-image: url("/__l5e/assets-v1/6da28651-ead1-4f56-bb5e-22f11f56508d/pattern-tile.webp");
+  background-size: 190px 190px;
+  background-repeat: repeat;
+  opacity: 0.07;
+  mask-image: radial-gradient(120% 100% at 50% 0%, black, transparent 75%);
+  transform: translateZ(0);
+  contain: paint;
 }
 
 .dark .brand-pattern {
-  opacity: 0.12;
+  opacity: 0.1;
 }
+
+.dark .brand-pattern-subtle {
+  opacity: 0.06;
+}
+
 
 
 @utility no-scrollbar {
