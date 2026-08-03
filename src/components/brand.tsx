@@ -1,6 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
 import logo from "@/assets/logo.png.asset.json";
+import wordmark from "@/assets/wordmark.png.asset.json";
+
 import mascotWave from "@/assets/mascot-wave.png.asset.json";
 import mascotSad from "@/assets/mascot-sad.png.asset.json";
 import mascotHappy from "@/assets/mascot-happy.png.asset.json";
@@ -49,13 +51,14 @@ export function Logo({
         />
       </span>
       {withWordmark && (
-        <span
-          className="font-display font-extrabold leading-none tracking-[-0.035em] text-foreground"
-          style={{ fontSize: Math.round(size * 0.62) }}
-        >
-          Swap<span className="text-primary">Space</span>
-        </span>
+        <img
+          src={wordmark.url}
+          alt="SwapSpace"
+          className="block w-auto select-none object-contain"
+          style={{ height: Math.round(size * 0.6) }}
+        />
       )}
+
     </Link>
   );
 }
