@@ -33,6 +33,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
           : "light";
     setTheme(initial);
     apply(initial);
+    // Re-apply after hydration finishes patching <html> attributes.
+    const raf = requestAnimationFrame(() => apply(initial));
+    return () => cancelAnimationFrame(raf);
   }, []);
 
   const toggleTheme = useCallback(() => {
