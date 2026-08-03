@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { currency } from "@/components/brand";
+import { MessageSkeleton } from "@/components/skeletons";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -50,7 +51,7 @@ function Conversation() {
     },
   });
 
-  const { data: messages = [] } = useQuery({
+  const { data: messages = [], isLoading } = useQuery({
     queryKey: ["messages", id],
     queryFn: async () => {
       const { data } = await supabase
@@ -98,9 +99,9 @@ function Conversation() {
   const image = [...(listing?.listing_images ?? [])].sort((a, b) => a.sort_order - b.sort_order)[0]?.url;
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
+    <div className="flex min-h-[100dvh] flex-col overscroll-none bg-background">
       <header className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-3xl items-center gap-3 px-3">
+        <div className="mx-auto flex h-14 max-w-3xl items-center gap-2 px-3 sm:h-16 sm:gap-3">
           <Link to="/chat" className="grid h-9 w-9 place-items-center rounded-full hover:bg-muted" aria-label="Back">
             <ChevronLeft className="h-5 w-5" />
           </Link>
@@ -130,7 +131,8 @@ function Conversation() {
       </header>
 
       <div className="mx-auto w-full max-w-3xl flex-1 space-y-2 px-3 py-4">
-        {messages.length === 0 && (
+        {isLoading && <MessageSkeleton />}
+        {!isLoading && messages.length === 0 && (
           <p className="py-8 text-center text-sm text-muted-foreground">
             Say hi 👋 — ask if it's still available.
           </p>
@@ -141,7 +143,7 @@ function Conversation() {
             <div key={m.id} className={cn("flex", mine ? "justify-end" : "justify-start")}>
               <div
                 className={cn(
-                  "max-w-[75%] rounded-2xl px-4 py-2 text-sm",
+                  "max-w-[85%] break-words rounded-2xl px-4 py-2 text-sm sm:max-w-[75%]",
                   mine
                     ? "rounded-br-md bg-primary text-primary-foreground"
                     : "rounded-bl-md bg-muted text-foreground",
@@ -155,7 +157,7 @@ function Conversation() {
         <div ref={bottomRef} />
       </div>
 
-      <div className="sticky bottom-0 border-t border-border bg-background/95 backdrop-blur-md">
+      <div className="sticky bottom-0 border-t border-border bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-md">
         <div className="mx-auto max-w-3xl px-3 py-3">
           {messages.length === 0 && (
             <div className="no-scrollbar mb-2 flex gap-2 overflow-x-auto">
