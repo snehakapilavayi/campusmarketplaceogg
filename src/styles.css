@@ -90,9 +90,10 @@
   --success: oklch(0.62 0.13 155);
   --success-foreground: oklch(0.99 0.005 95);
 
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.78 0.155 78);
+  --border: oklch(0.9 0.004 226);
+  --input: oklch(0.88 0.005 226);
+  --ring: oklch(0.7 0.16 72);
+
 
   --sidebar: oklch(0.33 0.023 226);
   --sidebar-foreground: oklch(0.93 0.008 95);
