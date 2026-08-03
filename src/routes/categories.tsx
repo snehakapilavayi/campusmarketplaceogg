@@ -8,7 +8,7 @@ export const Route = createFileRoute("/categories")({
   head: () => ({
     meta: [
       { title: "Categories — SwapSpace" },
-      { name: "description", content: "Books, cycles, electronics, hostel gear and more — browse by category." },
+      { name: "description", content: "Books, electronics, fashion, hostel gear and more — browse by category." },
       { property: "og:title", content: "Categories — SwapSpace" },
       { property: "og:description", content: "Browse campus listings by category." },
     ],

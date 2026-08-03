@@ -92,7 +92,7 @@ function Market() {
             <Input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search cycles, books, calculators…"
+              placeholder="Search books, gadgets, calculators…"
               className="h-12 rounded-full pl-10"
               maxLength={80}
             />
@@ -102,7 +102,7 @@ function Market() {
             size="icon"
             className="h-12 w-12 shrink-0 rounded-full"
             onClick={() => setFilter(filter === "all" ? "sell" : filter === "sell" ? "rent" : "all")}
-            aria-label="Cycle type filter"
+            aria-label="Listing type filter"
           >
             <SlidersHorizontal className="h-4 w-4" />
           </Button>

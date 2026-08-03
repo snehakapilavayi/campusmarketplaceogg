@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Recycle, ShieldCheck, Wallet } from "lucide-react";
 import { Logo, Mascot } from "@/components/brand";
+import { ThemeToggle } from "@/lib/theme";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/")({
@@ -10,7 +11,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Buy, rent and sell textbooks, cycles, gadgets and hostel gear inside your campus. Verified students only, no shipping, no strangers.",
+          "Buy, rent and sell textbooks, gadgets, lab gear and hostel essentials inside your campus. Verified students only, no shipping, no strangers.",
       },
       { property: "og:title", content: "SwapSpace — The campus marketplace for students" },
       {
@@ -44,8 +45,9 @@ function Landing() {
   return (
     <div className="min-h-screen bg-background">
       <header className="mx-auto flex h-20 max-w-6xl items-center justify-between px-5">
-        <Logo />
-        <div className="flex items-center gap-2">
+        <Logo to="/" />
+        <div className="flex items-center gap-1 sm:gap-2">
+          <ThemeToggle />
           <Button asChild variant="ghost" className="rounded-full">
             <Link to="/auth">Log in</Link>
           </Button>
@@ -69,7 +71,7 @@ function Landing() {
               <span className="block text-primary">Inside your campus.</span>
             </h1>
             <p className="mt-5 max-w-md text-base text-muted-foreground">
-              SwapSpace is the marketplace for the stuff that already lives on your campus — textbooks, cycles,
+              SwapSpace is the marketplace for the stuff that already lives on your campus — textbooks, calculators,
               lab coats, mini fridges. Meet at the canteen, hand it over, done.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
@@ -100,10 +102,15 @@ function Landing() {
             </div>
           </div>
 
-          <div className="relative flex items-end justify-center gap-2">
-            <Mascot variant="point" className="h-40 w-auto md:h-52" alt="" />
-            <Mascot variant="wave" className="h-56 w-auto animate-float md:h-72" alt="SwapSpace mascot waving" />
-            <Mascot variant="idea" className="h-36 w-auto md:h-44" alt="" />
+          <div className="relative flex justify-center">
+            <Mascot
+              variant="wave"
+              size="xl"
+              halo
+              float
+              alt="SwapSpace mascot waving"
+              className="md:scale-110"
+            />
           </div>
         </div>
       </section>
@@ -126,7 +133,7 @@ function Landing() {
         <div className="relative overflow-hidden rounded-3xl bg-secondary px-8 py-12 text-secondary-foreground md:px-14">
           <div className="relative z-10 max-w-lg">
             <h2 className="font-display text-3xl font-extrabold md:text-4xl">
-              That cycle in your hostel parking? Someone needs it today.
+              That spare desk lamp in your hostel room? Someone needs it today.
             </h2>
             <p className="mt-3 text-sm text-secondary-foreground/80">
               List it in under a minute. Get a 🍅 rating for every good swap.
@@ -139,7 +146,8 @@ function Landing() {
           </div>
           <Mascot
             variant="happy"
-            className="absolute -bottom-4 right-4 hidden h-56 w-auto md:block"
+            size="lg"
+            className="absolute bottom-0 right-6 hidden md:flex"
             alt=""
           />
         </div>

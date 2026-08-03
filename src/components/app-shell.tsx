@@ -3,6 +3,7 @@ import { Bell, Bike, Heart, LayoutGrid, MessageCircle, Plus, ShoppingBag, User }
 import { Logo } from "@/components/brand";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
+import { ThemeToggle } from "@/lib/theme";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -25,10 +26,11 @@ export function AppHeader({ title }: { title?: string | undefined }) {
     <header className="sticky top-0 z-30 border-b border-border/70 bg-background/85 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4">
         {title ? <h1 className="font-display text-lg font-bold">{title}</h1> : <Logo />}
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-0.5">
+          <ThemeToggle />
           <Link
             to="/notifications"
-            className="relative grid h-10 w-10 place-items-center rounded-full transition-colors hover:bg-muted"
+            className="relative grid h-10 w-10 place-items-center rounded-full transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             aria-label="Notifications"
           >
             <Bell className="h-5 w-5" />
@@ -38,7 +40,7 @@ export function AppHeader({ title }: { title?: string | undefined }) {
           </Link>
           <Link
             to="/chat"
-            className="grid h-10 w-10 place-items-center rounded-full transition-colors hover:bg-muted"
+            className="grid h-10 w-10 place-items-center rounded-full transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             aria-label="Messages"
           >
             <MessageCircle className="h-5 w-5" />

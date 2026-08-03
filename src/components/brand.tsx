@@ -19,32 +19,88 @@ export function Logo({
   className,
   withWordmark = true,
   size = 32,
+  to = "/market",
 }: {
   className?: string;
   withWordmark?: boolean;
   size?: number;
+  to?: string;
 }) {
   return (
-    <Link to="/market" className={cn("flex items-center gap-2", className)}>
-      <img src={logo.url} alt="SwapSpace logo" width={size} height={size} style={{ width: size, height: size }} />
+    <Link
+      to={to}
+      className={cn(
+        "inline-flex shrink-0 items-center gap-2 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+        className,
+      )}
+      aria-label="SwapSpace home"
+    >
+      <img
+        src={logo.url}
+        alt=""
+        width={size}
+        height={size}
+        style={{ width: size, height: size }}
+        className="block shrink-0 object-contain drop-shadow-[0_1px_0_rgba(0,0,0,0.06)] dark:brightness-110"
+      />
       {withWordmark && (
-        <span className="font-display text-lg font-extrabold tracking-tight">SwapSpace</span>
+        <span
+          className="font-display font-extrabold leading-none tracking-[-0.035em] text-foreground"
+          style={{ fontSize: Math.round(size * 0.62) }}
+        >
+          Swap<span className="text-primary">Space</span>
+        </span>
       )}
     </Link>
   );
 }
 
+const mascotSizes = {
+  sm: "h-24",
+  md: "h-36",
+  lg: "h-48",
+  xl: "h-60",
+} as const;
+
 export function Mascot({
   variant = "wave",
   className,
+  size = "md",
+  halo = false,
+  float = false,
   alt = "SwapSpace mascot",
 }: {
   variant?: keyof typeof mascots;
   className?: string;
+  size?: keyof typeof mascotSizes;
+  halo?: boolean;
+  float?: boolean;
   alt?: string;
 }) {
-  return <img src={mascots[variant]} alt={alt} className={cn("select-none", className)} loading="lazy" />;
+  return (
+    <span className={cn("relative inline-flex shrink-0 items-end justify-center", className)}>
+      {halo && (
+        <span
+          aria-hidden
+          className="pointer-events-none absolute left-1/2 top-1/2 aspect-square w-[112%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/15 blur-2xl"
+        />
+      )}
+      <img
+        src={mascots[variant]}
+        alt={alt}
+        width={768}
+        height={1024}
+        loading="lazy"
+        className={cn(
+          "relative block w-auto max-w-full select-none object-contain",
+          mascotSizes[size],
+          float && "animate-float",
+        )}
+      />
+    </span>
+  );
 }
+
 
 export function TomatoRating({
   value,
@@ -82,8 +138,8 @@ export function EmptyState({
   action?: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center gap-3 px-6 py-14 text-center">
-      <Mascot variant={variant} className="h-28 w-auto animate-float" alt="" />
+    <div className="flex flex-col items-center justify-center gap-4 px-6 py-16 text-center">
+      <Mascot variant={variant} size="sm" halo float alt="" />
       <h3 className="font-display text-lg font-bold">{title}</h3>
       {description && <p className="max-w-xs text-sm text-muted-foreground">{description}</p>}
       {action}

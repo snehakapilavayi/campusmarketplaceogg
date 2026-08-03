@@ -60,7 +60,7 @@ function Onboarding() {
     },
     {
       title: "Buy, rent or sell",
-      body: "List anything from textbooks to cycles. Renting is perfect for things you only need for a semester.",
+      body: "List anything from textbooks to mini fridges. Renting is perfect for things you only need for a semester.",
       mascot: "idea" as const,
     },
     {

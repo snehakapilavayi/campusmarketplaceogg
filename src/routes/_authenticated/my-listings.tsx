@@ -63,7 +63,7 @@ function MyListings() {
           <EmptyState
             variant="idea"
             title="You haven't listed anything"
-            description="That old cycle or last semester's textbook could be someone's find today."
+            description="That spare lamp or last semester's textbook could be someone's find today."
             action={
               <Button asChild className="mt-2 rounded-full">
                 <Link to="/sell">List an item</Link>
