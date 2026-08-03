@@ -1,6 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
 import logo from "@/assets/logo.png.asset.json";
+import wordmark from "@/assets/wordmark.png.asset.json";
+
 import mascotWave from "@/assets/mascot-wave.png.asset.json";
 import mascotSad from "@/assets/mascot-sad.png.asset.json";
 import mascotHappy from "@/assets/mascot-happy.png.asset.json";
