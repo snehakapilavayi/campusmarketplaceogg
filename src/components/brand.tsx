@@ -35,14 +35,19 @@ export function Logo({
       )}
       aria-label="SwapSpace home"
     >
-      <img
-        src={logo.url}
-        alt=""
-        width={size}
-        height={size}
+      <span
+        className="grid shrink-0 place-items-center overflow-visible"
         style={{ width: size, height: size }}
-        className="block shrink-0 object-contain drop-shadow-[0_1px_0_rgba(0,0,0,0.06)] dark:brightness-110"
-      />
+      >
+        <img
+          src={logo.url}
+          alt=""
+          width={size}
+          height={size}
+          style={{ width: size, height: size }}
+          className="block h-full w-full shrink-0 object-contain object-center drop-shadow-[0_1px_0_rgba(0,0,0,0.06)] dark:brightness-110"
+        />
+      </span>
       {withWordmark && (
         <span
           className="font-display font-extrabold leading-none tracking-[-0.035em] text-foreground"
