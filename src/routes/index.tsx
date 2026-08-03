@@ -131,7 +131,9 @@ function Landing() {
 
       <section className="mx-auto max-w-6xl px-5 pb-20">
         <div className="relative overflow-hidden rounded-3xl bg-secondary px-8 py-12 text-secondary-foreground md:px-14">
+          <div className="brand-pattern-subtle pointer-events-none absolute inset-0" aria-hidden />
           <div className="relative z-10 max-w-lg">
+
             <h2 className="font-display text-3xl font-extrabold md:text-4xl">
               That spare desk lamp in your hostel room? Someone needs it today.
             </h2>
