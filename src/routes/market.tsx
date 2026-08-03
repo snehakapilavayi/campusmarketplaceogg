@@ -134,7 +134,7 @@ function Market() {
                 <p className="mt-1 text-sm text-secondary-foreground/80">{banner.description}</p>
               )}
             </div>
-            <Mascot variant="point" className="absolute -bottom-2 right-3 h-24 w-auto" alt="" />
+            <Mascot variant="point" size="sm" className="absolute bottom-0 right-3" alt="" />
           </div>
         )}
 

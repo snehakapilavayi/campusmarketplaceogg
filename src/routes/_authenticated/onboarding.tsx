@@ -80,7 +80,7 @@ function Onboarding() {
 
         {current ? (
           <div className="text-center">
-            <Mascot variant={current.mascot} className="mx-auto h-40 w-auto animate-float" alt="" />
+            <Mascot variant={current.mascot} size="lg" halo float alt="" />
             <h1 className="mt-6 font-display text-3xl font-extrabold">{current.title}</h1>
             <p className="mt-3 text-sm text-muted-foreground">{current.body}</p>
             <Button size="lg" className="mt-10 w-full rounded-full" onClick={() => setStep(step + 1)}>

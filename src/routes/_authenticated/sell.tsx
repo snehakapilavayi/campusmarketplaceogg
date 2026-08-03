@@ -139,7 +139,7 @@ function SellPage() {
     <AppShell title="List an item">
       <form onSubmit={submit} className="space-y-6 pt-4">
         <div className="flex items-center gap-3 rounded-3xl bg-accent p-4">
-          <Mascot variant="idea" className="h-16 w-auto" alt="" />
+          <Mascot variant="idea" className="[&_img]:h-16" alt="" />
           <p className="text-sm text-accent-foreground">
             Clear photos and an honest condition get you replies within hours.
           </p>
