@@ -98,9 +98,14 @@ function AuthPage() {
         });
         if (error) throw error;
         if (!data.session) {
-          setSent("confirm");
-          return;
+          // Email confirmation is disabled — sign in straight away.
+          const { error: signInError } = await supabase.auth.signInWithPassword({
+            email: cleanEmail,
+            password,
+          });
+          if (signInError) throw signInError;
         }
+        toast.success("Welcome to SwapSpace 🍅");
         navigate({ to: "/onboarding" });
         return;
       }
