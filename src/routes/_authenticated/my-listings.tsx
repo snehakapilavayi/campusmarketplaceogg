@@ -60,7 +60,9 @@ function MyListings() {
   return (
     <AppShell title="My listings">
       <div className="space-y-3 pt-4">
-        {listings.length === 0 ? (
+        {isLoading ? (
+          <ListSkeleton count={3} />
+        ) : listings.length === 0 ? (
           <EmptyState
             variant="idea"
             title="You haven't listed anything"
@@ -75,7 +77,7 @@ function MyListings() {
           listings.map((l) => {
             const image = [...(l.listing_images ?? [])].sort((a, b) => a.sort_order - b.sort_order)[0]?.url;
             return (
-              <div key={l.id} className="flex gap-3 rounded-2xl border border-border bg-card p-3 shadow-[var(--shadow-soft)]">
+              <div key={l.id} className="flex gap-3 rounded-2xl border border-border bg-card p-2.5 shadow-[var(--shadow-soft)] sm:p-3">
                 <Link to="/listing/$id" params={{ id: l.id }} className="h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-muted">
                   {image && <img src={image} alt="" className="h-full w-full object-cover" />}
                 </Link>
