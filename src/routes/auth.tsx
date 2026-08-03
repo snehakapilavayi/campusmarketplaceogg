@@ -34,16 +34,19 @@ export const Route = createFileRoute("/auth")({
 });
 
 const COLLEGE_DOMAIN = "@vishnu.edu.in";
+const ADMIN_EMAIL = "admin@swapspace.in";
 const DOMAIN_ERROR = `Use your Vishnu college email (…${COLLEGE_DOMAIN})`;
 
 function validateEmail(raw: string) {
   const email = raw.trim().toLowerCase();
   if (!email || email.length > 255) return "Enter your college email";
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return "Enter a valid email address";
+  if (email === ADMIN_EMAIL) return null;
   if (!email.endsWith(COLLEGE_DOMAIN)) return DOMAIN_ERROR;
   if (email.split("@")[0]!.length === 0) return "Enter your college email";
   return null;
 }
+
 
 type Errors = Partial<Record<"name" | "email" | "password" | "confirm", string>>;
 
