@@ -132,7 +132,7 @@ export function AppShell({
       />
       <div className="relative">
         {header && <AppHeader title={title} />}
-        <main className="mx-auto max-w-5xl px-4">{children}</main>
+        <main className="mx-auto max-w-5xl px-3 sm:px-4">{children}</main>
       </div>
       <BottomNav />
     </div>
