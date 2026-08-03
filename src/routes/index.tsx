@@ -54,6 +54,9 @@ function Landing() {
         <Logo to="/" />
         <div className="flex items-center gap-1 sm:gap-2">
           <ThemeToggle />
+          <Button asChild variant="ghost" className="hidden rounded-full sm:inline-flex">
+            <Link to="/how-it-works">How it works</Link>
+          </Button>
           <Button asChild variant="ghost" className="rounded-full">
             <Link to="/auth">Log in</Link>
           </Button>
@@ -164,6 +167,9 @@ function Landing() {
       <footer className="border-t border-border">
         <div className="mx-auto flex max-w-6xl flex-col items-center gap-2 px-5 py-8 text-center text-xs text-muted-foreground">
           <Logo size={24} />
+          <Link to="/how-it-works" className="font-semibold text-foreground hover:text-primary">
+            How SwapSpace works
+          </Link>
           <p>Campus-exclusive marketplace. Meet safely, on campus, in daylight.</p>
         </div>
       </footer>

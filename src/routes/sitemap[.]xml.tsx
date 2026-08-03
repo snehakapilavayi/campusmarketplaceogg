@@ -3,12 +3,12 @@ import { createFileRoute } from "@tanstack/react-router";
 const SITE = "https://college-swap-link.lovable.app";
 const routes = ["/", "/how-it-works", "/market", "/categories", "/auth"];
 
-export const Route = createFileRoute("/sitemap[.]xml")({
+export const Route = createFileRoute("/sitemap.xml")({
   server: {
     handlers: {
       GET: () => {
         const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemap.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${routes
   .map((r) => `  <url><loc>${SITE}${r}</loc><changefreq>daily</changefreq></url>`)
   .join("\n")}
