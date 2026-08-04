@@ -34,14 +34,20 @@ function AdminListings() {
 
   async function moderate(id: string, status: "approved" | "rejected" | "pending" | "archived") {
     const { error: err } = await supabase.from("listings").update({ status }).eq("id", id);
-    if (err) return toast.error(err.message);
+    if (err) {
+      toast.error(err.message);
+      return;
+    }
     refresh();
     toast.success(`Listing marked ${status}`);
   }
 
   async function remove(id: string) {
     const { error: err } = await supabase.from("listings").delete().eq("id", id);
-    if (err) return toast.error(err.message);
+    if (err) {
+      toast.error(err.message);
+      return;
+    }
     refresh();
     toast.success("Listing deleted");
   }
