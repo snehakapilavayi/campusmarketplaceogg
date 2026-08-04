@@ -30,6 +30,7 @@ function Onboarding() {
   const [step, setStep] = useState(0);
   const [fullName, setFullName] = useState(profile?.full_name ?? "");
   const [bio, setBio] = useState(profile?.bio ?? "");
+  const [campus, setCampus] = useState(profile?.campus ?? "");
   const [busy, setBusy] = useState(false);
 
   async function finish() {
@@ -40,7 +41,12 @@ function Onboarding() {
     setBusy(true);
     const { error } = await supabase
       .from("profiles")
-      .update({ full_name: fullName.trim(), bio: bio.trim() || null, profile_complete: true })
+      .update({
+        full_name: fullName.trim(),
+        bio: bio.trim() || null,
+        campus: campus.trim() || null,
+        profile_complete: true,
+      })
       .eq("id", userId!);
     setBusy(false);
     if (error) {
@@ -101,6 +107,16 @@ function Onboarding() {
               <div className="space-y-1.5">
                 <Label htmlFor="fullName">Full name</Label>
                 <Input id="fullName" value={fullName} onChange={(e) => setFullName(e.target.value)} maxLength={80} />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="campus">Campus</Label>
+                <Input
+                  id="campus"
+                  value={campus}
+                  onChange={(e) => setCampus(e.target.value)}
+                  maxLength={60}
+                  placeholder="Vishnu Institute of Technology"
+                />
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="bio">Short bio</Label>

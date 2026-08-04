@@ -90,7 +90,7 @@ function Market() {
     return listings.filter((l) => l.title.toLowerCase().includes(term));
   }, [listings, query]);
 
-  const featured = visible.filter((l) => l.featured).slice(0, 6);
+  const featured = visible.filter((l) => l.featured).slice(0, 8);
 
   return (
     <AppShell>
