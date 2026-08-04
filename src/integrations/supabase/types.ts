@@ -133,6 +133,7 @@ export type Database = {
         Row: {
           accent: string | null
           active: boolean
+          campus: string | null
           description: string | null
           ends_at: string | null
           id: string
@@ -143,6 +144,7 @@ export type Database = {
         Insert: {
           accent?: string | null
           active?: boolean
+          campus?: string | null
           description?: string | null
           ends_at?: string | null
           id?: string
@@ -153,6 +155,7 @@ export type Database = {
         Update: {
           accent?: string | null
           active?: boolean
+          campus?: string | null
           description?: string | null
           ends_at?: string | null
           id?: string
