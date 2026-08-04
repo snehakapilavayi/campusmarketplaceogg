@@ -295,7 +295,11 @@ function Conversation() {
           >
             <Input
               value={draft}
-              onChange={(e) => setDraft(e.target.value)}
+              onChange={(e) => {
+                setDraft(e.target.value);
+                notifyTyping();
+              }}
+
               placeholder="Type a message…"
               maxLength={500}
               className="h-11 rounded-full"
