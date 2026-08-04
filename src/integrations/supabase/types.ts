@@ -36,7 +36,15 @@ export type Database = {
           id?: string
           target?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "admin_logs_admin_id_fkey"
+            columns: ["admin_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       cart: {
         Row: {
@@ -338,6 +346,7 @@ export type Database = {
         Row: {
           avatar_url: string | null
           bio: string | null
+          campus: string | null
           created_at: string
           full_name: string
           id: string
@@ -351,6 +360,7 @@ export type Database = {
         Insert: {
           avatar_url?: string | null
           bio?: string | null
+          campus?: string | null
           created_at?: string
           full_name?: string
           id: string
@@ -364,6 +374,7 @@ export type Database = {
         Update: {
           avatar_url?: string | null
           bio?: string | null
+          campus?: string | null
           created_at?: string
           full_name?: string
           id?: string
