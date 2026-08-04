@@ -189,7 +189,10 @@ function AdminCategories() {
             <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-accent">
               <CategoryIcon name={c.icon} className="h-4 w-4" />
             </div>
-            <div className="min-w-0 flex-1">
+            <button
+              className="min-w-0 flex-1 text-left"
+              onClick={() => setDraft({ id: c.id, name: c.name, slug: c.slug, icon: c.icon ?? "Package", active: c.active })}
+            >
               <p className="truncate text-sm font-semibold">
                 {c.name}
                 {!c.active && (
@@ -201,7 +204,7 @@ function AdminCategories() {
               <p className="text-[11px] text-muted-foreground">
                 /{c.slug} · {usage?.get(c.id) ?? 0} listings
               </p>
-            </div>
+            </button>
             <div className="flex shrink-0 items-center gap-1">
               <Button size="icon" variant="ghost" className="h-8 w-8" disabled={i === 0} onClick={() => void move(c.id, -1)} aria-label="Move up">
                 <ArrowUp className="h-4 w-4" />
@@ -235,20 +238,6 @@ function AdminCategories() {
         ))
       )}
 
-      {categories.length > 0 && (
-        <button
-          className="w-full text-left text-xs text-muted-foreground underline-offset-2 hover:underline"
-          onClick={() => setDraft(null)}
-        >
-          Tip: tap a row's arrows to reorder how categories appear on the market.
-        </button>
-      )}
-
-      <div className="hidden">
-        {categories.map((c) => (
-          <button key={c.id} onClick={() => setDraft({ id: c.id, name: c.name, slug: c.slug, icon: c.icon ?? "Package", active: c.active })} />
-        ))}
-      </div>
     </div>
   );
 }
