@@ -54,7 +54,9 @@ function ProfilePage() {
             )}
           </div>
           <h1 className="mt-3 font-display text-xl font-extrabold">{profile?.full_name ?? "Student"}</h1>
+          {profile?.campus && <p className="mt-1 text-xs font-medium text-primary">{profile.campus}</p>}
           {profile?.bio && <p className="mt-1 text-sm text-muted-foreground">{profile.bio}</p>}
+
           <div className="mt-3 flex items-center justify-center gap-2">
             <TomatoRating value={profile?.tomato_rating ?? 0} />
             {profile?.verification === "verified" && <VerifiedBadge compact />}
