@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { celebrate, haptic } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/sell")({
