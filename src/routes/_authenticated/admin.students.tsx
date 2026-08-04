@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { useAdminStudents } from "@/lib/admin";
+import type { Database } from "@/integrations/supabase/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -20,7 +21,7 @@ function AdminStudents() {
 
   const filtered = students.filter((s) => s.full_name.toLowerCase().includes(q.trim().toLowerCase()));
 
-  async function patch(id: string, values: Record<string, unknown>, message: string) {
+  async function patch(id: string, values: Database["public"]["Tables"]["profiles"]["Update"], message: string) {
     const { error: err } = await supabase.from("profiles").update(values).eq("id", id);
     if (err) {
       toast.error(err.message);
