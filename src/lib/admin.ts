@@ -1,16 +1,25 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
 
-export function usePendingListings(enabled: boolean) {
+export type ListingStatus = Database["public"]["Enums"]["listing_status"];
+export type AdminListingFilter = ListingStatus | "all";
+
+export function useAdminListings(enabled: boolean, filter: AdminListingFilter) {
   return useQuery({
-    queryKey: ["admin-pending"],
+    queryKey: ["admin-listings", filter],
     enabled,
     queryFn: async () => {
-      const { data } = await supabase
+      let q = supabase
         .from("listings")
-        .select("id,title,price,type,status,created_at,seller_id,listing_images(url,sort_order)")
-        .eq("status", "pending")
-        .order("created_at", { ascending: false });
+        .select(
+          "id,title,description,price,type,status,condition,created_at,seller_id,listing_images(url,sort_order),profiles:seller_id(full_name,verification)",
+        )
+        .order("created_at", { ascending: false })
+        .limit(100);
+      if (filter !== "all") q = q.eq("status", filter);
+      const { data, error } = await q;
+      if (error) throw error;
       return data ?? [];
     },
   });
@@ -21,11 +30,11 @@ export function useAdminReports(enabled: boolean) {
     queryKey: ["admin-reports"],
     enabled,
     queryFn: async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("reports")
         .select("*")
-        .eq("status", "pending")
         .order("created_at", { ascending: false });
+      if (error) throw error;
       return data ?? [];
     },
   });
@@ -36,11 +45,12 @@ export function useAdminStudents(enabled: boolean) {
     queryKey: ["admin-students"],
     enabled,
     queryFn: async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("profiles")
         .select("id,full_name,verification,tomato_rating,transactions_count,suspended,created_at")
         .order("created_at", { ascending: false })
-        .limit(100);
+        .limit(200);
+      if (error) throw error;
       return data ?? [];
     },
   });
@@ -51,7 +61,7 @@ export function useAdminStats(enabled: boolean) {
     queryKey: ["admin-stats"],
     enabled,
     queryFn: async () => {
-      const counts = async (status?: "approved" | "pending" | "rejected") => {
+      const counts = async (status?: ListingStatus) => {
         let q = supabase.from("listings").select("id", { count: "exact", head: true });
         if (status) q = q.eq("status", status);
         const { count } = await q;
