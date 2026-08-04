@@ -9,7 +9,10 @@ import { BottomNav } from "@/components/app-shell";
 import { Button } from "@/components/ui/button";
 import { openConversation, useCart, useWishlist } from "@/lib/marketplace";
 import { useAuth } from "@/lib/auth";
+import { SmartImage } from "@/components/smart-image";
+import { ShareSheet } from "@/components/share-sheet";
 import { cn } from "@/lib/utils";
+
 
 const SITE = "https://college-swap-link.lovable.app";
 
