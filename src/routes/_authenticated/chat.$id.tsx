@@ -206,10 +206,18 @@ function Conversation() {
             Say hi 👋 — ask if it's still available.
           </p>
         )}
-        {messages.map((m) => {
+        {messages.map((m, i) => {
           const mine = m.sender_id === userId;
+          const isLastMine = mine && i === messages.length - 1;
           return (
-            <div key={m.id} className={cn("flex", mine ? "justify-end" : "justify-start")}>
+            <motion.div
+              key={m.id}
+              layout
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: m.pending ? 0.65 : 1, y: 0 }}
+              transition={springy}
+              className={cn("flex flex-col", mine ? "items-end" : "items-start")}
+            >
               <div
                 className={cn(
                   "max-w-[85%] break-words rounded-2xl px-4 py-2 text-sm sm:max-w-[75%]",
@@ -220,10 +228,47 @@ function Conversation() {
               >
                 {m.content}
               </div>
-            </div>
+              {isLastMine && (
+                <span className="mt-1 flex items-center gap-1 pr-1 text-[10px] font-medium text-muted-foreground">
+                  {m.pending ? (
+                    <>Sending…</>
+                  ) : m.read_at ? (
+                    <>
+                      <CheckCheck className="h-3 w-3 text-primary" /> Seen
+                    </>
+                  ) : (
+                    <>
+                      <Check className="h-3 w-3" /> Sent
+                    </>
+                  )}
+                </span>
+              )}
+            </motion.div>
           );
         })}
+        <AnimatePresence>
+          {otherTyping && (
+            <motion.div
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="flex justify-start"
+            >
+              <div className="flex items-center gap-1 rounded-2xl rounded-bl-md bg-muted px-4 py-3">
+                {[0, 1, 2].map((d) => (
+                  <motion.span
+                    key={d}
+                    className="h-1.5 w-1.5 rounded-full bg-muted-foreground"
+                    animate={{ opacity: [0.3, 1, 0.3] }}
+                    transition={{ duration: 1, repeat: Infinity, delay: d * 0.18 }}
+                  />
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
         <div ref={bottomRef} />
+
       </div>
 
       <div className="sticky bottom-0 border-t border-border bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-md">
