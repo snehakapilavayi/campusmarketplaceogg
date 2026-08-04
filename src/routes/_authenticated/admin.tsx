@@ -49,7 +49,7 @@ function AdminLayout() {
 
   if (loading) {
     return (
-      <AppShell title="Admin portal">
+      <AppShell title="Admin portal" nav={false}>
         <div className="py-16 text-center text-sm text-muted-foreground">Checking access…</div>
       </AppShell>
     );
@@ -57,7 +57,7 @@ function AdminLayout() {
 
   if (!isAdmin) {
     return (
-      <AppShell title="Admin">
+      <AppShell title="Admin" nav={false}>
         <EmptyState
           title="Admins only"
           description="This area is limited to the SwapSpace moderation team."
@@ -72,7 +72,7 @@ function AdminLayout() {
   }
 
   return (
-    <AppShell title="Admin portal">
+    <AppShell title="Admin portal" nav={false}>
       <div className="flex gap-5 pt-4">
         <aside className="sticky top-20 hidden h-fit w-52 shrink-0 rounded-2xl border border-border bg-card p-2 md:block">
           <div className="flex items-center gap-2 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">

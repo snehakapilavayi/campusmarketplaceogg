@@ -7,7 +7,7 @@ import { ThemeToggle } from "@/lib/theme";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-export function AppHeader({ title }: { title?: string | undefined }) {
+export function AppHeader({ title, actions = true }: { title?: string | undefined; actions?: boolean }) {
   const { userId } = useAuth();
   const { data: unread = 0 } = useQuery({
     queryKey: ["unread-notifications", userId],
@@ -31,8 +31,9 @@ export function AppHeader({ title }: { title?: string | undefined }) {
           <Logo />
         )}
         <div className="flex shrink-0 items-center gap-0.5">
-
           <ThemeToggle />
+          {actions && (
+            <>
           <Link
             to="/notifications"
             className="relative grid h-10 w-10 place-items-center rounded-full transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -50,6 +51,8 @@ export function AppHeader({ title }: { title?: string | undefined }) {
           >
             <MessageCircle className="h-5 w-5" />
           </Link>
+            </>
+          )}
         </div>
       </div>
     </header>
@@ -119,22 +122,24 @@ export function AppShell({
   children,
   title,
   header = true,
+  nav = true,
 }: {
   children: React.ReactNode;
   title?: string | undefined;
   header?: boolean;
+  nav?: boolean;
 }) {
   return (
-    <div className="relative min-h-screen bg-background pb-24">
+    <div className={cn("relative min-h-screen bg-background", nav ? "pb-24" : "pb-10")}>
       <div
         className="brand-pattern-subtle pointer-events-none absolute inset-x-0 top-0 h-[420px]"
         aria-hidden
       />
       <div className="relative">
-        {header && <AppHeader title={title} />}
+        {header && <AppHeader title={title} actions={nav} />}
         <main className="mx-auto max-w-5xl px-3 sm:px-4">{children}</main>
       </div>
-      <BottomNav />
+      {nav && <BottomNav />}
     </div>
   );
 }
