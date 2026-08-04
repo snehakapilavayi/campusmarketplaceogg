@@ -75,7 +75,10 @@ function AdminListings() {
 
   async function moderate(ids: string[], status: "approved" | "rejected" | "pending" | "archived") {
     const { error: err } = await supabase.from("listings").update({ status }).in("id", ids);
-    if (err) return toast.error(err.message);
+    if (err) {
+      toast.error(err.message);
+      return;
+    }
     await logAdminActions(userId, `listing.${status}`, ids);
     refresh();
     toast.success(`${ids.length} listing${ids.length > 1 ? "s" : ""} marked ${status}`);
@@ -83,7 +86,10 @@ function AdminListings() {
 
   async function remove(ids: string[]) {
     const { error: err } = await supabase.from("listings").delete().in("id", ids);
-    if (err) return toast.error(err.message);
+    if (err) {
+      toast.error(err.message);
+      return;
+    }
     await logAdminActions(userId, "listing.deleted", ids);
     refresh();
     toast.success(`${ids.length} listing${ids.length > 1 ? "s" : ""} deleted`);
@@ -91,7 +97,10 @@ function AdminListings() {
 
   async function toggleFeatured(l: Row) {
     const { error: err } = await supabase.from("listings").update({ featured: !l.featured }).eq("id", l.id);
-    if (err) return toast.error(err.message);
+    if (err) {
+      toast.error(err.message);
+      return;
+    }
     await logAdminActions(userId, l.featured ? "listing.unfeatured" : "listing.featured", [l.id]);
     refresh();
     toast.success(l.featured ? "Removed from featured" : "Featured on the market");
@@ -114,8 +123,6 @@ function AdminListings() {
       ]),
     );
   }
-
-  const allSelected = visible.length > 0 && selected.length === visible.length;
 
   return (
     <div className="space-y-3">
@@ -247,12 +254,11 @@ function AdminListings() {
         count={selected.length}
         onClear={() => setSelected([])}
         actions={[
-          { label: "Approve", run: () => moderate(selected, "approved") },
-          { label: "Reject", run: () => moderate(selected, "rejected") },
-          { label: "Delete", destructive: true, description: "Deleted listings cannot be restored.", run: () => remove(selected) },
+          { label: "Approve", run: async () => { await moderate(selected, "approved"); } },
+          { label: "Reject", run: async () => { await moderate(selected, "rejected"); } },
+          { label: "Delete", destructive: true, description: "Deleted listings cannot be restored.", run: async () => { await remove(selected); } },
         ]}
       />
-      {allSelected && visible.length > 0 && null}
     </div>
   );
 }
