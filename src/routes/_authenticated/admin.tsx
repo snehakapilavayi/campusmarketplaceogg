@@ -1,5 +1,5 @@
 import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
-import { BarChart3, Flag, LayoutGrid, ShieldCheck, Users } from "lucide-react";
+import { BarChart3, Flag, LayoutGrid, Megaphone, ShieldCheck, Users } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { AppShell } from "@/components/app-shell";
 import { EmptyState } from "@/components/brand";
