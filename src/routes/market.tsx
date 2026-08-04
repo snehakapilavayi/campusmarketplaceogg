@@ -1,6 +1,6 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/app-shell";
@@ -8,10 +8,12 @@ import { ListingCard, ListingCardSkeleton, type ListingCardData } from "@/compon
 import { EmptyState, Mascot } from "@/components/brand";
 import { useWishlist } from "@/lib/marketplace";
 import { useAuth } from "@/lib/auth";
+import { Reveal } from "@/lib/motion";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { CategoryIcon } from "@/components/category-icon";
+
 
 export const Route = createFileRoute("/market")({
   head: () => ({
@@ -71,26 +73,56 @@ function Market() {
     },
   });
 
+  // Debounce the search term so infinite scroll doesn't refetch on every keystroke.
+  const [term, setTerm] = useState("");
+  useEffect(() => {
+    const t = setTimeout(() => setTerm(query.trim()), 250);
+    return () => clearTimeout(t);
+  }, [query]);
 
-  const { data: listings, isLoading } = useQuery({
-    queryKey: ["listings", filter, category],
-    queryFn: async () => {
+  const PAGE = 12;
+  const {
+    data,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["listings", filter, category, term],
+    initialPageParam: 0,
+    queryFn: async ({ pageParam }) => {
       let q = supabase.from("listings").select(LISTING_SELECT).eq("status", "approved");
       if (filter !== "all") q = q.eq("type", filter);
       if (category) q = q.eq("category_id", category);
-      const { data } = await q.order("featured", { ascending: false }).order("created_at", { ascending: false });
+      if (term) q = q.ilike("title", `%${term}%`);
+      const { data } = await q
+        .order("featured", { ascending: false })
+        .order("created_at", { ascending: false })
+        .range(pageParam * PAGE, pageParam * PAGE + PAGE - 1);
       return (data ?? []) as unknown as (ListingCardData & { featured: boolean })[];
     },
+    getNextPageParam: (lastPage, pages) => (lastPage.length < PAGE ? undefined : pages.length),
   });
 
-  const visible = useMemo(() => {
-    if (!listings) return [];
-    const term = query.trim().toLowerCase();
-    if (!term) return listings;
-    return listings.filter((l) => l.title.toLowerCase().includes(term));
-  }, [listings, query]);
+  const visible = useMemo(() => (data?.pages ?? []).flat(), [data]);
+
+  // Intersection sentinel → load the next page automatically.
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting && hasNextPage && !isFetchingNextPage) fetchNextPage();
+      },
+      { rootMargin: "400px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const featured = visible.filter((l) => l.featured).slice(0, 8);
+
 
   return (
     <AppShell>
@@ -154,38 +186,42 @@ function Market() {
           </div>
         )}
 
-        <section>
-          <div className="mb-3 flex items-center justify-between">
-            <h2 className="font-display text-base font-bold">Categories</h2>
-            <Link to="/categories" className="text-xs font-semibold text-muted-foreground hover:text-foreground">
-              See all
-            </Link>
-          </div>
-          <div className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 pb-1">
-            <CategoryChip label="All" active={!category} onClick={() => setCategory(null)} />
-            {categories.map((c) => (
-              <CategoryChip
-                key={c.id}
-                label={c.name}
-                icon={c.icon}
-                active={category === c.id}
-                onClick={() => setCategory(category === c.id ? null : c.id)}
-              />
-            ))}
-          </div>
-        </section>
-
-        {featured.length > 0 && !query && (
+        <Reveal>
           <section>
-            <h2 className="mb-3 font-display text-base font-bold">Featured on campus</h2>
-            <div className="no-scrollbar -mx-4 flex gap-3 overflow-x-auto px-4 pb-2">
-              {featured.map((l) => (
-                <div key={l.id} className="w-44 shrink-0">
-                  <ListingCard listing={l} wished={wishlist.ids.includes(l.id)} onToggleWish={wishlist.toggle} />
-                </div>
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="font-display text-base font-bold">Categories</h2>
+              <Link to="/categories" className="text-xs font-semibold text-muted-foreground hover:text-foreground">
+                See all
+              </Link>
+            </div>
+            <div className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 pb-1">
+              <CategoryChip label="All" active={!category} onClick={() => setCategory(null)} />
+              {categories.map((c) => (
+                <CategoryChip
+                  key={c.id}
+                  label={c.name}
+                  icon={c.icon}
+                  active={category === c.id}
+                  onClick={() => setCategory(category === c.id ? null : c.id)}
+                />
               ))}
             </div>
           </section>
+        </Reveal>
+
+        {featured.length > 0 && !query && (
+          <Reveal delay={0.05}>
+            <section>
+              <h2 className="mb-3 font-display text-base font-bold">Featured on campus</h2>
+              <div className="no-scrollbar -mx-4 flex gap-3 overflow-x-auto px-4 pb-2">
+                {featured.map((l) => (
+                  <div key={l.id} className="w-44 shrink-0">
+                    <ListingCard listing={l} wished={wishlist.ids.includes(l.id)} onToggleWish={wishlist.toggle} />
+                  </div>
+                ))}
+              </div>
+            </section>
+          </Reveal>
         )}
 
         <section>
@@ -209,13 +245,29 @@ function Market() {
               }
             />
           ) : (
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-              {visible.map((l) => (
-                <ListingCard key={l.id} listing={l} wished={wishlist.ids.includes(l.id)} onToggleWish={wishlist.toggle} />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+                {visible.map((l, i) => (
+                  <Reveal key={l.id} delay={Math.min(i, 5) * 0.03}>
+                    <ListingCard listing={l} wished={wishlist.ids.includes(l.id)} onToggleWish={wishlist.toggle} />
+                  </Reveal>
+                ))}
+              </div>
+              {isFetchingNextPage && (
+                <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <ListingCardSkeleton key={i} />
+                  ))}
+                </div>
+              )}
+              <div ref={sentinelRef} className="h-8" aria-hidden />
+              {!hasNextPage && visible.length > PAGE && (
+                <p className="py-4 text-center text-xs text-muted-foreground">That's everything on campus for now.</p>
+              )}
+            </>
           )}
         </section>
+
       </div>
     </AppShell>
   );

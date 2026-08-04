@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { celebrate, haptic } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/sell")({
@@ -165,8 +166,11 @@ function SellPage() {
 
     setBusy(false);
     queryClient.invalidateQueries({ queryKey: ["my-listings"] });
+    celebrate();
+    haptic([10, 40, 10]);
     toast.success("Listing submitted — admin review is usually quick");
     navigate({ to: "/my-listings" });
+
   }
 
   return (

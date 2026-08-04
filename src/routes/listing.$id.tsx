@@ -9,7 +9,10 @@ import { BottomNav } from "@/components/app-shell";
 import { Button } from "@/components/ui/button";
 import { openConversation, useCart, useWishlist } from "@/lib/marketplace";
 import { useAuth } from "@/lib/auth";
+import { SmartImage } from "@/components/smart-image";
+import { ShareSheet } from "@/components/share-sheet";
 import { cn } from "@/lib/utils";
+
 
 const SITE = "https://college-swap-link.lovable.app";
 
@@ -109,7 +112,12 @@ function ListingDetail() {
       <div className="relative">
         <div className="aspect-square w-full bg-muted sm:aspect-[16/10]">
           {images[active] ? (
-            <img src={images[active].url} alt={listing.title} className="h-full w-full object-cover" />
+            <SmartImage
+              src={images[active].url}
+              alt={listing.title}
+              layoutId={active === 0 ? `listing-${listing.id}` : undefined}
+              className="h-full w-full"
+            />
           ) : (
             <div className="grid h-full place-items-center text-sm text-muted-foreground">No photo</div>
           )}
@@ -121,6 +129,13 @@ function ListingDetail() {
         >
           <ChevronLeft className="h-5 w-5" />
         </Link>
+        <div className="absolute right-4 top-4">
+          <ShareSheet
+            url={typeof window !== "undefined" ? `${window.location.origin}/listing/${listing.id}` : `/listing/${listing.id}`}
+            title={listing.title}
+          />
+        </div>
+
         {images.length > 1 && (
           <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5">
             {images.map((img, i) => (

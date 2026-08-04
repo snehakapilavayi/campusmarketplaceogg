@@ -7,7 +7,9 @@ import { AppShell } from "@/components/app-shell";
 import { ListSkeleton } from "@/components/skeletons";
 import { currency, EmptyState } from "@/components/brand";
 import { Button } from "@/components/ui/button";
+import { celebrate, haptic } from "@/lib/motion";
 import { cn } from "@/lib/utils";
+
 
 export const Route = createFileRoute("/_authenticated/my-listings")({
   head: () => ({
@@ -54,7 +56,12 @@ function MyListings() {
       return;
     }
     queryClient.invalidateQueries({ queryKey: ["my-listings"] });
+    if (status === "completed") {
+      celebrate();
+      haptic([10, 40, 10]);
+    }
     toast.success(status === "completed" ? "Marked as sold 🎉" : "Listing archived");
+
   }
 
   return (
