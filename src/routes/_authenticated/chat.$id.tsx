@@ -1,15 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ChevronLeft, Send } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import type { RealtimeChannel } from "@supabase/supabase-js";
+import { Check, CheckCheck, ChevronLeft, Send } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { currency } from "@/components/brand";
 import { MessageSkeleton } from "@/components/skeletons";
+import { haptic, springy } from "@/lib/motion";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+
 
 export const Route = createFileRoute("/_authenticated/chat/$id")({
   head: () => ({
@@ -30,7 +34,11 @@ function Conversation() {
   const { userId } = useAuth();
   const queryClient = useQueryClient();
   const [draft, setDraft] = useState("");
+  const [otherTyping, setOtherTyping] = useState(false);
+  const typingTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const typingChannel = useRef<RealtimeChannel | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
+
 
   const { data: conversation } = useQuery({
     queryKey: ["conversation", id],
@@ -51,49 +59,110 @@ function Conversation() {
     },
   });
 
+  type Msg = {
+    id: string;
+    conversation_id: string;
+    sender_id: string;
+    content: string | null;
+    image_url?: string | null;
+    created_at: string;
+    read_at?: string | null;
+    pending?: boolean;
+  };
+
+  const messagesKey = ["messages", id];
   const { data: messages = [], isLoading } = useQuery({
-    queryKey: ["messages", id],
+    queryKey: messagesKey,
     queryFn: async () => {
       const { data } = await supabase
         .from("messages")
         .select("*")
         .eq("conversation_id", id)
         .order("created_at", { ascending: true });
-      return data ?? [];
+      return (data ?? []) as Msg[];
     },
   });
 
+  // Live messages + typing presence for this thread.
   useEffect(() => {
+    if (!userId) return;
     const channel = supabase
-      .channel(`messages-${id}`)
+      .channel(`thread-${id}`, { config: { presence: { key: userId } } })
       .on(
         "postgres_changes",
-        { event: "INSERT", schema: "public", table: "messages", filter: `conversation_id=eq.${id}` },
-        () => queryClient.invalidateQueries({ queryKey: ["messages", id] }),
+        { event: "*", schema: "public", table: "messages", filter: `conversation_id=eq.${id}` },
+        () => queryClient.invalidateQueries({ queryKey: messagesKey }),
       )
+      .on("broadcast", { event: "typing" }, ({ payload }) => {
+        if (payload?.userId === userId) return;
+        setOtherTyping(true);
+        if (typingTimer.current) clearTimeout(typingTimer.current);
+        typingTimer.current = setTimeout(() => setOtherTyping(false), 2200);
+      })
       .subscribe();
+    typingChannel.current = channel;
     return () => {
+      typingChannel.current = null;
       supabase.removeChannel(channel);
     };
-  }, [id, queryClient]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, userId, queryClient]);
+
+  // Mark the other person's messages as seen while the thread is open.
+  useEffect(() => {
+    if (!userId) return;
+    const unseen = messages.filter((m) => m.sender_id !== userId && !m.read_at);
+    if (unseen.length === 0) return;
+    supabase
+      .from("messages")
+      .update({ read_at: new Date().toISOString() })
+      .in("id", unseen.map((m) => m.id))
+      .then(() => queryClient.invalidateQueries({ queryKey: messagesKey }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messages, userId]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages.length]);
+  }, [messages.length, otherTyping]);
+
+  function notifyTyping() {
+    typingChannel.current?.send({ type: "broadcast", event: "typing", payload: { userId } });
+  }
 
   async function send(content: string) {
     const text = content.trim();
     if (!text) return;
     setDraft("");
+    haptic();
+
+    // Optimistic bubble — shows instantly with a "sending" state.
+    const tempId = `temp-${Date.now()}`;
+    const optimistic: Msg = {
+      id: tempId,
+      conversation_id: id,
+      sender_id: userId!,
+      content: text,
+      created_at: new Date().toISOString(),
+      read_at: null,
+      pending: true,
+    };
+    queryClient.setQueryData<Msg[]>(messagesKey, (prev) => [...(prev ?? []), optimistic]);
+
     const { error } = await supabase
       .from("messages")
       .insert({ conversation_id: id, sender_id: userId!, content: text });
+
     if (error) {
+      queryClient.setQueryData<Msg[]>(messagesKey, (prev) => (prev ?? []).filter((m) => m.id !== tempId));
+      setDraft(text);
       toast.error(error.message);
       return;
     }
-    queryClient.invalidateQueries({ queryKey: ["messages", id] });
+    queryClient.invalidateQueries({ queryKey: messagesKey });
   }
+
+
+
 
   const listing = conversation?.listings;
   const image = [...(listing?.listing_images ?? [])].sort((a, b) => a.sort_order - b.sort_order)[0]?.url;
