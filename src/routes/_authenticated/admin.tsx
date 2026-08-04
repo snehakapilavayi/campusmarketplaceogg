@@ -1,5 +1,16 @@
 import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
-import { BarChart3, Flag, LayoutGrid, Megaphone, ShieldCheck, Users } from "lucide-react";
+import {
+  BarChart3,
+  Flag,
+  LayoutGrid,
+  Megaphone,
+  MessagesSquare,
+  ScrollText,
+  ShieldCheck,
+  Tags,
+  Users,
+} from "lucide-react";
+
 import { useAuth } from "@/lib/auth";
 import { AppShell } from "@/components/app-shell";
 import { EmptyState } from "@/components/brand";
@@ -22,10 +33,14 @@ export const Route = createFileRoute("/_authenticated/admin")({
 export const adminNav = [
   { to: "/admin", label: "Dashboard", icon: BarChart3, exact: true },
   { to: "/admin/listings", label: "Listings", icon: LayoutGrid, exact: false },
+  { to: "/admin/categories", label: "Categories", icon: Tags, exact: false },
   { to: "/admin/banners", label: "Banners", icon: Megaphone, exact: false },
   { to: "/admin/reports", label: "Reports", icon: Flag, exact: false },
+  { to: "/admin/chats", label: "Chats", icon: MessagesSquare, exact: false },
   { to: "/admin/students", label: "Students", icon: Users, exact: false },
+  { to: "/admin/logs", label: "Audit log", icon: ScrollText, exact: false },
 ] as const;
+
 
 
 function AdminLayout() {

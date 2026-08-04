@@ -8,6 +8,8 @@ export type Profile = {
   full_name: string;
   avatar_url: string | null;
   bio: string | null;
+  campus: string | null;
+
   verification: "pending" | "verified" | "rejected";
   tomato_rating: number;
   transactions_count: number;
