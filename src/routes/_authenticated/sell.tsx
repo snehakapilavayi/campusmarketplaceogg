@@ -165,8 +165,11 @@ function SellPage() {
 
     setBusy(false);
     queryClient.invalidateQueries({ queryKey: ["my-listings"] });
+    celebrate();
+    haptic([10, 40, 10]);
     toast.success("Listing submitted — admin review is usually quick");
     navigate({ to: "/my-listings" });
+
   }
 
   return (
