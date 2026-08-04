@@ -96,3 +96,40 @@ export function useAdminStats(enabled: boolean) {
     },
   });
 }
+
+export type BannerFilter = "all" | "live" | "scheduled" | "inactive";
+
+export function useAdminBanners(enabled: boolean) {
+  return useQuery({
+    queryKey: ["admin-banners"],
+    enabled,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("event_banners")
+        .select("*")
+        .order("starts_at", { ascending: false, nullsFirst: false });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+}
+
+export type AdminBanner = {
+  id: string;
+  title: string;
+  description: string | null;
+  image_url: string | null;
+  accent: string | null;
+  campus: string | null;
+  starts_at: string | null;
+  ends_at: string | null;
+  active: boolean;
+};
+
+export function bannerState(b: Pick<AdminBanner, "active" | "starts_at" | "ends_at">) {
+  if (!b.active) return "inactive" as const;
+  const today = new Date().toISOString().slice(0, 10);
+  if (b.starts_at && b.starts_at > today) return "scheduled" as const;
+  if (b.ends_at && b.ends_at < today) return "expired" as const;
+  return "live" as const;
+}

@@ -55,12 +55,22 @@ function Market() {
   });
 
   const { data: banner } = useQuery({
-    queryKey: ["banner"],
+    queryKey: ["event-banner"],
     queryFn: async () => {
-      const { data } = await supabase.from("event_banners").select("*").eq("active", true).limit(1).maybeSingle();
+      const today = new Date().toISOString().slice(0, 10);
+      const { data } = await supabase
+        .from("event_banners")
+        .select("*")
+        .eq("active", true)
+        .or(`starts_at.is.null,starts_at.lte.${today}`)
+        .or(`ends_at.is.null,ends_at.gte.${today}`)
+        .order("starts_at", { ascending: false, nullsFirst: false })
+        .limit(1)
+        .maybeSingle();
       return data;
     },
   });
+
 
   const { data: listings, isLoading } = useQuery({
     queryKey: ["listings", filter, category],
