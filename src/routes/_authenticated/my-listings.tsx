@@ -54,7 +54,12 @@ function MyListings() {
       return;
     }
     queryClient.invalidateQueries({ queryKey: ["my-listings"] });
+    if (status === "completed") {
+      celebrate();
+      haptic([10, 40, 10]);
+    }
     toast.success(status === "completed" ? "Marked as sold 🎉" : "Listing archived");
+
   }
 
   return (
