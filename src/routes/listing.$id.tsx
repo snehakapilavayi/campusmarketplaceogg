@@ -49,7 +49,7 @@ function ListingDetail() {
       const { data } = await supabase
         .from("listings")
         .select(
-          "*,listing_images(url,sort_order),categories(name,icon),profiles(id,full_name,avatar_url,bio,tomato_rating,transactions_count,verification)",
+          "*,listing_images(url,sort_order),categories(name,icon),profiles(id,full_name,avatar_url,bio,tomato_rating,transactions_count,verification,campus)",
         )
         .eq("id", id)
         .maybeSingle();
