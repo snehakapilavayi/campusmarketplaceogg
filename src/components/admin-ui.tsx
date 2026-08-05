@@ -183,7 +183,14 @@ export const REJECT_REASONS = [
   "Duplicate listing",
 ];
 
-/** Reject listings with a written reason that is shown to the student. */
+export const RESUBMIT_WINDOWS = [
+  { days: 3, label: "3 days" },
+  { days: 7, label: "7 days" },
+  { days: 14, label: "14 days" },
+  { days: 0, label: "No deadline" },
+];
+
+/** Reject listings with a written reason + resubmission deadline shown to the student. */
 export function RejectDialog({
   open,
   onOpenChange,
@@ -193,17 +200,22 @@ export function RejectDialog({
   open: boolean;
   onOpenChange: (v: boolean) => void;
   count: number;
-  onConfirm: (reason: string) => void | Promise<void>;
+  onConfirm: (reason: string, deadline: string | null) => void | Promise<void>;
 }) {
   const [reason, setReason] = useState("");
+  const [days, setDays] = useState(7);
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     if (open) {
       setReason("");
+      setDays(7);
       setBusy(false);
     }
   }, [open]);
+
+  const deadline =
+    days > 0 ? new Date(Date.now() + days * 86400000) : null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -244,6 +256,32 @@ export function RejectDialog({
         />
         <p className="text-[11px] text-muted-foreground">{reason.trim().length}/300</p>
 
+        <div className="space-y-1.5">
+          <p className="text-[11px] font-semibold">Resubmission deadline</p>
+          <div className="flex flex-wrap gap-1.5">
+            {RESUBMIT_WINDOWS.map((w) => (
+              <button
+                key={w.days}
+                type="button"
+                onClick={() => setDays(w.days)}
+                className={cn(
+                  "rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors",
+                  days === w.days
+                    ? "border-primary/40 bg-primary/10 text-primary"
+                    : "border-border text-muted-foreground hover:text-foreground",
+                )}
+              >
+                {w.label}
+              </button>
+            ))}
+          </div>
+          <p className="text-[11px] text-muted-foreground">
+            {deadline
+              ? `Student must fix and resubmit by ${deadline.toLocaleDateString()}. After that the listing is archived.`
+              : "Student can fix and resubmit whenever they like."}
+          </p>
+        </div>
+
         <DialogFooter>
           <Button variant="ghost" className="rounded-full" onClick={() => onOpenChange(false)}>
             Cancel
@@ -253,7 +291,7 @@ export function RejectDialog({
             disabled={reason.trim().length < 5 || busy}
             onClick={async () => {
               setBusy(true);
-              await onConfirm(reason.trim());
+              await onConfirm(reason.trim(), deadline ? deadline.toISOString() : null);
               onOpenChange(false);
             }}
           >

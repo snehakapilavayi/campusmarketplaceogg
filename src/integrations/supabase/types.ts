@@ -217,6 +217,7 @@ export type Database = {
           price: number
           rejection_reason: string | null
           rent_period: Database["public"]["Enums"]["rent_period"] | null
+          resubmit_by: string | null
           seller_id: string
           status: Database["public"]["Enums"]["listing_status"]
           title: string
@@ -237,6 +238,7 @@ export type Database = {
           price?: number
           rejection_reason?: string | null
           rent_period?: Database["public"]["Enums"]["rent_period"] | null
+          resubmit_by?: string | null
           seller_id: string
           status?: Database["public"]["Enums"]["listing_status"]
           title: string
@@ -257,6 +259,7 @@ export type Database = {
           price?: number
           rejection_reason?: string | null
           rent_period?: Database["public"]["Enums"]["rent_period"] | null
+          resubmit_by?: string | null
           seller_id?: string
           status?: Database["public"]["Enums"]["listing_status"]
           title?: string
