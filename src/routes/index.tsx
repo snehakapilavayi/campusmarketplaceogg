@@ -156,9 +156,9 @@ function Landing() {
             </Button>
           </div>
           <Mascot
-            variant="happy"
-            size="md"
-            className="absolute bottom-8 right-10 hidden md:flex"
+            variant="point"
+            size="lg"
+            className="absolute bottom-6 right-10 hidden md:flex"
             alt=""
           />
         </div>
