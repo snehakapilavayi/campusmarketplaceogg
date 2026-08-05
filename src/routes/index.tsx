@@ -157,8 +157,8 @@ function Landing() {
           </div>
           <Mascot
             variant="happy"
-            size="lg"
-            className="absolute bottom-0 right-6 hidden md:flex"
+            size="md"
+            className="absolute bottom-8 right-10 hidden md:flex"
             alt=""
           />
         </div>
