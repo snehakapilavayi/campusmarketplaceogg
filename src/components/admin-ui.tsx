@@ -295,10 +295,6 @@ export function RejectDialog({
               onOpenChange(false);
             }}
           >
-
-              onOpenChange(false);
-            }}
-          >
             Reject &amp; notify
           </Button>
         </DialogFooter>
