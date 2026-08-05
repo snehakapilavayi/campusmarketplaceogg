@@ -256,6 +256,32 @@ export function RejectDialog({
         />
         <p className="text-[11px] text-muted-foreground">{reason.trim().length}/300</p>
 
+        <div className="space-y-1.5">
+          <p className="text-[11px] font-semibold">Resubmission deadline</p>
+          <div className="flex flex-wrap gap-1.5">
+            {RESUBMIT_WINDOWS.map((w) => (
+              <button
+                key={w.days}
+                type="button"
+                onClick={() => setDays(w.days)}
+                className={cn(
+                  "rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors",
+                  days === w.days
+                    ? "border-primary/40 bg-primary/10 text-primary"
+                    : "border-border text-muted-foreground hover:text-foreground",
+                )}
+              >
+                {w.label}
+              </button>
+            ))}
+          </div>
+          <p className="text-[11px] text-muted-foreground">
+            {deadline
+              ? `Student must fix and resubmit by ${deadline.toLocaleDateString()}. After that the listing is archived.`
+              : "Student can fix and resubmit whenever they like."}
+          </p>
+        </div>
+
         <DialogFooter>
           <Button variant="ghost" className="rounded-full" onClick={() => onOpenChange(false)}>
             Cancel
@@ -265,7 +291,11 @@ export function RejectDialog({
             disabled={reason.trim().length < 5 || busy}
             onClick={async () => {
               setBusy(true);
-              await onConfirm(reason.trim());
+              await onConfirm(reason.trim(), deadline ? deadline.toISOString() : null);
+              onOpenChange(false);
+            }}
+          >
+
               onOpenChange(false);
             }}
           >
