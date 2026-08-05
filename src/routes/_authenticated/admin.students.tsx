@@ -58,7 +58,7 @@ function AdminStudents() {
     () =>
       students.filter((s) => {
         if (!s.full_name.toLowerCase().includes(q.trim().toLowerCase())) return false;
-        if (campus === "__none" ? !!s.campus : campus !== "all" && s.campus !== campus) return false;
+        if (campus !== "all" && s.campus !== campus) return false;
         if (tab === "pending") return s.verification === "pending";
         if (tab === "verified") return s.verification === "verified";
         if (tab === "suspended") return s.suspended;

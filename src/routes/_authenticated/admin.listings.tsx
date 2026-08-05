@@ -75,7 +75,6 @@ function AdminListings() {
     () =>
       listings.filter((l) => {
         if (campus === "all") return true;
-        if (campus === "__none") return !l.profiles?.campus;
         return l.profiles?.campus === campus;
       }),
     [listings, campus],
