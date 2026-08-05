@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, CheckCircle2, HandCoins, MessageCircle, ShieldCheck, Sparkles, UploadCloud } from "lucide-react";
+import { ArrowRight, CheckCircle2, HandCoins, Instagram, MessageCircle, ShieldCheck, Sparkles, UploadCloud } from "lucide-react";
 import { Logo, Mascot } from "@/components/brand";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/lib/theme";
