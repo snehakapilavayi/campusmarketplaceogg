@@ -244,6 +244,28 @@ function AdminStudents() {
                   >
                     {s.suspended ? "Unsuspend" : "Suspend"}
                   </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button size="sm" variant="ghost" className="h-8 rounded-full text-destructive hover:text-destructive">
+                        Delete
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Delete {s.full_name}?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This permanently removes the account, their listings, chats and saved items. This cannot be
+                          undone.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel className="rounded-full">Cancel</AlertDialogCancel>
+                        <AlertDialogAction className="rounded-full" onClick={() => void removeStudents([s.id])}>
+                          Delete account
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               </div>
             );
