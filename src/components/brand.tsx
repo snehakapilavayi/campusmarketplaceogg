@@ -166,6 +166,28 @@ export function VerifiedBadge({ compact = false }: { compact?: boolean }) {
   );
 }
 
+export function CampusBadge({
+  campus = "VITB",
+  className,
+}: {
+  campus?: string | null;
+  className?: string;
+}) {
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center gap-1 rounded-full border border-primary/40 bg-primary/15 px-2 py-0.5 text-[11px] font-semibold text-foreground",
+        className,
+      )}
+    >
+      <svg viewBox="0 0 24 24" className="h-3 w-3 fill-primary" aria-hidden>
+        <path d="M12 3l9 4.5-9 4.5-9-4.5L12 3zm7 8.2V16c0 1.7-3.1 3-7 3s-7-1.3-7-3v-4.8l7 3.5 7-3.5z" />
+      </svg>
+      {campus?.trim() ? campus : "VITB"}
+    </span>
+  );
+}
+
 export function currency(value: number | string) {
   return `₹${Number(value).toLocaleString("en-IN")}`;
 }
