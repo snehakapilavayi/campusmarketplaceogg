@@ -151,21 +151,22 @@
   }
 }
 
-/* Brand pattern: one shared tiled layer + gradient wash. GPU-friendly —
-   no fixed attachment, no repaint on scroll, single decoded 256px webp. */
+/* Brand pattern: one shared tiled layer + soft gradient wash. GPU-friendly —
+   no fixed attachment, no repaint on scroll, single decoded 256px webp.
+   Tuned to sit behind content without competing for attention. */
 @utility brand-pattern {
   position: relative;
   isolation: isolate;
   background-image:
-    radial-gradient(140% 110% at 50% -10%, oklch(0.78 0.155 78 / 0.55), oklch(0.78 0.155 78 / 0.12) 45%, transparent 78%),
+    radial-gradient(140% 110% at 50% -10%, oklch(0.78 0.155 78 / 0.22), oklch(0.78 0.155 78 / 0.05) 50%, transparent 82%),
     url("/__l5e/assets-v1/6da28651-ead1-4f56-bb5e-22f11f56508d/pattern-tile.webp");
   background-size:
     100% 100%,
-    460px 460px;
+    560px 560px;
   background-repeat: no-repeat, repeat;
   background-position: center top, center top;
-  opacity: 0.32;
-  mask-image: linear-gradient(to bottom, black, black 45%, transparent 96%);
+  opacity: 0.16;
+  mask-image: linear-gradient(to bottom, black, black 38%, transparent 92%);
   transform: translateZ(0);
   will-change: auto;
   contain: paint;
@@ -173,24 +174,24 @@
 
 @utility brand-pattern-subtle {
   background-image:
-    radial-gradient(120% 100% at 50% 0%, oklch(0.78 0.155 78 / 0.25), transparent 70%),
+    radial-gradient(120% 100% at 50% 0%, oklch(0.78 0.155 78 / 0.12), transparent 72%),
     url("/__l5e/assets-v1/6da28651-ead1-4f56-bb5e-22f11f56508d/pattern-tile.webp");
   background-size:
     100% 100%,
-    380px 380px;
+    480px 480px;
   background-repeat: no-repeat, repeat;
-  opacity: 0.2;
-  mask-image: radial-gradient(140% 120% at 50% 0%, black, black 40%, transparent 88%);
+  opacity: 0.11;
+  mask-image: radial-gradient(140% 120% at 50% 0%, black, black 32%, transparent 86%);
   transform: translateZ(0);
   contain: paint;
 }
 
 .dark .brand-pattern {
-  opacity: 0.2;
+  opacity: 0.11;
 }
 
 .dark .brand-pattern-subtle {
-  opacity: 0.14;
+  opacity: 0.08;
 }
 
 
