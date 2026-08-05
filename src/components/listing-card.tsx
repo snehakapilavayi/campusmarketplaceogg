@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { Link } from "@tanstack/react-router";
 import { motion, useMotionValue, useReducedMotion, useTransform } from "motion/react";
 import { Heart } from "lucide-react";
-import { currency, TomatoRating } from "@/components/brand";
+import { currency, CoinRating } from "@/components/brand";
 import { SmartImage } from "@/components/smart-image";
 import { haptic, springy } from "@/lib/motion";
 import { cn } from "@/lib/utils";
@@ -100,7 +100,7 @@ export function ListingCard({
             {listing.profiles && (
               <div className="flex items-center justify-between pt-0.5">
                 <span className="line-clamp-1 text-[11px] text-muted-foreground">{listing.profiles.full_name}</span>
-                <TomatoRating value={listing.profiles.tomato_rating} showValue={false} className="text-[9px]" />
+                <CoinRating value={listing.profiles.tomato_rating} showValue={false} className="text-[9px]" />
               </div>
             )}
           </div>

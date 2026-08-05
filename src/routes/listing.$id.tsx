@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ChevronLeft, Flag, Heart, MessageCircle, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { CampusBadge, conditionLabels, currency, EmptyState, TomatoRating, VerifiedBadge } from "@/components/brand";
+import { CampusBadge, conditionLabels, currency, EmptyState, CoinRating, VerifiedBadge } from "@/components/brand";
 import { BottomNav } from "@/components/app-shell";
 import { Button } from "@/components/ui/button";
 import { openConversation, useCart, useWishlist } from "@/lib/marketplace";
@@ -206,7 +206,7 @@ function ListingDetail() {
               <div className="min-w-0 flex-1">
                 <p className="truncate font-semibold">{seller.full_name}</p>
                 <div className="flex items-center gap-2">
-                  <TomatoRating value={seller.tomato_rating} />
+                  <CoinRating value={seller.tomato_rating} />
                   <span className="text-xs text-muted-foreground">· {seller.transactions_count} swaps</span>
                 </div>
               </div>
@@ -220,7 +220,7 @@ function ListingDetail() {
                 {reviews.map((r) => (
                   <li key={r.id} className="text-sm">
                     <div className="flex items-center gap-2">
-                      <TomatoRating value={r.tomatoes} showValue={false} className="text-[10px]" />
+                      <CoinRating value={r.tomatoes} showValue={false} className="text-[10px]" />
                       <span className="text-xs font-medium text-muted-foreground">
                         {r.reviewer_name}
                       </span>
