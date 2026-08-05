@@ -96,6 +96,9 @@ function ProfilePage() {
             <CoinRating value={profile?.tomato_rating ?? 0} />
             {profile?.verification === "verified" && <VerifiedBadge compact />}
           </div>
+          <p className="mt-1 text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+            SwapCoins trust score
+          </p>
           <div className="mt-5 grid grid-cols-3 divide-x divide-border border-t border-border pt-4 text-center">
             <Stat label="Active" value={stats?.active ?? 0} />
             <Stat label="Completed" value={stats?.sold ?? 0} />
