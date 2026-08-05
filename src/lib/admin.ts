@@ -50,7 +50,7 @@ export function useAdminListings(enabled: boolean, filter: AdminListingFilter) {
       let q = supabase
         .from("listings")
         .select(
-          "id,title,description,price,type,status,condition,featured,created_at,seller_id,listing_images(url,sort_order),profiles:seller_id(full_name,verification,campus)",
+          "id,title,description,price,type,status,condition,featured,created_at,seller_id,category_id,rejection_reason,listing_images(url,sort_order),profiles:seller_id(full_name,verification,campus)",
         )
         .order("created_at", { ascending: false })
         .limit(200);
