@@ -17,6 +17,29 @@ export async function logAdminActions(adminId: string | null, action: string, ta
   await supabase.from("admin_logs").insert(targets.map((t) => ({ admin_id: adminId, action, target: t })));
 }
 
+/* ---------------------------------------------------------- notifications */
+
+export type NotifyPayload = {
+  userId: string;
+  title: string;
+  message?: string | null;
+  icon?: string | null;
+};
+
+/** Sends in-app notifications to students (admin-only insert policy). */
+export async function notifyUsers(items: NotifyPayload[]) {
+  const rows = items.filter((i) => !!i.userId);
+  if (rows.length === 0) return;
+  await supabase.from("notifications").insert(
+    rows.map((r) => ({
+      user_id: r.userId,
+      title: r.title,
+      message: r.message ?? null,
+      icon: r.icon ?? null,
+    })),
+  );
+}
+
 /* --------------------------------------------------------------- listings */
 
 export function useAdminListings(enabled: boolean, filter: AdminListingFilter) {
