@@ -1,8 +1,21 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { deleteStudentAccounts } from "@/lib/account.functions";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { useAuth } from "@/lib/auth";
 import { campusOptions, logAdminActions, riskReasons, useAdminStudents, useTrustSignals } from "@/lib/admin";
 import { downloadCsv } from "@/lib/csv";
@@ -37,6 +50,7 @@ function AdminStudents() {
   const [selected, setSelected] = useState<string[]>([]);
   const { data: students = [], isLoading, error } = useAdminStudents(isAdmin);
   const { data: signals } = useTrustSignals(isAdmin);
+  const deleteStudents = useServerFn(deleteStudentAccounts);
 
   const campuses = useMemo(() => campusOptions(students), [students]);
 
@@ -71,6 +85,20 @@ function AdminStudents() {
     queryClient.invalidateQueries({ queryKey: ["admin-logs"] });
     setSelected([]);
     toast.success(message);
+  }
+
+  async function removeStudents(ids: string[]) {
+    try {
+      await logAdminActions(userId, "student.deleted", ids);
+      await deleteStudents({ data: { ids } });
+      queryClient.invalidateQueries({ queryKey: ["admin-students"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-stats"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-logs"] });
+      setSelected([]);
+      toast.success(ids.length > 1 ? `${ids.length} accounts deleted` : "Account deleted");
+    } catch (e) {
+      toast.error((e as Error).message);
+    }
   }
 
   function exportCsv() {
@@ -148,16 +176,30 @@ function AdminStudents() {
                     {s.full_name.charAt(0)}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-semibold">
-                      {s.full_name}
+                    <p className="flex items-center gap-2 truncate text-sm font-semibold">
+                      <span className="truncate">{s.full_name}</span>
+                      {s.verification === "verified" && (
+                        <span className="rounded-full bg-success/15 px-2 py-0.5 text-[10px] font-semibold text-success">
+                          verified
+                        </span>
+                      )}
                       {s.suspended && (
-                        <span className="ml-2 rounded-full bg-destructive/10 px-2 py-0.5 text-[10px] font-semibold text-destructive">
+                        <span className="rounded-full bg-destructive/10 px-2 py-0.5 text-[10px] font-semibold text-destructive">
                           suspended
                         </span>
                       )}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {s.verification} · 🍅 {Number(s.tomato_rating).toFixed(1)} · {s.transactions_count} swaps
+                      <span
+                        className={cn(
+                          "font-semibold",
+                          s.verification === "verified" && "text-success",
+                          s.verification === "rejected" && "text-destructive",
+                        )}
+                      >
+                        {s.verification}
+                      </span>{" "}
+                      · 🍅 {Number(s.tomato_rating).toFixed(1)} · {s.transactions_count} swaps
                       {s.campus ? ` · ${s.campus}` : ""}
                     </p>
                     {reasons.length > 0 && (
@@ -202,6 +244,28 @@ function AdminStudents() {
                   >
                     {s.suspended ? "Unsuspend" : "Suspend"}
                   </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button size="sm" variant="ghost" className="h-8 rounded-full text-destructive hover:text-destructive">
+                        Delete
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Delete {s.full_name}?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This permanently removes the account, their listings, chats and saved items. This cannot be
+                          undone.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel className="rounded-full">Cancel</AlertDialogCancel>
+                        <AlertDialogAction className="rounded-full" onClick={() => void removeStudents([s.id])}>
+                          Delete account
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               </div>
             );
@@ -220,6 +284,12 @@ function AdminStudents() {
             destructive: true,
             description: "Suspended students cannot list or chat until restored.",
             run: async () => { await patch(selected, { suspended: true }, "student.suspended", "Accounts suspended"); },
+          },
+          {
+            label: "Delete",
+            destructive: true,
+            description: "Permanently removes these accounts, their listings, chats and saved items.",
+            run: async () => { await removeStudents(selected); },
           },
         ]}
       />
