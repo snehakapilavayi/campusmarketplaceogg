@@ -36,6 +36,24 @@ export const Route = createFileRoute("/_authenticated/profile")({
 
 function ProfilePage() {
   const { profile, userId, isAdmin, signOut } = useAuth();
+  const navigate = useNavigate();
+  const removeAccount = useServerFn(deleteOwnAccount);
+  const [deleting, setDeleting] = useState(false);
+
+  async function handleDelete() {
+    setDeleting(true);
+    try {
+      await removeAccount({ data: undefined });
+      toast.success("Your account has been deleted");
+      await signOut();
+      void navigate({ to: "/" });
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setDeleting(false);
+    }
+  }
+
 
   const { data: stats } = useQuery({
     queryKey: ["profile-stats", userId],
