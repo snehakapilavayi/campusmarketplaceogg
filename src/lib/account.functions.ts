@@ -1,17 +1,34 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
+type Admin = Awaited<typeof import("@/integrations/supabase/client.server")>["supabaseAdmin"];
+
+async function purgeUser(supabaseAdmin: Admin, id: string) {
+  // Owned rows that don't cascade from profiles
+  await supabaseAdmin.from("cart").delete().eq("user_id", id);
+  await supabaseAdmin.from("wishlist").delete().eq("user_id", id);
+  await supabaseAdmin.from("notifications").delete().eq("user_id", id);
+  await supabaseAdmin.from("messages").delete().eq("sender_id", id);
+  await supabaseAdmin.from("conversations").delete().or(`buyer_id.eq.${id},seller_id.eq.${id}`);
+  await supabaseAdmin.from("reports").delete().eq("reporter_id", id);
+  await supabaseAdmin.from("ratings").delete().eq("reviewer_id", id);
+  await supabaseAdmin.from("user_roles").delete().eq("user_id", id);
+  // profiles cascade → listings, listing_images, ratings received, admin logs
+  await supabaseAdmin.from("profiles").delete().eq("id", id);
+  const { error } = await supabaseAdmin.auth.admin.deleteUser(id);
+  if (error && !/not found/i.test(error.message)) throw new Error(error.message);
+}
+
 /** Permanently deletes the signed-in student's own account. */
 export const deleteOwnAccount = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin.auth.admin.deleteUser(context.userId);
-    if (error) throw new Error(error.message);
+    await purgeUser(supabaseAdmin, context.userId);
     return { ok: true };
   });
 
-/** Admin-only: permanently deletes a student account. */
+/** Admin-only: permanently deletes student accounts. */
 export const deleteStudentAccounts = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { ids: string[] }) => {
@@ -25,12 +42,9 @@ export const deleteStudentAccounts = createServerFn({ method: "POST" })
     });
     if (roleError) throw new Error(roleError.message);
     if (!isAdmin) throw new Error("Forbidden");
-    if (data.ids.includes(context.userId)) throw new Error("You cannot delete your own admin account here");
+    if (data.ids.includes(context.userId)) throw new Error("You cannot delete your own admin account");
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    for (const id of data.ids) {
-      const { error } = await supabaseAdmin.auth.admin.deleteUser(id);
-      if (error) throw new Error(error.message);
-    }
+    for (const id of data.ids) await purgeUser(supabaseAdmin, id);
     return { deleted: data.ids.length };
   });
