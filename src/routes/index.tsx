@@ -158,7 +158,7 @@ function Landing() {
           <Mascot
             variant="point"
             size="lg"
-            className="absolute bottom-6 right-10 hidden md:flex"
+            className="absolute bottom-6 right-10 hidden -scale-x-100 md:flex"
             alt=""
           />
         </div>
