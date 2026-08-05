@@ -39,7 +39,7 @@ export const Route = createFileRoute("/how-it-works")({
             { "@type": "HowToStep", name: "List your item in a minute" },
             { "@type": "HowToStep", name: "Chat with the student" },
             { "@type": "HowToStep", name: "Meet on campus and swap" },
-            { "@type": "HowToStep", name: "Rate each other with tomatoes" },
+            { "@type": "HowToStep", name: "Rate each other with SwapCoins" },
           ],
         }),
       },
