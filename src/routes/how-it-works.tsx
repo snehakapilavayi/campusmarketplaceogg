@@ -71,8 +71,8 @@ const steps = [
   },
   {
     icon: Sparkles,
-    title: "Leave a 🍅 rating",
-    body: "Every good swap builds your tomato rating, so the next student knows you're reliable.",
+    title: "Earn SwapCoins",
+    body: "Every good swap earns you SwapCoins — our 5-coin trust rating, so the next student knows you're reliable.",
   },
 ];
 
