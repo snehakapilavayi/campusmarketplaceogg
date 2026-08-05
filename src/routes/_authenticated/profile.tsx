@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { deleteOwnAccount } from "@/lib/account.functions";
 import { AppShell } from "@/components/app-shell";
-import { TomatoRating, VerifiedBadge } from "@/components/brand";
+import { CampusBadge, TomatoRating, VerifiedBadge } from "@/components/brand";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -87,7 +87,9 @@ function ProfilePage() {
             )}
           </div>
           <h1 className="mt-3 font-display text-xl font-extrabold">{profile?.full_name ?? "Student"}</h1>
-          {profile?.campus && <p className="mt-1 text-xs font-medium text-primary">{profile.campus}</p>}
+          <div className="mt-2 flex justify-center">
+            <CampusBadge campus={profile?.campus ?? "VITB"} />
+          </div>
           {profile?.bio && <p className="mt-1 text-sm text-muted-foreground">{profile.bio}</p>}
 
           <div className="mt-3 flex items-center justify-center gap-2">

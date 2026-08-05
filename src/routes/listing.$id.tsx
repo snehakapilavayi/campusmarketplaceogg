@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ChevronLeft, Flag, Heart, MessageCircle, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { conditionLabels, currency, EmptyState, TomatoRating, VerifiedBadge } from "@/components/brand";
+import { CampusBadge, conditionLabels, currency, EmptyState, TomatoRating, VerifiedBadge } from "@/components/brand";
 import { BottomNav } from "@/components/app-shell";
 import { Button } from "@/components/ui/button";
 import { openConversation, useCart, useWishlist } from "@/lib/marketplace";
@@ -210,7 +210,10 @@ function ListingDetail() {
                   <span className="text-xs text-muted-foreground">· {seller.transactions_count} swaps</span>
                 </div>
               </div>
-              {seller.verification === "verified" && <VerifiedBadge compact />}
+              <div className="flex shrink-0 flex-col items-end gap-1">
+                {seller.verification === "verified" && <VerifiedBadge compact />}
+                {listing.status === "approved" && <CampusBadge campus={seller.campus} />}
+              </div>
             </div>
             {reviews.length > 0 && (
               <ul className="mt-4 space-y-3 border-t border-border pt-4">
