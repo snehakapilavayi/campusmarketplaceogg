@@ -158,15 +158,15 @@
   position: relative;
   isolation: isolate;
   background-image:
-    radial-gradient(160% 130% at 50% -6%, oklch(0.78 0.155 78 / 0.09), oklch(0.78 0.155 78 / 0.02) 54%, transparent 88%),
+    radial-gradient(160% 130% at 50% -6%, oklch(0.78 0.155 78 / 0.14), oklch(0.78 0.155 78 / 0.04) 54%, transparent 88%),
     url("/__l5e/assets-v1/6da28651-ead1-4f56-bb5e-22f11f56508d/pattern-tile.webp");
   background-size:
     100% 100%,
-    720px 720px;
+    620px 620px;
   background-repeat: no-repeat, repeat;
   background-position: center top, center top;
-  opacity: 0.045;
-  mask-image: linear-gradient(to bottom, black, black 24%, transparent 86%);
+  opacity: 0.1;
+  mask-image: linear-gradient(to bottom, black, black 30%, transparent 90%);
   transform: translateZ(0);
   will-change: auto;
   contain: paint;
@@ -174,24 +174,24 @@
 
 @utility brand-pattern-subtle {
   background-image:
-    radial-gradient(140% 110% at 50% 0%, oklch(0.78 0.155 78 / 0.05), transparent 80%),
+    radial-gradient(140% 110% at 50% 0%, oklch(0.78 0.155 78 / 0.08), transparent 80%),
     url("/__l5e/assets-v1/6da28651-ead1-4f56-bb5e-22f11f56508d/pattern-tile.webp");
   background-size:
     100% 100%,
-    640px 640px;
+    560px 560px;
   background-repeat: no-repeat, repeat;
-  opacity: 0.03;
-  mask-image: radial-gradient(150% 130% at 50% 0%, black, black 20%, transparent 82%);
+  opacity: 0.065;
+  mask-image: radial-gradient(150% 130% at 50% 0%, black, black 26%, transparent 86%);
   transform: translateZ(0);
   contain: paint;
 }
 
 .dark .brand-pattern {
-  opacity: 0.035;
+  opacity: 0.075;
 }
 
 .dark .brand-pattern-subtle {
-  opacity: 0.025;
+  opacity: 0.05;
 }
 
 
