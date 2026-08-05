@@ -86,6 +86,20 @@ function AdminStudents() {
     toast.success(message);
   }
 
+  async function removeStudents(ids: string[]) {
+    try {
+      await logAdminActions(userId, "student.deleted", ids);
+      await deleteStudents({ data: { ids } });
+      queryClient.invalidateQueries({ queryKey: ["admin-students"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-stats"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-logs"] });
+      setSelected([]);
+      toast.success(ids.length > 1 ? `${ids.length} accounts deleted` : "Account deleted");
+    } catch (e) {
+      toast.error((e as Error).message);
+    }
+  }
+
   function exportCsv() {
     downloadCsv(
       "students",
