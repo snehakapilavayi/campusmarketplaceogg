@@ -183,7 +183,14 @@ export const REJECT_REASONS = [
   "Duplicate listing",
 ];
 
-/** Reject listings with a written reason that is shown to the student. */
+export const RESUBMIT_WINDOWS = [
+  { days: 3, label: "3 days" },
+  { days: 7, label: "7 days" },
+  { days: 14, label: "14 days" },
+  { days: 0, label: "No deadline" },
+];
+
+/** Reject listings with a written reason + resubmission deadline shown to the student. */
 export function RejectDialog({
   open,
   onOpenChange,
@@ -193,17 +200,22 @@ export function RejectDialog({
   open: boolean;
   onOpenChange: (v: boolean) => void;
   count: number;
-  onConfirm: (reason: string) => void | Promise<void>;
+  onConfirm: (reason: string, deadline: string | null) => void | Promise<void>;
 }) {
   const [reason, setReason] = useState("");
+  const [days, setDays] = useState(7);
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     if (open) {
       setReason("");
+      setDays(7);
       setBusy(false);
     }
   }, [open]);
+
+  const deadline =
+    days > 0 ? new Date(Date.now() + days * 86400000) : null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
