@@ -215,6 +215,7 @@ export type Database = {
           featured: boolean
           id: string
           price: number
+          rejection_reason: string | null
           rent_period: Database["public"]["Enums"]["rent_period"] | null
           seller_id: string
           status: Database["public"]["Enums"]["listing_status"]
@@ -234,6 +235,7 @@ export type Database = {
           featured?: boolean
           id?: string
           price?: number
+          rejection_reason?: string | null
           rent_period?: Database["public"]["Enums"]["rent_period"] | null
           seller_id: string
           status?: Database["public"]["Enums"]["listing_status"]
@@ -253,6 +255,7 @@ export type Database = {
           featured?: boolean
           id?: string
           price?: number
+          rejection_reason?: string | null
           rent_period?: Database["public"]["Enums"]["rent_period"] | null
           seller_id?: string
           status?: Database["public"]["Enums"]["listing_status"]

@@ -8,12 +8,22 @@ import { useAuth } from "@/lib/auth";
 import {
   campusOptions,
   logAdminActions,
+  notifyUsers,
+  useAdminCategories,
   useAdminListings,
   type AdminListingFilter,
 } from "@/lib/admin";
 import { downloadCsv } from "@/lib/csv";
 import { currency, EmptyState } from "@/components/brand";
-import { BulkBar, CampusSelect, ExportButton, FilterTabs, SelectAllRow } from "@/components/admin-ui";
+import {
+  BulkBar,
+  CampusSelect,
+  CategorySelect,
+  ExportButton,
+  FilterTabs,
+  RejectDialog,
+  SelectAllRow,
+} from "@/components/admin-ui";
 import { ListSkeleton } from "@/components/skeletons";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -40,6 +50,9 @@ type Row = {
   condition: string;
   featured: boolean;
   created_at: string;
+  seller_id: string;
+  category_id: string | null;
+  rejection_reason: string | null;
   listing_images?: { url: string; sort_order: number }[] | null;
   profiles?: { full_name: string; verification: string; campus: string | null } | null;
 };
@@ -50,7 +63,9 @@ function AdminListings() {
   const [filter, setFilter] = useState<AdminListingFilter>("pending");
   const [campus, setCampus] = useState("all");
   const [selected, setSelected] = useState<string[]>([]);
+  const [rejecting, setRejecting] = useState<string[] | null>(null);
   const { data, isLoading, error } = useAdminListings(isAdmin, filter);
+  const { data: categories = [] } = useAdminCategories(isAdmin);
   const listings = (data ?? []) as unknown as Row[];
 
   const campuses = useMemo(() => campusOptions(listings.map((l) => ({ campus: l.profiles?.campus }))), [listings]);
@@ -70,18 +85,80 @@ function AdminListings() {
     queryClient.invalidateQueries({ queryKey: ["admin-stats"] });
     queryClient.invalidateQueries({ queryKey: ["admin-logs"] });
     queryClient.invalidateQueries({ queryKey: ["listings"] });
+    queryClient.invalidateQueries({ queryKey: ["my-listings"] });
+    queryClient.invalidateQueries({ queryKey: ["notifications"] });
     setSelected([]);
   }
 
+  function rowsFor(ids: string[]) {
+    return listings.filter((l) => ids.includes(l.id));
+  }
+
   async function moderate(ids: string[], status: "approved" | "rejected" | "pending" | "archived") {
-    const { error: err } = await supabase.from("listings").update({ status }).in("id", ids);
+    const { error: err } = await supabase
+      .from("listings")
+      .update({ status, ...(status === "approved" ? { rejection_reason: null } : {}) })
+      .in("id", ids);
     if (err) {
       toast.error(err.message);
       return;
     }
     await logAdminActions(userId, `listing.${status}`, ids);
+    if (status === "approved") {
+      await notifyUsers(
+        rowsFor(ids).map((l) => ({
+          userId: l.seller_id,
+          title: "Listing approved",
+          message: `"${l.title}" is now live on the market.`,
+          icon: "check",
+        })),
+      );
+    }
     refresh();
     toast.success(`${ids.length} listing${ids.length > 1 ? "s" : ""} marked ${status}`);
+  }
+
+  async function rejectWithReason(ids: string[], reason: string) {
+    const targets = rowsFor(ids);
+    const { error: err } = await supabase
+      .from("listings")
+      .update({ status: "rejected", rejection_reason: reason })
+      .in("id", ids);
+    if (err) {
+      toast.error(err.message);
+      return;
+    }
+    await logAdminActions(userId, `listing.rejected — ${reason}`, ids);
+    await notifyUsers(
+      targets.map((l) => ({
+        userId: l.seller_id,
+        title: "Listing needs changes",
+        message: `"${l.title}" was rejected: ${reason}. Edit and resubmit it any time.`,
+        icon: "alert",
+      })),
+    );
+    refresh();
+    toast.success(`${ids.length} listing${ids.length > 1 ? "s" : ""} rejected and student notified`);
+  }
+
+  async function reassignCategory(l: Row, categoryId: string) {
+    const { error: err } = await supabase.from("listings").update({ category_id: categoryId }).eq("id", l.id);
+    if (err) {
+      toast.error(err.message);
+      return;
+    }
+    const name = categories.find((c) => c.id === categoryId)?.name ?? "another category";
+    await logAdminActions(userId, `listing.category → ${name}`, [l.id]);
+    await notifyUsers([
+      {
+        userId: l.seller_id,
+        title: "Listing recategorised",
+        message: `"${l.title}" was moved to ${name}.`,
+        icon: "tag",
+      },
+    ]);
+    refresh();
+    toast.success(`Moved to ${name}`);
   }
 
   async function remove(ids: string[]) {
@@ -208,6 +285,11 @@ function AdminListings() {
                     {String(l.condition).replace("_", " ")}
                   </p>
                   <p className="font-display font-bold text-primary">{currency(l.price)}</p>
+                  {l.status === "rejected" && l.rejection_reason && (
+                    <p className="mt-1 rounded-lg bg-destructive/10 px-2 py-1 text-[11px] text-destructive">
+                      Reason: {l.rejection_reason}
+                    </p>
+                  )}
                   <div className="mt-2 flex flex-wrap gap-2">
                     {l.status !== "approved" && (
                       <Button size="sm" className="h-8 rounded-full" onClick={() => void moderate([l.id], "approved")}>
@@ -219,7 +301,7 @@ function AdminListings() {
                         size="sm"
                         variant="outline"
                         className="h-8 rounded-full"
-                        onClick={() => void moderate([l.id], "rejected")}
+                        onClick={() => setRejecting([l.id])}
                       >
                         Reject
                       </Button>
@@ -234,6 +316,11 @@ function AdminListings() {
                         Send back
                       </Button>
                     )}
+                    <CategorySelect
+                      value={l.category_id}
+                      options={categories}
+                      onChange={(id) => void reassignCategory(l, id)}
+                    />
                     <Button
                       size="sm"
                       variant="ghost"
@@ -255,9 +342,18 @@ function AdminListings() {
         onClear={() => setSelected([])}
         actions={[
           { label: "Approve", run: async () => { await moderate(selected, "approved"); } },
-          { label: "Reject", run: async () => { await moderate(selected, "rejected"); } },
+          { label: "Reject", run: () => setRejecting(selected) },
           { label: "Delete", destructive: true, description: "Deleted listings cannot be restored.", run: async () => { await remove(selected); } },
         ]}
+      />
+
+      <RejectDialog
+        open={rejecting !== null}
+        onOpenChange={(v) => setRejecting(v ? rejecting : null)}
+        count={rejecting?.length ?? 0}
+        onConfirm={async (reason) => {
+          if (rejecting) await rejectWithReason(rejecting, reason);
+        }}
       />
     </div>
   );

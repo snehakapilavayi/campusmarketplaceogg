@@ -1,4 +1,13 @@
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 import { Download, ShieldAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -162,6 +171,126 @@ export function CampusSelect({
         </option>
       ))}
       <option value="__none">No campus set</option>
+    </select>
+  );
+}
+
+export const REJECT_REASONS = [
+  "Item doesn't fit any SwapSpace category",
+  "Photos are unclear or missing",
+  "Prohibited or unsafe item",
+  "Price or description looks misleading",
+  "Duplicate listing",
+];
+
+/** Reject listings with a written reason that is shown to the student. */
+export function RejectDialog({
+  open,
+  onOpenChange,
+  count,
+  onConfirm,
+}: {
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+  count: number;
+  onConfirm: (reason: string) => void | Promise<void>;
+}) {
+  const [reason, setReason] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    if (open) {
+      setReason("");
+      setBusy(false);
+    }
+  }, [open]);
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-md rounded-2xl">
+        <DialogHeader>
+          <DialogTitle className="font-display">
+            Reject {count} {count === 1 ? "listing" : "listings"}
+          </DialogTitle>
+          <DialogDescription>
+            The student sees this note on their listing and gets a notification. Nothing is deleted.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="flex flex-wrap gap-1.5">
+          {REJECT_REASONS.map((r) => (
+            <button
+              key={r}
+              type="button"
+              onClick={() => setReason(r)}
+              className={cn(
+                "rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors",
+                reason === r
+                  ? "border-primary/40 bg-primary/10 text-primary"
+                  : "border-border text-muted-foreground hover:text-foreground",
+              )}
+            >
+              {r}
+            </button>
+          ))}
+        </div>
+
+        <Textarea
+          value={reason}
+          onChange={(e) => setReason(e.target.value.slice(0, 300))}
+          placeholder="Explain why this listing was rejected…"
+          rows={3}
+          className="rounded-xl"
+        />
+        <p className="text-[11px] text-muted-foreground">{reason.trim().length}/300</p>
+
+        <DialogFooter>
+          <Button variant="ghost" className="rounded-full" onClick={() => onOpenChange(false)}>
+            Cancel
+          </Button>
+          <Button
+            className="rounded-full"
+            disabled={reason.trim().length < 5 || busy}
+            onClick={async () => {
+              setBusy(true);
+              await onConfirm(reason.trim());
+              onOpenChange(false);
+            }}
+          >
+            Reject &amp; notify
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+/** Reassign a listing to a different category. */
+export function CategorySelect({
+  value,
+  options,
+  onChange,
+  disabled,
+}: {
+  value: string | null;
+  options: { id: string; name: string }[];
+  onChange: (id: string) => void;
+  disabled?: boolean;
+}) {
+  return (
+    <select
+      value={value ?? ""}
+      disabled={disabled}
+      onChange={(e) => e.target.value && onChange(e.target.value)}
+      className="h-8 max-w-[10rem] rounded-full border border-border bg-background px-2.5 text-[11px] font-medium disabled:opacity-50"
+      aria-label="Reassign category"
+    >
+      <option value="">Uncategorised</option>
+      {options.map((c) => (
+        <option key={c.id} value={c.id}>
+          {c.name}
+        </option>
+      ))}
     </select>
   );
 }

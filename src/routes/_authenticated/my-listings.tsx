@@ -42,12 +42,25 @@ function MyListings() {
     queryFn: async () => {
       const { data } = await supabase
         .from("listings")
-        .select("id,title,price,type,rent_period,status,listing_images(url,sort_order)")
+        .select("id,title,price,type,rent_period,status,rejection_reason,listing_images(url,sort_order)")
         .eq("seller_id", userId!)
         .order("created_at", { ascending: false });
       return data ?? [];
     },
   });
+
+  async function resubmit(id: string) {
+    const { error } = await supabase
+      .from("listings")
+      .update({ status: "pending", rejection_reason: null })
+      .eq("id", id);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    queryClient.invalidateQueries({ queryKey: ["my-listings"] });
+    toast.success("Sent back for review");
+  }
 
   async function updateStatus(id: string, status: "completed" | "archived") {
     const { error } = await supabase.from("listings").update({ status }).eq("id", id);
@@ -106,6 +119,25 @@ function MyListings() {
                       <span className="text-xs text-muted-foreground">/{l.rent_period ?? "day"}</span>
                     )}
                   </p>
+                  {l.status === "rejected" && l.rejection_reason && (
+                    <div className="mt-1.5 rounded-xl bg-destructive/10 px-2.5 py-1.5">
+                      <p className="text-[11px] font-semibold text-destructive">Why it was rejected</p>
+                      <p className="text-[11px] text-destructive/90">{l.rejection_reason}</p>
+                      <div className="mt-1.5 flex gap-2">
+                        <Button asChild size="sm" variant="outline" className="h-7 rounded-full text-[11px]">
+                          <Link to="/sell">Edit &amp; relist</Link>
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-7 rounded-full text-[11px]"
+                          onClick={() => resubmit(l.id)}
+                        >
+                          Resubmit
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                   {(l.status === "approved" || l.status === "pending") && (
                     <div className="mt-2 flex gap-2">
                       <Button size="sm" variant="outline" className="h-8 rounded-full" onClick={() => updateStatus(l.id, "completed")}>
