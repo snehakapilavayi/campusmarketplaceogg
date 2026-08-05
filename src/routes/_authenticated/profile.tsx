@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { deleteOwnAccount } from "@/lib/account.functions";
 import { AppShell } from "@/components/app-shell";
-import { CampusBadge, TomatoRating, VerifiedBadge } from "@/components/brand";
+import { CampusBadge, CoinRating, VerifiedBadge } from "@/components/brand";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -26,7 +26,7 @@ export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({
     meta: [
       { title: "Your account — SwapSpace" },
-      { name: "description", content: "Your student profile, tomato rating and swap history on SwapSpace." },
+      { name: "description", content: "Your student profile, SwapCoins rating and swap history on SwapSpace." },
       { property: "og:title", content: "Your account — SwapSpace" },
       { property: "og:description", content: "Your student profile and swap history." },
     ],
@@ -93,9 +93,12 @@ function ProfilePage() {
           {profile?.bio && <p className="mt-1 text-sm text-muted-foreground">{profile.bio}</p>}
 
           <div className="mt-3 flex items-center justify-center gap-2">
-            <TomatoRating value={profile?.tomato_rating ?? 0} />
+            <CoinRating value={profile?.tomato_rating ?? 0} />
             {profile?.verification === "verified" && <VerifiedBadge compact />}
           </div>
+          <p className="mt-1 text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+            SwapCoins trust score
+          </p>
           <div className="mt-5 grid grid-cols-3 divide-x divide-border border-t border-border pt-4 text-center">
             <Stat label="Active" value={stats?.active ?? 0} />
             <Stat label="Completed" value={stats?.sold ?? 0} />

@@ -39,7 +39,7 @@ export const Route = createFileRoute("/how-it-works")({
             { "@type": "HowToStep", name: "List your item in a minute" },
             { "@type": "HowToStep", name: "Chat with the student" },
             { "@type": "HowToStep", name: "Meet on campus and swap" },
-            { "@type": "HowToStep", name: "Rate each other with tomatoes" },
+            { "@type": "HowToStep", name: "Rate each other with SwapCoins" },
           ],
         }),
       },
@@ -71,8 +71,8 @@ const steps = [
   },
   {
     icon: Sparkles,
-    title: "Leave a 🍅 rating",
-    body: "Every good swap builds your tomato rating, so the next student knows you're reliable.",
+    title: "Earn SwapCoins",
+    body: "Every good swap earns you SwapCoins — our 5-coin trust rating, so the next student knows you're reliable.",
   },
 ];
 

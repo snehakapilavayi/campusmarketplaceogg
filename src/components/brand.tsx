@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
 import logo from "@/assets/logo.png.asset.json";
 import wordmark from "@/assets/wordmark.png.asset.json";
+import swapcoin from "@/assets/swapcoin.png.asset.json";
 
 import mascotWave from "@/assets/mascot-wave.png.asset.json";
 import mascotSad from "@/assets/mascot-sad.png.asset.json";
@@ -110,29 +111,67 @@ export function Mascot({
 }
 
 
-export function TomatoRating({
+export function SwapCoin({ size = 16, className }: { size?: number; className?: string }) {
+  return (
+    <img
+      src={swapcoin.url}
+      alt=""
+      aria-hidden
+      width={size}
+      height={size}
+      loading="lazy"
+      style={{ width: size, height: size }}
+      className={cn("inline-block shrink-0 select-none object-contain", className)}
+    />
+  );
+}
+
+const coinSizeFor = (className?: string) => {
+  if (className?.includes("text-[9px]")) return 11;
+  if (className?.includes("text-[10px]")) return 12;
+  return 16;
+};
+
+/** SwapCoins rating — 5 coins earned through good swaps. */
+export function CoinRating({
   value,
   showValue = true,
   className,
+  size,
 }: {
   value: number;
   showValue?: boolean;
   className?: string;
+  size?: number;
 }) {
   const rounded = Math.round(value);
+  const coin = size ?? coinSizeFor(className);
   return (
-    <span className={cn("inline-flex items-center gap-1 text-sm", className)} aria-label={`${value} out of 5 tomatoes`}>
-      <span className="tracking-tight">
+    <span
+      className={cn("inline-flex items-center gap-1 text-sm", className)}
+      aria-label={`${value} out of 5 SwapCoins`}
+      title={`${Number(value).toFixed(1)} SwapCoins`}
+    >
+      <span className="inline-flex items-center gap-[2px]">
         {Array.from({ length: 5 }).map((_, i) => (
-          <span key={i} className={i < rounded ? "" : "opacity-25"}>
-            🍅
-          </span>
+          <SwapCoin
+            key={i}
+            size={coin}
+            className={
+              i < rounded
+                ? "drop-shadow-[0_1px_2px_rgba(191,143,26,0.45)]"
+                : "opacity-25 grayscale"
+            }
+          />
         ))}
       </span>
       {showValue && <span className="font-medium text-muted-foreground">{Number(value).toFixed(1)}</span>}
     </span>
   );
 }
+
+/** @deprecated use CoinRating */
+export const TomatoRating = CoinRating;
 
 export function EmptyState({
   title,

@@ -54,7 +54,7 @@ function Onboarding() {
       return;
     }
     queryClient.invalidateQueries({ queryKey: ["profile"] });
-    toast.success("You're all set 🍅");
+    toast.success("You're all set");
     navigate({ to: "/market" });
   }
 
@@ -70,7 +70,7 @@ function Onboarding() {
       mascot: "idea" as const,
     },
     {
-      title: "Earn your 🍅 rating",
+      title: "Earn your SwapCoins rating",
       body: "After every swap both sides rate each other. Good ratings get you faster replies and more trust.",
       mascot: "happy" as const,
     },

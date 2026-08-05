@@ -114,14 +114,14 @@ function AuthPage() {
           });
           if (signInError) throw signInError;
         }
-        toast.success("Welcome to SwapSpace 🍅");
+        toast.success("Welcome to SwapSpace");
         navigate({ to: "/onboarding" });
         return;
       }
 
       const { error } = await supabase.auth.signInWithPassword({ email: cleanEmail, password });
       if (error) throw error;
-      toast.success("Welcome back 🍅");
+      toast.success("Welcome back");
       navigate({ to: destination });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Something went wrong");
