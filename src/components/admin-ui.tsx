@@ -170,7 +170,6 @@ export function CampusSelect({
           {c}
         </option>
       ))}
-      <option value="__none">No campus set</option>
     </select>
   );
 }
