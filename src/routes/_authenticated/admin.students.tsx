@@ -20,7 +20,7 @@ import { useAuth } from "@/lib/auth";
 import { campusOptions, logAdminActions, riskReasons, useAdminStudents, useTrustSignals } from "@/lib/admin";
 import { downloadCsv } from "@/lib/csv";
 import type { Database } from "@/integrations/supabase/types";
-import { EmptyState } from "@/components/brand";
+import { EmptyState, SwapCoin } from "@/components/brand";
 import { BulkBar, CampusSelect, ExportButton, FilterTabs, RiskBadge, SelectAllRow } from "@/components/admin-ui";
 import { ListSkeleton } from "@/components/skeletons";
 import { Button } from "@/components/ui/button";
