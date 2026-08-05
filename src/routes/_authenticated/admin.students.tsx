@@ -199,7 +199,8 @@ function AdminStudents() {
                       >
                         {s.verification}
                       </span>{" "}
-                      · 🍅 {Number(s.tomato_rating).toFixed(1)} · {s.transactions_count} swaps
+                      · <SwapCoin size={12} className="-mt-0.5" /> {Number(s.tomato_rating).toFixed(1)} SwapCoins ·{" "}
+                      {s.transactions_count} swaps
                       {s.campus ? ` · ${s.campus}` : ""}
                     </p>
                     {reasons.length > 0 && (
