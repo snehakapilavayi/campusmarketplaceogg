@@ -32,6 +32,18 @@ const statusStyles: Record<string, string> = {
   draft: "bg-muted text-muted-foreground",
 };
 
+function isExpired(deadline: string | null) {
+  return !!deadline && new Date(deadline).getTime() < Date.now();
+}
+
+function deadlineNote(deadline: string | null) {
+  if (!deadline) return "Fix it and resubmit whenever you're ready — no deadline.";
+  const ms = new Date(deadline).getTime() - Date.now();
+  if (ms < 0) return "The resubmission deadline has passed. Post a fresh listing instead.";
+  const days = Math.ceil(ms / 86400000);
+  return `Resubmit by ${new Date(deadline).toLocaleDateString()} — ${days} day${days === 1 ? "" : "s"} left.`;
+}
+
 function MyListings() {
   const { userId } = useAuth();
   const queryClient = useQueryClient();
@@ -42,17 +54,21 @@ function MyListings() {
     queryFn: async () => {
       const { data } = await supabase
         .from("listings")
-        .select("id,title,price,type,rent_period,status,rejection_reason,listing_images(url,sort_order)")
+        .select("id,title,price,type,rent_period,status,rejection_reason,resubmit_by,listing_images(url,sort_order)")
         .eq("seller_id", userId!)
         .order("created_at", { ascending: false });
       return data ?? [];
     },
   });
 
-  async function resubmit(id: string) {
+  async function resubmit(id: string, deadline: string | null) {
+    if (deadline && new Date(deadline).getTime() < Date.now()) {
+      toast.error("The resubmission deadline has passed. Create a fresh listing instead.");
+      return;
+    }
     const { error } = await supabase
       .from("listings")
-      .update({ status: "pending", rejection_reason: null })
+      .update({ status: "pending", rejection_reason: null, resubmit_by: null })
       .eq("id", id);
     if (error) {
       toast.error(error.message);
@@ -119,10 +135,15 @@ function MyListings() {
                       <span className="text-xs text-muted-foreground">/{l.rent_period ?? "day"}</span>
                     )}
                   </p>
-                  {l.status === "rejected" && l.rejection_reason && (
+                  {l.status === "rejected" && (
                     <div className="mt-1.5 rounded-xl bg-destructive/10 px-2.5 py-1.5">
                       <p className="text-[11px] font-semibold text-destructive">Why it was rejected</p>
-                      <p className="text-[11px] text-destructive/90">{l.rejection_reason}</p>
+                      <p className="text-[11px] text-destructive/90">
+                        {l.rejection_reason ?? "An admin asked for changes before this can go live."}
+                      </p>
+                      <p className="mt-1 text-[11px] font-semibold text-destructive">
+                        {deadlineNote(l.resubmit_by)}
+                      </p>
                       <div className="mt-1.5 flex gap-2">
                         <Button asChild size="sm" variant="outline" className="h-7 rounded-full text-[11px]">
                           <Link to="/sell">Edit &amp; relist</Link>
@@ -131,9 +152,10 @@ function MyListings() {
                           size="sm"
                           variant="ghost"
                           className="h-7 rounded-full text-[11px]"
-                          onClick={() => resubmit(l.id)}
+                          disabled={isExpired(l.resubmit_by)}
+                          onClick={() => resubmit(l.id, l.resubmit_by)}
                         >
-                          Resubmit
+                          Resubmit for review
                         </Button>
                       </div>
                     </div>
