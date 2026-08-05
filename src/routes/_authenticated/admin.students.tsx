@@ -285,6 +285,12 @@ function AdminStudents() {
             description: "Suspended students cannot list or chat until restored.",
             run: async () => { await patch(selected, { suspended: true }, "student.suspended", "Accounts suspended"); },
           },
+          {
+            label: "Delete",
+            destructive: true,
+            description: "Permanently removes these accounts, their listings, chats and saved items.",
+            run: async () => { await removeStudents(selected); },
+          },
         ]}
       />
     </div>
