@@ -73,7 +73,7 @@ function Landing() {
         <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-5 pb-16 pt-8 md:grid-cols-2 md:pb-24 md:pt-14">
           <div>
             <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs font-semibold text-muted-foreground">
-              🍅 Built for Vishnu students
+              Built for Vishnu students
             </span>
             <h1 className="mt-5 font-display text-5xl font-extrabold leading-[1.05] md:text-6xl">
               Buy. Rent. Sell.
@@ -147,7 +147,7 @@ function Landing() {
               That spare desk lamp in your hostel room? Someone needs it today.
             </h2>
             <p className="mt-3 text-sm text-secondary-foreground/80">
-              List it in under a minute. Get a 🍅 rating for every good swap.
+              List it in under a minute. Get a SwapCoins rating for every good swap.
             </p>
             <Button asChild size="lg" className="mt-7 rounded-full px-7">
               <Link to="/auth" search={{ mode: "signup" }}>
