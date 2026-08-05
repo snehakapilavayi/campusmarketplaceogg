@@ -53,6 +53,7 @@ type Row = {
   seller_id: string;
   category_id: string | null;
   rejection_reason: string | null;
+  resubmit_by: string | null;
   listing_images?: { url: string; sort_order: number }[] | null;
   profiles?: { full_name: string; verification: string; campus: string | null } | null;
 };
@@ -97,7 +98,7 @@ function AdminListings() {
   async function moderate(ids: string[], status: "approved" | "rejected" | "pending" | "archived") {
     const { error: err } = await supabase
       .from("listings")
-      .update({ status, ...(status === "approved" ? { rejection_reason: null } : {}) })
+      .update({ status, ...(status === "approved" ? { rejection_reason: null, resubmit_by: null } : {}) })
       .in("id", ids);
     if (err) {
       toast.error(err.message);
@@ -118,22 +119,27 @@ function AdminListings() {
     toast.success(`${ids.length} listing${ids.length > 1 ? "s" : ""} marked ${status}`);
   }
 
-  async function rejectWithReason(ids: string[], reason: string) {
+  async function rejectWithReason(ids: string[], reason: string, deadline: string | null) {
     const targets = rowsFor(ids);
     const { error: err } = await supabase
       .from("listings")
-      .update({ status: "rejected", rejection_reason: reason })
+      .update({ status: "rejected", rejection_reason: reason, resubmit_by: deadline })
       .in("id", ids);
     if (err) {
       toast.error(err.message);
       return;
     }
-    await logAdminActions(userId, `listing.rejected — ${reason}`, ids);
+    const byText = deadline ? ` Resubmit by ${new Date(deadline).toLocaleDateString()}.` : "";
+    await logAdminActions(userId, `listing.rejected — ${reason}${byText}`, ids);
     await notifyUsers(
       targets.map((l) => ({
         userId: l.seller_id,
         title: "Listing needs changes",
-        message: `"${l.title}" was rejected: ${reason}. Edit and resubmit it any time.`,
+        message: `"${l.title}" was rejected: ${reason}.${
+          deadline
+            ? ` Fix it and resubmit before ${new Date(deadline).toLocaleDateString()}.`
+            : " Edit and resubmit it any time."
+        }`,
         icon: "alert",
       })),
     );
@@ -288,6 +294,12 @@ function AdminListings() {
                   {l.status === "rejected" && l.rejection_reason && (
                     <p className="mt-1 rounded-lg bg-destructive/10 px-2 py-1 text-[11px] text-destructive">
                       Reason: {l.rejection_reason}
+                      {l.resubmit_by && (
+                        <span className="block font-semibold">
+                          Resubmit by {new Date(l.resubmit_by).toLocaleDateString()}
+                          {new Date(l.resubmit_by).getTime() < Date.now() ? " · deadline passed" : ""}
+                        </span>
+                      )}
                     </p>
                   )}
                   <div className="mt-2 flex flex-wrap gap-2">
@@ -351,8 +363,8 @@ function AdminListings() {
         open={rejecting !== null}
         onOpenChange={(v) => setRejecting(v ? rejecting : null)}
         count={rejecting?.length ?? 0}
-        onConfirm={async (reason) => {
-          if (rejecting) await rejectWithReason(rejecting, reason);
+        onConfirm={async (reason, deadline) => {
+          if (rejecting) await rejectWithReason(rejecting, reason, deadline);
         }}
       />
     </div>
