@@ -50,6 +50,7 @@ function AdminStudents() {
   const [selected, setSelected] = useState<string[]>([]);
   const { data: students = [], isLoading, error } = useAdminStudents(isAdmin);
   const { data: signals } = useTrustSignals(isAdmin);
+  const deleteStudents = useServerFn(deleteStudentAccounts);
 
   const campuses = useMemo(() => campusOptions(students), [students]);
 
