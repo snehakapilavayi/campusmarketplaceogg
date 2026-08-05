@@ -176,16 +176,30 @@ function AdminStudents() {
                     {s.full_name.charAt(0)}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-semibold">
-                      {s.full_name}
+                    <p className="flex items-center gap-2 truncate text-sm font-semibold">
+                      <span className="truncate">{s.full_name}</span>
+                      {s.verification === "verified" && (
+                        <span className="rounded-full bg-success/15 px-2 py-0.5 text-[10px] font-semibold text-success">
+                          verified
+                        </span>
+                      )}
                       {s.suspended && (
-                        <span className="ml-2 rounded-full bg-destructive/10 px-2 py-0.5 text-[10px] font-semibold text-destructive">
+                        <span className="rounded-full bg-destructive/10 px-2 py-0.5 text-[10px] font-semibold text-destructive">
                           suspended
                         </span>
                       )}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {s.verification} · 🍅 {Number(s.tomato_rating).toFixed(1)} · {s.transactions_count} swaps
+                      <span
+                        className={cn(
+                          "font-semibold",
+                          s.verification === "verified" && "text-success",
+                          s.verification === "rejected" && "text-destructive",
+                        )}
+                      >
+                        {s.verification}
+                      </span>{" "}
+                      · 🍅 {Number(s.tomato_rating).toFixed(1)} · {s.transactions_count} swaps
                       {s.campus ? ` · ${s.campus}` : ""}
                     </p>
                     {reasons.length > 0 && (
