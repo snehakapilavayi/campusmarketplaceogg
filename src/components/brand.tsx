@@ -89,8 +89,8 @@ export function Mascot({
   return (
     <span
       className={cn(
-        // p-[4%] is the safe area so hands/feet never touch the bounding box
-        "relative inline-flex shrink-0 items-end justify-center overflow-visible p-[4%]",
+        // generous safe area so hands/feet never touch/clipped by the bounding box
+        "relative inline-flex shrink-0 items-end justify-center overflow-visible p-[10%]",
         className,
       )}
     >
