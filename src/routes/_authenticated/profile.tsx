@@ -1,26 +1,11 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
-import { toast } from "sonner";
-import { ChevronRight, LogOut, Package, ShieldCheck, Trash2 } from "lucide-react";
+import { ChevronRight, LogOut, Package, Settings as SettingsIcon, ShieldCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
-import { deleteOwnAccount } from "@/lib/account.functions";
 import { AppShell } from "@/components/app-shell";
 import { CampusBadge, CoinRating, VerifiedBadge } from "@/components/brand";
 import { Button } from "@/components/ui/button";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({
@@ -36,23 +21,7 @@ export const Route = createFileRoute("/_authenticated/profile")({
 
 function ProfilePage() {
   const { profile, userId, isAdmin, signOut } = useAuth();
-  const navigate = useNavigate();
-  const removeAccount = useServerFn(deleteOwnAccount);
-  const [deleting, setDeleting] = useState(false);
 
-  async function handleDelete() {
-    setDeleting(true);
-    try {
-      await removeAccount({ data: undefined });
-      toast.success("Your account has been deleted");
-      await signOut();
-      void navigate({ to: "/" });
-    } catch (e) {
-      toast.error((e as Error).message);
-    } finally {
-      setDeleting(false);
-    }
-  }
 
 
   const { data: stats } = useQuery({
