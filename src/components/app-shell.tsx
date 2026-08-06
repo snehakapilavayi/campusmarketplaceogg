@@ -76,6 +76,26 @@ export function AppHeader({ title, actions = true }: { title?: string | undefine
           <Logo />
         )}
         <div className="flex shrink-0 items-center gap-0.5">
+          {actions && (
+            <Link
+              to="/wishlist"
+              className="relative grid h-11 w-11 place-items-center rounded-full transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              aria-label={`Wishlist${savedCount > 0 ? ` (${savedCount} saved)` : ""}`}
+            >
+              <Heart className="h-5 w-5" />
+              {savedCount > 0 && (
+                <motion.span
+                  key={savedCount}
+                  initial={{ scale: 0.4, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={springy}
+                  className="absolute right-1 top-1 grid min-w-4 place-items-center rounded-full bg-primary px-1 text-[10px] font-bold leading-4 text-primary-foreground ring-2 ring-background"
+                >
+                  {savedCount > 9 ? "9+" : savedCount}
+                </motion.span>
+              )}
+            </Link>
+          )}
           <ThemeToggle />
           {actions && (
             <>
@@ -122,7 +142,8 @@ const navItems = [
   { to: "/profile", label: "Account", icon: User },
   { to: "/categories", label: "Categories", icon: LayoutGrid },
   { to: "/cart", label: "Cart", icon: ShoppingBag },
-  { to: "/wishlist", label: "Wishlist", icon: Heart },
+  { to: "/", label: "Home", icon: Home },
+
 ] as const;
 
 export function BottomNav() {
