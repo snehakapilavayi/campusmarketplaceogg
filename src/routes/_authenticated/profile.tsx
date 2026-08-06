@@ -77,7 +77,7 @@ function ProfilePage() {
 
         <div className="overflow-hidden rounded-3xl border border-border bg-card shadow-[var(--shadow-soft)]">
           <Row to="/my-listings" icon={Package} label="My listings" />
-          <Row to="/onboarding" icon={ShieldCheck} label="Edit profile" />
+          <Row to="/settings" icon={SettingsIcon} label="Settings" />
           {isAdmin && <Row to="/admin" icon={ShieldCheck} label="Admin portal" />}
         </div>
 
@@ -85,31 +85,7 @@ function ProfilePage() {
           <LogOut className="mr-2 h-4 w-4" /> Sign out
         </Button>
 
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button
-              variant="ghost"
-              disabled={deleting}
-              className="w-full rounded-full text-destructive hover:bg-destructive/10 hover:text-destructive"
-            >
-              <Trash2 className="mr-2 h-4 w-4" /> {deleting ? "Deleting…" : "Delete my profile"}
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Delete your SwapSpace profile?</AlertDialogTitle>
-              <AlertDialogDescription>
-                This permanently deletes your account, listings, chats, wishlist and cart. This cannot be undone.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel className="rounded-full">Keep my account</AlertDialogCancel>
-              <AlertDialogAction className="rounded-full" onClick={() => void handleDelete()}>
-                Delete forever
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+
 
       </div>
     </AppShell>
