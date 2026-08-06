@@ -150,11 +150,14 @@ function Landing() {
           <img
             src={bannerMascot.url}
             alt=""
-            className="absolute inset-0 h-full w-full object-cover object-right"
+            className="absolute inset-0 h-full w-full object-contain object-right-bottom"
             loading="lazy"
           />
-          <div className="brand-pattern-subtle pointer-events-none absolute inset-0 opacity-20" aria-hidden />
-          <div className="relative z-10 max-w-lg px-8 py-12 md:px-14">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-y-0 left-0 w-2/3 bg-gradient-to-r from-ink via-ink/80 to-transparent"
+          />
+          <div className="relative z-10 max-w-md px-8 py-12 md:max-w-lg md:px-14">
             <h2 className="font-display text-3xl font-extrabold md:text-4xl">
               That spare desk lamp in your hostel room? Someone needs it today.
             </h2>
