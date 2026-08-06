@@ -1,8 +1,11 @@
 function escapeCell(value: unknown) {
   if (value === null || value === undefined) return "";
-  const s = String(value);
+  let s = String(value);
+  // Neutralize spreadsheet formula injection (OWASP): prefix risky leading chars.
+  if (/^[=+\-@\t\r]/.test(s)) s = `'${s}`;
   return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
 }
+
 
 export function toCsv(headers: string[], rows: unknown[][]) {
   return [headers, ...rows].map((r) => r.map(escapeCell).join(",")).join("\r\n");
