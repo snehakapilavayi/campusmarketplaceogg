@@ -4,6 +4,7 @@ import { Logo, Mascot } from "@/components/brand";
 import { ThemeToggle } from "@/lib/theme";
 import { Button } from "@/components/ui/button";
 import { useAppSettings } from "@/lib/settings";
+import bannerMascot from "@/assets/banner-mascot-clean2.png.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -145,14 +146,23 @@ function Landing() {
       </section>
 
       <section className="mx-auto max-w-6xl px-5 pb-20">
-        <div className="relative overflow-hidden rounded-3xl bg-secondary px-8 py-12 text-secondary-foreground md:px-14">
-          <div className="brand-pattern-subtle pointer-events-none absolute inset-0" aria-hidden />
-          <div className="relative z-10 max-w-lg">
-
+        <div className="relative min-h-[220px] overflow-hidden rounded-3xl bg-ink text-ink-foreground md:min-h-[260px]">
+          <img
+            src={bannerMascot.url}
+            alt=""
+            className="absolute inset-0 h-full w-full object-contain object-right-bottom"
+            loading="lazy"
+            style={{ imageRendering: "pixelated" }}
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-y-0 left-0 w-2/3 bg-gradient-to-r from-ink via-ink/80 to-transparent"
+          />
+          <div className="relative z-10 max-w-md px-8 py-12 md:max-w-lg md:px-14">
             <h2 className="font-display text-3xl font-extrabold md:text-4xl">
               That spare desk lamp in your hostel room? Someone needs it today.
             </h2>
-            <p className="mt-3 text-sm text-secondary-foreground/80">
+            <p className="mt-3 text-sm text-ink-foreground/80">
               List it in under a minute. Get a SwapCoins rating for every good swap.
             </p>
             <Button asChild size="lg" className="mt-7 rounded-full px-7">
@@ -161,12 +171,6 @@ function Landing() {
               </Link>
             </Button>
           </div>
-          <Mascot
-            variant="point"
-            size="lg"
-            className="absolute bottom-6 right-10 hidden -scale-x-100 md:flex"
-            alt=""
-          />
         </div>
       </section>
 
