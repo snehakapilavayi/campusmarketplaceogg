@@ -146,7 +146,7 @@ function Landing() {
       </section>
 
       <section className="mx-auto max-w-6xl px-5 pb-20">
-        <div className="relative overflow-hidden rounded-3xl bg-ink text-ink-foreground">
+        <div className="relative min-h-[220px] overflow-hidden rounded-3xl bg-ink text-ink-foreground md:min-h-[260px]">
           <img
             src={bannerMascot.url}
             alt=""
