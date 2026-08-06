@@ -64,7 +64,7 @@ function BroadcastPage() {
       toast.error("No students in this segment");
       return;
     }
-
+    setSending(true);
     try {
       await notifyUsers(
         recipients.map((id) => ({ userId: id, title: title.trim(), message: message.trim() || null, icon: "megaphone" })),
