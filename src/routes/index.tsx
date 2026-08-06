@@ -146,14 +146,19 @@ function Landing() {
       </section>
 
       <section className="mx-auto max-w-6xl px-5 pb-20">
-        <div className="relative overflow-hidden rounded-3xl bg-secondary px-8 py-12 text-secondary-foreground md:px-14">
-          <div className="brand-pattern-subtle pointer-events-none absolute inset-0" aria-hidden />
-          <div className="relative z-10 max-w-lg">
-
+        <div className="relative overflow-hidden rounded-3xl bg-ink text-ink-foreground">
+          <img
+            src={bannerMascot.url}
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover object-right"
+            loading="lazy"
+          />
+          <div className="brand-pattern-subtle pointer-events-none absolute inset-0 opacity-20" aria-hidden />
+          <div className="relative z-10 max-w-lg px-8 py-12 md:px-14">
             <h2 className="font-display text-3xl font-extrabold md:text-4xl">
               That spare desk lamp in your hostel room? Someone needs it today.
             </h2>
-            <p className="mt-3 text-sm text-secondary-foreground/80">
+            <p className="mt-3 text-sm text-ink-foreground/80">
               List it in under a minute. Get a SwapCoins rating for every good swap.
             </p>
             <Button asChild size="lg" className="mt-7 rounded-full px-7">
@@ -162,12 +167,6 @@ function Landing() {
               </Link>
             </Button>
           </div>
-          <Mascot
-            variant="point"
-            size="lg"
-            className="absolute bottom-6 right-10 hidden -scale-x-100 md:flex"
-            alt=""
-          />
         </div>
       </section>
 
