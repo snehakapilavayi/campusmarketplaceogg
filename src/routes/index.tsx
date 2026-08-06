@@ -152,6 +152,7 @@ function Landing() {
             alt=""
             className="absolute inset-0 h-full w-full object-contain object-right-bottom"
             loading="lazy"
+            style={{ imageRendering: "pixelated" }}
           />
           <div
             aria-hidden
