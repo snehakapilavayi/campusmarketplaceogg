@@ -6,6 +6,7 @@ import {
   Megaphone,
   MessagesSquare,
   ScrollText,
+  Settings,
   ShieldCheck,
   Tags,
   Users,
