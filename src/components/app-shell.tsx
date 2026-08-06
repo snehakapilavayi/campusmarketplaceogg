@@ -223,6 +223,8 @@ export function AppShell({
   header?: boolean;
   nav?: boolean;
 }) {
+  const { general } = useAppSettings();
+
   return (
     <div className={cn("relative min-h-screen bg-background", nav ? "pb-24" : "pb-10")}>
       <div
@@ -230,11 +232,17 @@ export function AppShell({
         aria-hidden
       />
       <div className="relative">
+        {general.maintenance_mode && (
+          <div className="bg-primary px-4 py-2 text-center text-sm font-semibold text-primary-foreground">
+            {general.maintenance_message}
+          </div>
+        )}
         {header && <AppHeader title={title} actions={nav} />}
         <main className="mx-auto max-w-5xl px-3 sm:px-4">
           <PageTransition>{children}</PageTransition>
         </main>
       </div>
+
       {nav && <BottomNav />}
       <CommandPalette />
     </div>
