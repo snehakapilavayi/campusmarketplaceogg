@@ -3,6 +3,7 @@ import { ArrowRight, Instagram, Recycle, ShieldCheck, Wallet } from "lucide-reac
 import { Logo, Mascot } from "@/components/brand";
 import { ThemeToggle } from "@/lib/theme";
 import { Button } from "@/components/ui/button";
+import { useAppSettings } from "@/lib/settings";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -47,7 +48,14 @@ const perks = [
   },
 ];
 
+function splitHero(text: string): [string, string] {
+  const parts = text.split("|");
+  return [parts[0]!.trim(), (parts[1] ?? "").trim()];
+}
+
 function Landing() {
+  const { content } = useAppSettings();
+  const [heroTitle, heroHighlight] = splitHero(content.hero_title);
   return (
     <div className="min-h-screen bg-background">
       <header className="mx-auto flex h-20 max-w-6xl items-center justify-between px-5">
@@ -169,7 +177,7 @@ function Landing() {
             How SwapSpace works
           </Link>
           <a
-            href="https://www.instagram.com/swapspace.07?igsh=MWZ4NHUyeHI0bTEyZA=="
+            href={content.instagram_url}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-1.5 font-medium text-accent-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
