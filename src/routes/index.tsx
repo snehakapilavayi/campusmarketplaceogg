@@ -1,9 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Instagram, Recycle, ShieldCheck, Wallet } from "lucide-react";
-import { Logo, Mascot } from "@/components/brand";
+import { Logo } from "@/components/brand";
 import { ThemeToggle } from "@/lib/theme";
 import { Button } from "@/components/ui/button";
 import { useAppSettings } from "@/lib/settings";
+import bannerMascot from "@/assets/banner-mascot-filled.png.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
