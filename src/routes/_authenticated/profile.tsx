@@ -1,26 +1,11 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
-import { toast } from "sonner";
-import { ChevronRight, LogOut, Package, ShieldCheck, Trash2 } from "lucide-react";
+import { ChevronRight, LogOut, Package, Settings as SettingsIcon, ShieldCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
-import { deleteOwnAccount } from "@/lib/account.functions";
 import { AppShell } from "@/components/app-shell";
 import { CampusBadge, CoinRating, VerifiedBadge } from "@/components/brand";
 import { Button } from "@/components/ui/button";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({
@@ -36,23 +21,7 @@ export const Route = createFileRoute("/_authenticated/profile")({
 
 function ProfilePage() {
   const { profile, userId, isAdmin, signOut } = useAuth();
-  const navigate = useNavigate();
-  const removeAccount = useServerFn(deleteOwnAccount);
-  const [deleting, setDeleting] = useState(false);
 
-  async function handleDelete() {
-    setDeleting(true);
-    try {
-      await removeAccount({ data: undefined });
-      toast.success("Your account has been deleted");
-      await signOut();
-      void navigate({ to: "/" });
-    } catch (e) {
-      toast.error((e as Error).message);
-    } finally {
-      setDeleting(false);
-    }
-  }
 
 
   const { data: stats } = useQuery({
@@ -108,7 +77,7 @@ function ProfilePage() {
 
         <div className="overflow-hidden rounded-3xl border border-border bg-card shadow-[var(--shadow-soft)]">
           <Row to="/my-listings" icon={Package} label="My listings" />
-          <Row to="/onboarding" icon={ShieldCheck} label="Edit profile" />
+          <Row to="/settings" icon={SettingsIcon} label="Settings" />
           {isAdmin && <Row to="/admin" icon={ShieldCheck} label="Admin portal" />}
         </div>
 
@@ -116,31 +85,7 @@ function ProfilePage() {
           <LogOut className="mr-2 h-4 w-4" /> Sign out
         </Button>
 
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button
-              variant="ghost"
-              disabled={deleting}
-              className="w-full rounded-full text-destructive hover:bg-destructive/10 hover:text-destructive"
-            >
-              <Trash2 className="mr-2 h-4 w-4" /> {deleting ? "Deleting…" : "Delete my profile"}
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Delete your SwapSpace profile?</AlertDialogTitle>
-              <AlertDialogDescription>
-                This permanently deletes your account, listings, chats, wishlist and cart. This cannot be undone.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel className="rounded-full">Keep my account</AlertDialogCancel>
-              <AlertDialogAction className="rounded-full" onClick={() => void handleDelete()}>
-                Delete forever
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+
 
       </div>
     </AppShell>

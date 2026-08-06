@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { motion, useReducedMotion } from "motion/react";
-import { Bell, Bike, Heart, LayoutGrid, MessageCircle, Plus, Search, ShoppingBag, User } from "lucide-react";
+import { Bell, Bike, Heart, Home, LayoutGrid, MessageCircle, Plus, Search, ShoppingBag, User } from "lucide-react";
 import { toast } from "sonner";
 import { Logo } from "@/components/brand";
 import { cn } from "@/lib/utils";
@@ -11,6 +11,7 @@ import { PageTransition, springy } from "@/lib/motion";
 import { CommandPalette } from "@/components/command-palette";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useAppSettings } from "@/lib/settings";
 
 export function AppHeader({ title, actions = true }: { title?: string | undefined; actions?: boolean }) {
   const { userId } = useAuth();
@@ -29,6 +30,19 @@ export function AppHeader({ title, actions = true }: { title?: string | undefine
       return count ?? 0;
     },
   });
+
+  const { data: savedCount = 0 } = useQuery({
+    queryKey: ["wishlist-count", userId],
+    enabled: !!userId,
+    queryFn: async () => {
+      const { count } = await supabase
+        .from("wishlist")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", userId!);
+      return count ?? 0;
+    },
+  });
+
 
   // Live notification badge + clickable toast.
   useEffect(() => {
@@ -63,6 +77,26 @@ export function AppHeader({ title, actions = true }: { title?: string | undefine
           <Logo />
         )}
         <div className="flex shrink-0 items-center gap-0.5">
+          {actions && (
+            <Link
+              to="/wishlist"
+              className="relative grid h-11 w-11 place-items-center rounded-full transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              aria-label={`Wishlist${savedCount > 0 ? ` (${savedCount} saved)` : ""}`}
+            >
+              <Heart className="h-5 w-5" />
+              {savedCount > 0 && (
+                <motion.span
+                  key={savedCount}
+                  initial={{ scale: 0.4, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={springy}
+                  className="absolute right-1 top-1 grid min-w-4 place-items-center rounded-full bg-primary px-1 text-[10px] font-bold leading-4 text-primary-foreground ring-2 ring-background"
+                >
+                  {savedCount > 9 ? "9+" : savedCount}
+                </motion.span>
+              )}
+            </Link>
+          )}
           <ThemeToggle />
           {actions && (
             <>
@@ -109,7 +143,8 @@ const navItems = [
   { to: "/profile", label: "Account", icon: User },
   { to: "/categories", label: "Categories", icon: LayoutGrid },
   { to: "/cart", label: "Cart", icon: ShoppingBag },
-  { to: "/wishlist", label: "Wishlist", icon: Heart },
+  { to: "/", label: "Home", icon: Home },
+
 ] as const;
 
 export function BottomNav() {
@@ -189,6 +224,8 @@ export function AppShell({
   header?: boolean;
   nav?: boolean;
 }) {
+  const { general } = useAppSettings();
+
   return (
     <div className={cn("relative min-h-screen bg-background", nav ? "pb-24" : "pb-10")}>
       <div
@@ -196,11 +233,17 @@ export function AppShell({
         aria-hidden
       />
       <div className="relative">
+        {general.maintenance_mode && (
+          <div className="bg-primary px-4 py-2 text-center text-sm font-semibold text-primary-foreground">
+            {general.maintenance_message}
+          </div>
+        )}
         {header && <AppHeader title={title} actions={nav} />}
         <main className="mx-auto max-w-5xl px-3 sm:px-4">
           <PageTransition>{children}</PageTransition>
         </main>
       </div>
+
       {nav && <BottomNav />}
       <CommandPalette />
     </div>

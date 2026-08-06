@@ -3,6 +3,7 @@ import { ArrowRight, Instagram, Recycle, ShieldCheck, Wallet } from "lucide-reac
 import { Logo, Mascot } from "@/components/brand";
 import { ThemeToggle } from "@/lib/theme";
 import { Button } from "@/components/ui/button";
+import { useAppSettings } from "@/lib/settings";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -47,7 +48,14 @@ const perks = [
   },
 ];
 
+function splitHero(text: string): [string, string] {
+  const parts = text.split("|");
+  return [parts[0]!.trim(), (parts[1] ?? "").trim()];
+}
+
 function Landing() {
+  const { content } = useAppSettings();
+  const [heroTitle, heroHighlight] = splitHero(content.hero_title);
   return (
     <div className="min-h-screen bg-background">
       <header className="mx-auto flex h-20 max-w-6xl items-center justify-between px-5">
@@ -76,13 +84,11 @@ function Landing() {
               Built for Vishnu students
             </span>
             <h1 className="mt-5 font-display text-5xl font-extrabold leading-[1.05] md:text-6xl">
-              Buy. Rent. Sell.
-              <span className="block text-primary">Inside your campus.</span>
+              {heroTitle}
+              {heroHighlight && <span className="block text-primary">{heroHighlight}</span>}
             </h1>
-            <p className="mt-5 max-w-md text-base text-muted-foreground">
-              SwapSpace is the marketplace for the stuff that already lives on your campus — textbooks, calculators,
-              lab coats, mini fridges. Meet at the canteen, hand it over, done.
-            </p>
+            <p className="mt-5 max-w-md text-base text-muted-foreground">{content.hero_subtitle}</p>
+
             <div className="mt-8 flex flex-wrap gap-3">
               <Button asChild size="lg" className="rounded-full px-7 shadow-[var(--shadow-amber)]">
                 <Link to="/auth" search={{ mode: "signup" }}>
@@ -171,7 +177,7 @@ function Landing() {
             How SwapSpace works
           </Link>
           <a
-            href="https://www.instagram.com/swapspace.07?igsh=MWZ4NHUyeHI0bTEyZA=="
+            href={content.instagram_url}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-1.5 font-medium text-accent-foreground transition-colors hover:bg-primary hover:text-primary-foreground"

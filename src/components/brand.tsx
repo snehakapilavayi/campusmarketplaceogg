@@ -87,7 +87,13 @@ export function Mascot({
   alt?: string;
 }) {
   return (
-    <span className={cn("relative inline-flex shrink-0 items-end justify-center", className)}>
+    <span
+      className={cn(
+        // p-[4%] is the safe area so hands/feet never touch the bounding box
+        "relative inline-flex shrink-0 items-end justify-center overflow-visible p-[4%]",
+        className,
+      )}
+    >
       {halo && (
         <span
           aria-hidden
@@ -98,7 +104,7 @@ export function Mascot({
         src={mascots[variant]}
         alt={alt}
         width={768}
-        height={1024}
+        height={768}
         loading="lazy"
         className={cn(
           "relative block w-auto max-w-full select-none object-contain",

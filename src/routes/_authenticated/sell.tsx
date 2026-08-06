@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
+import { findBlockedTerm, useAppSettings } from "@/lib/settings";
 import { AppShell } from "@/components/app-shell";
 import { Mascot } from "@/components/brand";
 import { Button } from "@/components/ui/button";
@@ -42,7 +43,6 @@ const schema = z.object({
 });
 
 const BUCKET = "listing-photos";
-const MAX_PHOTOS = 5;
 const MAX_SIZE = 5 * 1024 * 1024;
 const SIGNED_TTL = 60 * 60 * 24 * 365 * 10;
 
@@ -56,6 +56,8 @@ const conditions = [
 
 function SellPage() {
   const { userId } = useAuth();
+  const { limits, moderation } = useAppSettings();
+  const MAX_PHOTOS = limits.max_photos_per_listing;
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -133,6 +135,17 @@ function SellPage() {
     if (!categoryId) {
       toast.error("Pick a category");
       return;
+    }
+    if (parsed.data.price < limits.min_price || parsed.data.price > limits.max_price) {
+      toast.error(`Price must be between ₹${limits.min_price} and ₹${limits.max_price}`);
+      return;
+    }
+    if (moderation.auto_flag) {
+      const blocked = findBlockedTerm(`${parsed.data.title} ${parsed.data.description ?? ""}`, moderation.blocklist);
+      if (blocked) {
+        toast.error(`"${blocked}" isn't allowed on SwapSpace. Please edit your listing.`);
+        return;
+      }
     }
     setBusy(true);
     const { data, error } = await supabase

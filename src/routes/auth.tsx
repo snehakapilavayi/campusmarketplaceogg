@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
+import { useAppSettings } from "@/lib/settings";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { Logo, Mascot } from "@/components/brand";
@@ -33,16 +34,15 @@ export const Route = createFileRoute("/auth")({
   component: AuthPage,
 });
 
-const COLLEGE_DOMAIN = "@vishnu.edu.in";
 const ADMIN_EMAIL = "admin@swapspace.in";
-const DOMAIN_ERROR = `Use your Vishnu college email (…${COLLEGE_DOMAIN})`;
 
-function validateEmail(raw: string) {
+function validateEmail(raw: string, domain: string) {
+  const suffix = `@${domain.replace(/^@/, "")}`;
   const email = raw.trim().toLowerCase();
   if (!email || email.length > 255) return "Enter your college email";
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return "Enter a valid email address";
   if (email === ADMIN_EMAIL) return null;
-  if (!email.endsWith(COLLEGE_DOMAIN)) return DOMAIN_ERROR;
+  if (!email.endsWith(suffix)) return `Use your Vishnu college email (…${suffix})`;
   if (email.split("@")[0]!.length === 0) return "Enter your college email";
   return null;
 }
@@ -52,6 +52,8 @@ type Errors = Partial<Record<"name" | "email" | "password" | "confirm", string>>
 
 function AuthPage() {
   const { mode, next } = Route.useSearch();
+  const { general } = useAppSettings();
+  const domain = general.allowed_email_domain.replace(/^@/, "");
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -70,11 +72,15 @@ function AuthPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const nextErrors: Errors = {};
-    const emailError = validateEmail(email);
+    const emailError = validateEmail(email, domain);
     if (emailError) nextErrors.email = emailError;
 
     if (mode !== "forgot") {
       if (password.length < 6) nextErrors.password = "Use at least 6 characters";
+    }
+    if (mode === "signup" && !general.signups_enabled) {
+      toast.error("New signups are paused right now. Check back soon.");
+      return;
     }
     if (mode === "signup") {
       if (name.trim().length < 2) nextErrors.name = "Tell us your name";
@@ -161,7 +167,7 @@ function AuthPage() {
         <p className="mt-1.5 text-sm text-muted-foreground">
           {mode === "forgot"
             ? "We'll email you a secure reset link."
-            : `Only ${COLLEGE_DOMAIN} emails — it keeps SwapSpace students-only.`}
+            : `Only @${domain} emails — it keeps SwapSpace students-only.`}
         </p>
       </div>
 
@@ -191,7 +197,7 @@ function AuthPage() {
               setEmail(e.target.value);
               clearError("email");
             }}
-            placeholder={`yourname${COLLEGE_DOMAIN}`}
+            placeholder={`yourname@${domain}`}
             autoComplete="email"
             aria-invalid={!!errors.email}
           />
