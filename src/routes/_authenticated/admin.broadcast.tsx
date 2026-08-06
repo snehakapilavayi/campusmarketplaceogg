@@ -56,9 +56,15 @@ function BroadcastPage() {
   });
 
   async function send() {
-    if (!title.trim()) return toast.error("Add a title");
-    if (recipients.length === 0) return toast.error("No students in this segment");
-    setSending(true);
+    if (!title.trim()) {
+      toast.error("Add a title");
+      return;
+    }
+    if (recipients.length === 0) {
+      toast.error("No students in this segment");
+      return;
+    }
+
     try {
       await notifyUsers(
         recipients.map((id) => ({ userId: id, title: title.trim(), message: message.trim() || null, icon: "megaphone" })),
