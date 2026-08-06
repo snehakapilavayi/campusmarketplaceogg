@@ -39,6 +39,8 @@ export const adminNav = [
   { to: "/admin/reports", label: "Reports", icon: Flag, exact: false },
   { to: "/admin/chats", label: "Chats", icon: MessagesSquare, exact: false },
   { to: "/admin/students", label: "Students", icon: Users, exact: false },
+  { to: "/admin/broadcast", label: "Announcements", icon: Megaphone, exact: false },
+  { to: "/admin/settings", label: "Settings", icon: Settings, exact: false },
   { to: "/admin/logs", label: "Audit log", icon: ScrollText, exact: false },
 ] as const;
 
