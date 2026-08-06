@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Instagram, Recycle, ShieldCheck, Wallet } from "lucide-react";
-import { Logo } from "@/components/brand";
+import { Logo, Mascot } from "@/components/brand";
 import { ThemeToggle } from "@/lib/theme";
 import { Button } from "@/components/ui/button";
 import { useAppSettings } from "@/lib/settings";
