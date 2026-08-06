@@ -30,6 +30,19 @@ export function AppHeader({ title, actions = true }: { title?: string | undefine
     },
   });
 
+  const { data: savedCount = 0 } = useQuery({
+    queryKey: ["wishlist-count", userId],
+    enabled: !!userId,
+    queryFn: async () => {
+      const { count } = await supabase
+        .from("wishlist")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", userId!);
+      return count ?? 0;
+    },
+  });
+
+
   // Live notification badge + clickable toast.
   useEffect(() => {
     if (!userId) return;
