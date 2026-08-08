@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { Logo } from "@/components/brand";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
-import { ThemeToggle } from "@/lib/theme";
+
 import { PageTransition, springy } from "@/lib/motion";
 import { CommandPalette } from "@/components/command-palette";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
