@@ -6,7 +6,7 @@ export const SUPPORT_EMAIL = "info.swapspace@gmail.com";
 export function SupportLink({ className }: { className?: string }) {
   return (
     <a
-      href={`mailto:${SUPPORT_EMAIL}`}
+      href={`mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent("SwapSpace query")}`}
       className={cn("font-semibold text-primary underline-offset-2 hover:underline", className)}
     >
       {SUPPORT_EMAIL}
