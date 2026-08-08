@@ -269,13 +269,29 @@ function Market() {
           ) : visible.length === 0 ? (
             <EmptyState
               title="Nothing here yet"
-              description="No listings match your search. Try another keyword or be the first to list something."
+              description={emptyMessage}
               action={
-                <Button asChild className="mt-2 rounded-full">
-                  <Link to="/sell">List an item</Link>
-                </Button>
+                <div className="mt-2 flex flex-wrap justify-center gap-2">
+                  <Button asChild className="rounded-full">
+                    <Link to="/sell">List an item</Link>
+                  </Button>
+                  {hasFilters && (
+                    <Button
+                      variant="outline"
+                      className="rounded-full"
+                      onClick={() => {
+                        setQuery("");
+                        setFilter("all");
+                        setCategory(null);
+                      }}
+                    >
+                      Clear filters
+                    </Button>
+                  )}
+                </div>
               }
             />
+
           ) : (
             <>
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
