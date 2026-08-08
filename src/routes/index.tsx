@@ -147,7 +147,7 @@ function Landing() {
 
       <section className="mx-auto max-w-6xl px-5 pb-20">
         <div className="relative overflow-hidden rounded-3xl bg-ink text-ink-foreground">
-          <div className="brand-pattern-subtle pointer-events-none absolute inset-0 opacity-[0.55]" aria-hidden />
+          <div className="brand-pattern-subtle pointer-events-none absolute inset-0 opacity-30" aria-hidden />
           <div className="relative z-10 flex flex-col items-center gap-8 px-8 py-12 text-center md:flex-row md:px-14 md:py-14 md:text-left">
             <div className="max-w-lg">
               <h2 className="font-display text-3xl font-extrabold md:text-4xl">
