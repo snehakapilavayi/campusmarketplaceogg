@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Instagram, Recycle, ShieldCheck, Wallet } from "lucide-react";
 import { Logo, Mascot } from "@/components/brand";
 import { SupportNote } from "@/components/support";
-import { ThemeToggle } from "@/lib/theme";
 import { Button } from "@/components/ui/button";
 import { useAppSettings } from "@/lib/settings";
 
@@ -62,7 +61,6 @@ function Landing() {
       <header className="mx-auto flex h-20 max-w-6xl items-center justify-between px-5">
         <Logo to="/" />
         <div className="flex items-center gap-1 sm:gap-2">
-          <ThemeToggle />
           <Button asChild variant="ghost" className="hidden rounded-full sm:inline-flex">
             <Link to="/how-it-works">How it works</Link>
           </Button>
