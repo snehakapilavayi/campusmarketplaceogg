@@ -14,6 +14,27 @@ export function SupportLink({ className }: { className?: string }) {
   );
 }
 
+export const SUPPORT_MAILTO = `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(
+  "SwapSpace query",
+)}&body=${encodeURIComponent("Hi SwapSpace team,\n\n")}`;
+
+/** Icon button that opens the user's mail app straight to support. */
+export function ContactUsButton({ className }: { className?: string }) {
+  return (
+    <a
+      href={SUPPORT_MAILTO}
+      className={cn(
+        "grid h-11 w-11 place-items-center rounded-full transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        className,
+      )}
+      aria-label={`Contact us at ${SUPPORT_EMAIL}`}
+      title="Contact us"
+    >
+      <Mail className="h-5 w-5" />
+    </a>
+  );
+}
+
 /** Subtle one-liner used in footers and empty states. */
 export function SupportNote({
   label = "Need help or have a question?",
