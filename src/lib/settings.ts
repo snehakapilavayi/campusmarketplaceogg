@@ -50,7 +50,7 @@ export const defaultSettings: AppSettings = {
   content: {
     hero_title: "Everything you need is already on campus.",
     hero_subtitle: "Buy, rent and swap with verified Vishnu students. No strangers, no commission.",
-    instagram_url: "https://www.instagram.com/swapspace.in?igsh=MWZ4NHUyeHI0bTEyZA==",
+    instagram_url: "https://www.instagram.com/swapspace.in/",
     support_email: "info.swapspace@gmail.com",
   },
   moderation: { blocklist: [], auto_flag: true },

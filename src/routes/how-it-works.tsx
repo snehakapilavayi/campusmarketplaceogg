@@ -174,7 +174,7 @@ function HowItWorks() {
         <div className="mx-auto flex max-w-6xl flex-col items-center gap-3 px-5 py-8 text-center text-xs text-muted-foreground">
           <Logo size={24} />
           <a
-            href="https://www.instagram.com/swapspace.in?igsh=MWZ4NHUyeHI0bTEyZA=="
+            href="https://www.instagram.com/swapspace.in/"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-1.5 font-medium text-accent-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
