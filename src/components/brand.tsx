@@ -1,5 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
+import { SupportNote } from "@/components/support";
+
 import logo from "@/assets/logo.png.asset.json";
 import wordmark from "@/assets/wordmark.png.asset.json";
 import swapcoin from "@/assets/swapcoin.png.asset.json";
