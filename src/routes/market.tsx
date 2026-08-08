@@ -41,6 +41,18 @@ const LISTING_SELECT =
 
 type Filter = "all" | "sell" | "rent";
 
+const POPULAR_SEARCHES = ["Lab Coat", "Casio FX-991EX", "Mini Fridge", "Drawing Board"] as const;
+
+const CATEGORY_EMPTY: Record<string, string> = {
+  books: "No textbooks listed yet. Be the first to list one!",
+  electronics: "No gadgets on campus right now. List your spare one!",
+  furniture: "No hostel furniture listed yet. Be the first!",
+  stationery: "No stationery listed yet. Someone needs your spare set!",
+  sports: "No sports gear listed yet. Be the first to list one!",
+  lab: "No lab gear listed yet. Lab coats and kits go fast — list yours!",
+};
+
+
 function Market() {
   const { profile } = useAuth();
   const [query, setQuery] = useState("");
