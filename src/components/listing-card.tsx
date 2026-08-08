@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { Link } from "@tanstack/react-router";
 import { motion, useMotionValue, useReducedMotion, useTransform } from "motion/react";
 import { Heart } from "lucide-react";
-import { currency, CoinRating } from "@/components/brand";
+import { currency, CoinRating, conditionLabels } from "@/components/brand";
 import { SmartImage } from "@/components/smart-image";
 import { haptic, springy } from "@/lib/motion";
 import { cn } from "@/lib/utils";
