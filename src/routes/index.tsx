@@ -5,7 +5,6 @@ import { SupportNote } from "@/components/support";
 import { ThemeToggle } from "@/lib/theme";
 import { Button } from "@/components/ui/button";
 import { useAppSettings } from "@/lib/settings";
-import bannerMascot from "@/assets/banner-mascot-clean2.png.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
