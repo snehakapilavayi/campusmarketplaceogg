@@ -5,6 +5,7 @@ import { Loader2, UploadCloud, X } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
+import { compressImage } from "@/lib/image-compress";
 import { useAuth } from "@/lib/auth";
 import { findBlockedTerm, useAppSettings } from "@/lib/settings";
 import { AppShell } from "@/components/app-shell";
@@ -102,9 +103,10 @@ function SellPage() {
         toast.error(`${file.name} is over 5 MB`);
         continue;
       }
-      const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
+      const optimized = await compressImage(file);
+      const ext = optimized.name.split(".").pop()?.toLowerCase() || "jpg";
       const path = `${userId}/${crypto.randomUUID()}.${ext}`;
-      const { error } = await supabase.storage.from(BUCKET).upload(path, file, {
+      const { error } = await supabase.storage.from(BUCKET).upload(path, optimized, {
         cacheControl: "31536000",
         upsert: false,
       });

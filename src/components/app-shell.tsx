@@ -12,6 +12,7 @@ import { CommandPalette } from "@/components/command-palette";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAppSettings } from "@/lib/settings";
+import { SupportNote } from "@/components/support";
 
 export function AppHeader({ title, actions = true }: { title?: string | undefined; actions?: boolean }) {
   const { userId } = useAuth();
@@ -143,19 +144,26 @@ const navItems = [
   { to: "/profile", label: "Account", icon: User },
   { to: "/categories", label: "Categories", icon: LayoutGrid },
   { to: "/cart", label: "Cart", icon: ShoppingBag },
-  { to: "/", label: "Home", icon: Home },
-
+  { to: "/market", label: "Home", icon: Home },
 ] as const;
 
 export function BottomNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const reduce = useReducedMotion();
+  const { userId } = useAuth();
+
+  // Signed-in students land on the marketplace; visitors get the landing page.
+  const items = navItems.map((item) =>
+    item.label === "Home" ? { ...item, to: userId ? "/market" : "/" } : item,
+  );
+  const isActive = (to: string) =>
+    to === "/market" ? pathname === "/market" || pathname === "/" : pathname === to;
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border/70 bg-background/95 backdrop-blur-md">
       <div className="mx-auto grid max-w-5xl grid-cols-5 items-end px-1 pb-[max(env(safe-area-inset-bottom),0.25rem)] sm:px-2">
-        {navItems.slice(0, 2).map((item) => (
-          <NavLink key={item.to} {...item} active={pathname === item.to} />
+        {items.slice(0, 2).map((item) => (
+          <NavLink key={item.label} {...item} active={isActive(item.to)} />
         ))}
         <div className="flex min-w-0 justify-center">
           <motion.div whileTap={reduce ? undefined : { scale: 0.9 }} transition={springy}>
@@ -168,13 +176,14 @@ export function BottomNav() {
             </Link>
           </motion.div>
         </div>
-        {navItems.slice(2).map((item) => (
-          <NavLink key={item.to} {...item} active={pathname === item.to} />
+        {items.slice(2).map((item) => (
+          <NavLink key={item.label} {...item} active={isActive(item.to)} />
         ))}
       </div>
     </nav>
   );
 }
+
 
 function NavLink({
   to,
@@ -195,14 +204,14 @@ function NavLink({
         preload="intent"
         className={cn(
           "relative flex min-h-11 min-w-0 flex-col items-center gap-1 px-0.5 py-2.5 text-[10px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:text-[11px]",
-          active ? "text-foreground" : "text-muted-foreground hover:text-foreground",
+          active ? "font-semibold text-primary" : "text-muted-foreground hover:text-foreground",
         )}
       >
         {active && (
           <motion.span
             layoutId="nav-pill"
             transition={reduce ? { duration: 0 } : springy}
-            className="absolute inset-x-2 top-1 -z-10 h-8 rounded-full bg-accent"
+            className="absolute inset-x-2 top-1 -z-10 h-8 rounded-full bg-primary/15 ring-1 ring-primary/30"
             aria-hidden
           />
         )}
@@ -212,6 +221,7 @@ function NavLink({
     </motion.div>
   );
 }
+
 
 export function AppShell({
   children,
@@ -241,6 +251,9 @@ export function AppShell({
         {header && <AppHeader title={title} actions={nav} />}
         <main className="mx-auto max-w-5xl px-3 sm:px-4">
           <PageTransition>{children}</PageTransition>
+          <footer className="mt-10 border-t border-border/70 py-6 text-center">
+            <SupportNote label="Have queries? Reach out to" />
+          </footer>
         </main>
       </div>
 

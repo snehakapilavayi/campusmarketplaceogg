@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { Link } from "@tanstack/react-router";
 import { motion, useMotionValue, useReducedMotion, useTransform } from "motion/react";
 import { Heart } from "lucide-react";
-import { currency, CoinRating } from "@/components/brand";
+import { currency, CoinRating, conditionLabels } from "@/components/brand";
 import { SmartImage } from "@/components/smart-image";
 import { haptic, springy } from "@/lib/motion";
 import { cn } from "@/lib/utils";
@@ -91,12 +91,17 @@ export function ListingCard({
           </div>
           <div className="space-y-1 p-3">
             <p className="line-clamp-1 text-sm font-semibold">{listing.title}</p>
-            <p className="font-display text-base font-bold text-foreground">
-              {currency(listing.price)}
-              {listing.type === "rent" && (
-                <span className="text-xs font-medium text-muted-foreground">/{listing.rent_period ?? "day"}</span>
-              )}
-            </p>
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="rounded-full bg-primary/15 px-2 py-0.5 font-display text-xs font-bold text-foreground ring-1 ring-primary/30">
+                {Number(listing.price) === 0
+                  ? "Swap"
+                  : `${currency(listing.price)}${listing.type === "rent" ? `/${listing.rent_period ?? "day"}` : ""}`}
+              </span>
+              <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-semibold text-muted-foreground">
+                {conditionLabels[listing.condition] ?? listing.condition}
+              </span>
+            </div>
+
             {listing.profiles && (
               <div className="flex items-center justify-between pt-0.5">
                 <span className="line-clamp-1 text-[11px] text-muted-foreground">{listing.profiles.full_name}</span>

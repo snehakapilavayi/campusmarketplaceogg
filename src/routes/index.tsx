@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Instagram, Recycle, ShieldCheck, Wallet } from "lucide-react";
 import { Logo, Mascot } from "@/components/brand";
+import { SupportNote } from "@/components/support";
 import { ThemeToggle } from "@/lib/theme";
 import { Button } from "@/components/ui/button";
 import { useAppSettings } from "@/lib/settings";
@@ -190,6 +191,7 @@ function Landing() {
             <Instagram className="h-3.5 w-3.5" />
             @swapspace.07
           </a>
+          <SupportNote label="Have queries? Reach out to" />
           <p>Campus-exclusive marketplace. Meet safely, on campus, in daylight.</p>
         </div>
       </footer>

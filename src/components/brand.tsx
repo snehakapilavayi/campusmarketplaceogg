@@ -1,5 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
+import { SupportNote } from "@/components/support";
+
 import logo from "@/assets/logo.png.asset.json";
 import wordmark from "@/assets/wordmark.png.asset.json";
 import swapcoin from "@/assets/swapcoin.png.asset.json";
@@ -184,11 +186,13 @@ export function EmptyState({
   description,
   variant = "sad",
   action,
+  support = true,
 }: {
   title: string;
   description?: string;
   variant?: keyof typeof mascots;
   action?: React.ReactNode;
+  support?: boolean;
 }) {
   return (
     <div className="flex flex-col items-center justify-center gap-4 px-6 py-16 text-center">
@@ -196,9 +200,11 @@ export function EmptyState({
       <h3 className="font-display text-lg font-bold">{title}</h3>
       {description && <p className="max-w-xs text-sm text-muted-foreground">{description}</p>}
       {action}
+      {support && <SupportNote className="mt-2 max-w-xs" />}
     </div>
   );
 }
+
 
 export function VerifiedBadge({ compact = false }: { compact?: boolean }) {
   return (

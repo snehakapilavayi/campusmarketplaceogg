@@ -41,6 +41,18 @@ const LISTING_SELECT =
 
 type Filter = "all" | "sell" | "rent";
 
+const POPULAR_SEARCHES = ["Lab Coat", "Casio FX-991EX", "Mini Fridge", "Drawing Board"] as const;
+
+const CATEGORY_EMPTY: Record<string, string> = {
+  books: "No textbooks listed yet. Be the first to list one!",
+  electronics: "No gadgets on campus right now. List your spare one!",
+  furniture: "No hostel furniture listed yet. Be the first!",
+  stationery: "No stationery listed yet. Someone needs your spare set!",
+  sports: "No sports gear listed yet. Be the first to list one!",
+  lab: "No lab gear listed yet. Lab coats and kits go fast — list yours!",
+};
+
+
 function Market() {
   const { profile } = useAuth();
   const [query, setQuery] = useState("");
@@ -123,6 +135,16 @@ function Market() {
 
   const featured = visible.filter((l) => l.featured).slice(0, 8);
 
+  const hasFilters = !!term || filter !== "all" || !!category;
+  const activeCategory = categories.find((c) => c.id === category);
+  const emptyMessage = term
+    ? `No results for "${term}". Try another keyword or clear your filters.`
+    : activeCategory
+      ? (CATEGORY_EMPTY[(activeCategory.slug ?? activeCategory.name).toLowerCase()] ??
+        `No ${activeCategory.name.toLowerCase()} listed yet. Be the first to list one!`)
+      : "No listings match your search. Try another keyword or be the first to list something.";
+
+
 
   return (
     <AppShell>
@@ -155,6 +177,25 @@ function Market() {
             <SlidersHorizontal className="h-4 w-4" />
           </Button>
         </div>
+
+        <div className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4">
+          {POPULAR_SEARCHES.map((s) => (
+            <button
+              key={s}
+              type="button"
+              onClick={() => setQuery(s)}
+              className={cn(
+                "shrink-0 rounded-full border px-3 py-1 text-xs font-medium transition-colors",
+                query === s
+                  ? "border-transparent bg-primary text-primary-foreground"
+                  : "border-border bg-card text-muted-foreground hover:text-foreground",
+              )}
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+
 
         <div className="flex gap-2">
           {(["all", "sell", "rent"] as Filter[]).map((f) => (
@@ -238,13 +279,29 @@ function Market() {
           ) : visible.length === 0 ? (
             <EmptyState
               title="Nothing here yet"
-              description="No listings match your search. Try another keyword or be the first to list something."
+              description={emptyMessage}
               action={
-                <Button asChild className="mt-2 rounded-full">
-                  <Link to="/sell">List an item</Link>
-                </Button>
+                <div className="mt-2 flex flex-wrap justify-center gap-2">
+                  <Button asChild className="rounded-full">
+                    <Link to="/sell">List an item</Link>
+                  </Button>
+                  {hasFilters && (
+                    <Button
+                      variant="outline"
+                      className="rounded-full"
+                      onClick={() => {
+                        setQuery("");
+                        setFilter("all");
+                        setCategory(null);
+                      }}
+                    >
+                      Clear filters
+                    </Button>
+                  )}
+                </div>
               }
             />
+
           ) : (
             <>
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
