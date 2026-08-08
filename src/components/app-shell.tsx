@@ -98,7 +98,8 @@ export function AppHeader({ title, actions = true }: { title?: string | undefine
               )}
             </Link>
           )}
-          
+          {actions && <ContactUsButton className="hidden sm:grid" />}
+
           {actions && (
             <>
               <button
