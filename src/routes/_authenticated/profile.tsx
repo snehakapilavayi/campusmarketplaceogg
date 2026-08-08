@@ -21,8 +21,15 @@ export const Route = createFileRoute("/_authenticated/profile")({
   component: ProfilePage,
 });
 
+const themeOptions: { value: ThemeMode; label: string; icon: typeof Sun }[] = [
+  { value: "light", label: "Light", icon: Sun },
+  { value: "dark", label: "Dark", icon: Moon },
+  { value: "system", label: "System", icon: Laptop },
+];
+
 function ProfilePage() {
   const { profile, userId, isAdmin, signOut } = useAuth();
+  const { mode, setMode } = useTheme();
 
 
 
