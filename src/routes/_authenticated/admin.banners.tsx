@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { Plus, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
-import { useAdminBanners, bannerState, type AdminBanner } from "@/lib/admin";
+import { logAdminAction, useAdminBanners, bannerState, type AdminBanner } from "@/lib/admin";
 import { EmptyState } from "@/components/brand";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,7 +43,7 @@ const emptyDraft = {
 };
 
 function AdminBanners() {
-  const { isAdmin } = useAuth();
+  const { isAdmin, userId } = useAuth();
   const queryClient = useQueryClient();
   const [filter, setFilter] = useState<Filter>("all");
   const [draft, setDraft] = useState(emptyDraft);
@@ -85,6 +85,7 @@ function AdminBanners() {
       toast.error(err.message);
       return;
     }
+    await logAdminAction(userId, "banner.created", draft.title.trim());
     setDraft(emptyDraft);
     setOpen(false);
     refresh();
@@ -97,6 +98,7 @@ function AdminBanners() {
       toast.error(err.message);
       return;
     }
+    await logAdminAction(userId, "banner.updated", `${id} · ${message}`);
     refresh();
     toast.success(message);
   }
@@ -107,6 +109,7 @@ function AdminBanners() {
       toast.error(err.message);
       return;
     }
+    await logAdminAction(userId, "banner.deleted", id);
     refresh();
     toast.success("Banner deleted");
   }
