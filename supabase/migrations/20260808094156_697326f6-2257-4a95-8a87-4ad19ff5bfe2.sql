@@ -1,0 +1,1 @@
+UPDATE public.app_settings SET value = jsonb_set(value, '{instagram_url}', '"https://www.instagram.com/swapspace.in/"') WHERE key = 'content' AND value ? 'instagram_url';
