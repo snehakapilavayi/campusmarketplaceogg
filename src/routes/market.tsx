@@ -156,6 +156,25 @@ function Market() {
           </Button>
         </div>
 
+        <div className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4">
+          {POPULAR_SEARCHES.map((s) => (
+            <button
+              key={s}
+              type="button"
+              onClick={() => setQuery(s)}
+              className={cn(
+                "shrink-0 rounded-full border px-3 py-1 text-xs font-medium transition-colors",
+                query === s
+                  ? "border-transparent bg-primary text-primary-foreground"
+                  : "border-border bg-card text-muted-foreground hover:text-foreground",
+              )}
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+
+
         <div className="flex gap-2">
           {(["all", "sell", "rent"] as Filter[]).map((f) => (
             <button
