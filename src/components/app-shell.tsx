@@ -98,7 +98,7 @@ export function AppHeader({ title, actions = true }: { title?: string | undefine
               )}
             </Link>
           )}
-          <ThemeToggle />
+          
           {actions && (
             <>
               <button
