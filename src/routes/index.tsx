@@ -182,7 +182,7 @@ function Landing() {
             aria-label="Follow SwapSpace on Instagram"
           >
             <Instagram className="h-3.5 w-3.5" />
-            @swapspace.07
+            @swapspace.in
           </a>
           <SupportNote label="Have queries? Reach out to" />
           <p>Campus-exclusive marketplace. Meet safely, on campus, in daylight.</p>
