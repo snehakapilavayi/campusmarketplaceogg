@@ -12,7 +12,7 @@ import { CommandPalette } from "@/components/command-palette";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAppSettings } from "@/lib/settings";
-import { SupportNote } from "@/components/support";
+import { SupportNote, ContactUsButton } from "@/components/support";
 
 export function AppHeader({ title, actions = true }: { title?: string | undefined; actions?: boolean }) {
   const { userId } = useAuth();
@@ -98,7 +98,8 @@ export function AppHeader({ title, actions = true }: { title?: string | undefine
               )}
             </Link>
           )}
-          
+          {actions && <ContactUsButton className="hidden sm:grid" />}
+
           {actions && (
             <>
               <button
