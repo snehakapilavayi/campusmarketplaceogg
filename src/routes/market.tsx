@@ -135,6 +135,16 @@ function Market() {
 
   const featured = visible.filter((l) => l.featured).slice(0, 8);
 
+  const hasFilters = !!term || filter !== "all" || !!category;
+  const activeCategory = categories.find((c) => c.id === category);
+  const emptyMessage = term
+    ? `No results for "${term}". Try another keyword or clear your filters.`
+    : activeCategory
+      ? (CATEGORY_EMPTY[(activeCategory.slug ?? activeCategory.name).toLowerCase()] ??
+        `No ${activeCategory.name.toLowerCase()} listed yet. Be the first to list one!`)
+      : "No listings match your search. Try another keyword or be the first to list something.";
+
+
 
   return (
     <AppShell>
