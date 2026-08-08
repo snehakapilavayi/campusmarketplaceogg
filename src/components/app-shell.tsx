@@ -203,14 +203,14 @@ function NavLink({
         preload="intent"
         className={cn(
           "relative flex min-h-11 min-w-0 flex-col items-center gap-1 px-0.5 py-2.5 text-[10px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:text-[11px]",
-          active ? "text-foreground" : "text-muted-foreground hover:text-foreground",
+          active ? "font-semibold text-primary" : "text-muted-foreground hover:text-foreground",
         )}
       >
         {active && (
           <motion.span
             layoutId="nav-pill"
             transition={reduce ? { duration: 0 } : springy}
-            className="absolute inset-x-2 top-1 -z-10 h-8 rounded-full bg-accent"
+            className="absolute inset-x-2 top-1 -z-10 h-8 rounded-full bg-primary/15 ring-1 ring-primary/30"
             aria-hidden
           />
         )}
@@ -220,6 +220,7 @@ function NavLink({
     </motion.div>
   );
 }
+
 
 export function AppShell({
   children,
