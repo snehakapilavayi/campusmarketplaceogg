@@ -12,6 +12,7 @@ import { CommandPalette } from "@/components/command-palette";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAppSettings } from "@/lib/settings";
+import { SupportNote } from "@/components/support";
 
 export function AppHeader({ title, actions = true }: { title?: string | undefined; actions?: boolean }) {
   const { userId } = useAuth();
@@ -250,6 +251,9 @@ export function AppShell({
         {header && <AppHeader title={title} actions={nav} />}
         <main className="mx-auto max-w-5xl px-3 sm:px-4">
           <PageTransition>{children}</PageTransition>
+          <footer className="mt-10 border-t border-border/70 py-6 text-center">
+            <SupportNote label="Have queries? Reach out to" />
+          </footer>
         </main>
       </div>
 
