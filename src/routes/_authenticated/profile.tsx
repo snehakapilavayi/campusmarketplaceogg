@@ -71,7 +71,7 @@ function ProfilePage() {
           {profile?.bio && <p className="mt-1 text-sm text-muted-foreground">{profile.bio}</p>}
 
           <div className="mt-3 flex items-center justify-center gap-2">
-            <CoinRating value={profile?.tomato_rating ?? 0} />
+            <CoinRating value={profile?.swapcoin_rating ?? 0} />
             {profile?.verification === "verified" && <VerifiedBadge compact />}
           </div>
           <p className="mt-1 text-[11px] font-medium uppercase tracking-wide text-muted-foreground">

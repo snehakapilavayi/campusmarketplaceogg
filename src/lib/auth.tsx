@@ -12,7 +12,7 @@ export type Profile = {
   account_type: string;
 
   verification: "pending" | "verified" | "rejected";
-  tomato_rating: number;
+  swapcoin_rating: number;
   transactions_count: number;
   profile_complete: boolean;
 };

@@ -14,7 +14,7 @@ import { ShareSheet } from "@/components/share-sheet";
 import { cn } from "@/lib/utils";
 
 
-const SITE = "https://swapspace.lovable.app";
+import { SITE } from "@/lib/site";
 
 export const Route = createFileRoute("/listing/$id")({
   head: ({ params }) => ({
@@ -49,7 +49,7 @@ function ListingDetail() {
       const { data } = await supabase
         .from("listings")
         .select(
-          "*,listing_images(url,sort_order),categories(name,icon),profiles(id,full_name,avatar_url,bio,tomato_rating,transactions_count,verification,campus)",
+          "*,listing_images(url,sort_order),categories(name,icon),profiles(id,full_name,avatar_url,swapcoin_rating,verification,campus)",
         )
         .eq("id", id)
         .maybeSingle();
@@ -57,13 +57,24 @@ function ListingDetail() {
     },
   });
 
-  const { data: reviews = [] } = useQuery({
-    queryKey: ["seller-reviews", listing?.seller_id],
+  // Public reputation summary — aggregates only, safe for signed-out visitors.
+  const { data: repStats } = useQuery({
+    queryKey: ["seller-rating-stats", listing?.seller_id],
     enabled: !!listing?.seller_id,
+    queryFn: async () => {
+      const { data } = await supabase.rpc("get_seller_rating_stats", { _seller: listing!.seller_id });
+      return data?.[0] ?? { avg_swapcoins: 0, review_count: 0 };
+    },
+  });
+
+  // Review text/identity is only readable by the people involved (RLS enforced).
+  const { data: reviews = [] } = useQuery({
+    queryKey: ["seller-reviews", listing?.seller_id, userId],
+    enabled: !!listing?.seller_id && !!userId,
     queryFn: async () => {
       const { data } = await supabase
         .from("ratings")
-        .select("id,tomatoes,review,created_at,reviewer_id")
+        .select("id,swapcoins,review,created_at,reviewer_id")
         .eq("reviewed_id", listing!.seller_id)
         .order("created_at", { ascending: false })
         .limit(3);
@@ -77,6 +88,7 @@ function ListingDetail() {
       return rows.map((r) => ({ ...r, reviewer_name: names.get(r.reviewer_id) ?? "Student" }));
     },
   });
+
 
   if (isLoading) {
     return <div className="min-h-screen animate-pulse bg-muted" />;
@@ -226,8 +238,11 @@ function ListingDetail() {
               <div className="min-w-0 flex-1">
                 <p className="truncate font-semibold">{seller.full_name}</p>
                 <div className="flex items-center gap-2">
-                  <CoinRating value={seller.tomato_rating} />
-                  <span className="text-xs text-muted-foreground">· {seller.transactions_count} swaps</span>
+                  <CoinRating value={Number(repStats?.avg_swapcoins ?? seller.swapcoin_rating) || 0} />
+                  <span className="text-xs text-muted-foreground">
+                    · {repStats?.review_count ?? 0} review{(repStats?.review_count ?? 0) === 1 ? "" : "s"}
+                  </span>
+
                 </div>
               </div>
               <div className="flex shrink-0 flex-col items-end gap-1">
@@ -240,7 +255,7 @@ function ListingDetail() {
                 {reviews.map((r) => (
                   <li key={r.id} className="text-sm">
                     <div className="flex items-center gap-2">
-                      <CoinRating value={r.tomatoes} showValue={false} className="text-[10px]" />
+                      <CoinRating value={r.swapcoins} showValue={false} className="text-[10px]" />
                       <span className="text-xs font-medium text-muted-foreground">
                         {r.reviewer_name}
                       </span>

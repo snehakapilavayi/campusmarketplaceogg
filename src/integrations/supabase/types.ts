@@ -220,20 +220,26 @@ export type Database = {
       }
       listing_images: {
         Row: {
+          flagged: boolean
           id: string
           listing_id: string
+          moderation_note: string | null
           sort_order: number
           url: string
         }
         Insert: {
+          flagged?: boolean
           id?: string
           listing_id: string
+          moderation_note?: string | null
           sort_order?: number
           url: string
         }
         Update: {
+          flagged?: boolean
           id?: string
           listing_id?: string
+          moderation_note?: string | null
           sort_order?: number
           url?: string
         }
@@ -252,6 +258,7 @@ export type Database = {
           available_from: string | null
           available_until: string | null
           badge: string | null
+          buyer_id: string | null
           category_id: string | null
           condition: Database["public"]["Enums"]["item_condition"]
           created_at: string
@@ -264,6 +271,7 @@ export type Database = {
           rent_period: Database["public"]["Enums"]["rent_period"] | null
           resubmit_by: string | null
           seller_id: string
+          sold_at: string | null
           status: Database["public"]["Enums"]["listing_status"]
           title: string
           type: Database["public"]["Enums"]["listing_type"]
@@ -273,6 +281,7 @@ export type Database = {
           available_from?: string | null
           available_until?: string | null
           badge?: string | null
+          buyer_id?: string | null
           category_id?: string | null
           condition?: Database["public"]["Enums"]["item_condition"]
           created_at?: string
@@ -285,6 +294,7 @@ export type Database = {
           rent_period?: Database["public"]["Enums"]["rent_period"] | null
           resubmit_by?: string | null
           seller_id: string
+          sold_at?: string | null
           status?: Database["public"]["Enums"]["listing_status"]
           title: string
           type?: Database["public"]["Enums"]["listing_type"]
@@ -294,6 +304,7 @@ export type Database = {
           available_from?: string | null
           available_until?: string | null
           badge?: string | null
+          buyer_id?: string | null
           category_id?: string | null
           condition?: Database["public"]["Enums"]["item_condition"]
           created_at?: string
@@ -306,6 +317,7 @@ export type Database = {
           rent_period?: Database["public"]["Enums"]["rent_period"] | null
           resubmit_by?: string | null
           seller_id?: string
+          sold_at?: string | null
           status?: Database["public"]["Enums"]["listing_status"]
           title?: string
           type?: Database["public"]["Enums"]["listing_type"]
@@ -403,11 +415,12 @@ export type Database = {
           bio: string | null
           campus: string | null
           created_at: string
+          email_prefs: Json
           full_name: string
           id: string
           profile_complete: boolean
           suspended: boolean
-          tomato_rating: number
+          swapcoin_rating: number
           transactions_count: number
           updated_at: string
           verification: Database["public"]["Enums"]["verification_status"]
@@ -418,11 +431,12 @@ export type Database = {
           bio?: string | null
           campus?: string | null
           created_at?: string
+          email_prefs?: Json
           full_name?: string
           id: string
           profile_complete?: boolean
           suspended?: boolean
-          tomato_rating?: number
+          swapcoin_rating?: number
           transactions_count?: number
           updated_at?: string
           verification?: Database["public"]["Enums"]["verification_status"]
@@ -433,11 +447,12 @@ export type Database = {
           bio?: string | null
           campus?: string | null
           created_at?: string
+          email_prefs?: Json
           full_name?: string
           id?: string
           profile_complete?: boolean
           suspended?: boolean
-          tomato_rating?: number
+          swapcoin_rating?: number
           transactions_count?: number
           updated_at?: string
           verification?: Database["public"]["Enums"]["verification_status"]
@@ -455,7 +470,7 @@ export type Database = {
           review: string | null
           reviewed_id: string
           reviewer_id: string
-          tomatoes: number
+          swapcoins: number
         }
         Insert: {
           accuracy?: number
@@ -467,7 +482,7 @@ export type Database = {
           review?: string | null
           reviewed_id: string
           reviewer_id: string
-          tomatoes?: number
+          swapcoins?: number
         }
         Update: {
           accuracy?: number
@@ -479,7 +494,7 @@ export type Database = {
           review?: string | null
           reviewed_id?: string
           reviewer_id?: string
-          tomatoes?: number
+          swapcoins?: number
         }
         Relationships: [
           {
@@ -591,6 +606,13 @@ export type Database = {
         Returns: {
           key: string
           value: Json
+        }[]
+      }
+      get_seller_rating_stats: {
+        Args: { _seller: string }
+        Returns: {
+          avg_swapcoins: number
+          review_count: number
         }[]
       }
       has_role: {

@@ -89,7 +89,7 @@ export function useAdminStudents(enabled: boolean) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("profiles")
-        .select("id,full_name,verification,tomato_rating,transactions_count,suspended,campus,created_at,account_type")
+        .select("id,full_name,verification,swapcoin_rating,transactions_count,suspended,campus,created_at,account_type")
         .order("created_at", { ascending: false })
         .limit(500);
       if (error) throw error;
@@ -127,12 +127,12 @@ export function useTrustSignals(enabled: boolean) {
 }
 
 export function riskReasons(
-  student: { tomato_rating: number | string; id: string },
+  student: { swapcoin_rating: number | string; id: string },
   signals: Map<string, RiskSignals> | undefined,
 ) {
   const s = signals?.get(student.id);
   const reasons: string[] = [];
-  if (s && s.ratings > 0 && Number(student.tomato_rating) < 3) reasons.push("Low rating");
+  if (s && s.ratings > 0 && Number(student.swapcoin_rating) < 3) reasons.push("Low rating");
   if (s && s.rejected >= 3) reasons.push(`${s.rejected} rejected listings`);
   if (s && s.reports >= 2) reasons.push(`${s.reports} reports`);
   return reasons;
