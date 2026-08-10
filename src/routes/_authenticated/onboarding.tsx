@@ -1,4 +1,5 @@
 import { Building2 } from "lucide-react";
+import { useCampuses } from "@/lib/campuses";
 import { useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
@@ -36,17 +37,7 @@ function Onboarding() {
   const [campus, setCampus] = useState(profile?.campus ?? "");
   const [busy, setBusy] = useState(false);
 
-  const { data: campuses = [] } = useQuery({
-    queryKey: ["campuses"],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("campuses")
-        .select("id,name")
-        .eq("active", true)
-        .order("sort_order");
-      return data ?? [];
-    },
-  });
+  const { data: campuses = [] } = useCampuses();
 
   async function finish() {
     if (fullName.trim().length < 2) {
