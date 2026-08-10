@@ -156,7 +156,7 @@ function MyListings() {
                           disabled={isExpired(l.resubmit_by)}
                           onClick={() => resubmit(l.id, l.resubmit_by)}
                         >
-                          Resubmit for review
+                          Publish again
                         </Button>
                       </div>
                     </div>
