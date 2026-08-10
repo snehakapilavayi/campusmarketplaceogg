@@ -131,7 +131,7 @@ function ListingDetail() {
         </Link>
         <div className="absolute right-4 top-4">
           <ShareSheet
-            url={typeof window !== "undefined" ? `${window.location.origin}/listing/${listing.id}` : `/listing/${listing.id}`}
+            url={`${SITE}/listing/${listing.id}`}
             title={listing.title}
           />
         </div>
