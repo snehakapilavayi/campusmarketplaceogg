@@ -181,10 +181,10 @@ function Landing() {
           <div className="relative z-10 flex flex-col items-center gap-6 px-8 py-12 text-center md:flex-row md:items-end md:px-14 md:pb-0 md:pt-14 md:text-left">
             <div className="max-w-lg md:pb-14">
               <h2 className="font-display text-3xl font-extrabold text-ink-foreground md:text-4xl">
-                That spare desk lamp in your hostel room? Someone needs it today.
+                Why buy it when someone on campus already has it?
               </h2>
               <p className="mt-3 text-sm text-ink-foreground/80">
-                List it in under a minute. Get a SwapCoins rating for every good swap.
+                Swap what you have for what you need — simple, local, student-to-student.
               </p>
               <Button asChild size="lg" className="mt-7 rounded-full px-7">
                 <Link to="/auth" search={{ mode: "signup" }}>
