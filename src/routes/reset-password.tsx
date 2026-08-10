@@ -62,12 +62,13 @@ function ResetPassword() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
               <Label htmlFor="pw">New password</Label>
-              <Input id="pw" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+              <PasswordInput id="pw" value={password} onChange={(e) => setPassword(e.target.value)} required />
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="pw2">Confirm password</Label>
-              <Input id="pw2" type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} required />
+              <PasswordInput id="pw2" value={confirm} onChange={(e) => setConfirm(e.target.value)} required />
             </div>
+
             <Button type="submit" size="lg" disabled={busy} className="w-full rounded-full">
               {busy ? "Updating…" : "Update password"}
             </Button>
