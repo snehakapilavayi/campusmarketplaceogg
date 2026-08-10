@@ -41,22 +41,12 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     const resolved: Theme = initialMode === "system" ? systemTheme() : initialMode;
     setModeState(initialMode);
     setTheme(resolved);
-    apply(resolved);
   }, []);
 
-  // Hydration (and any other code touching <html>) can strip the theme class.
-  // Watch the root element and re-apply whenever it drifts from state.
+  // Theme state is the single owner of the root class. A MutationObserver here
+  // can race a click with stale state and immediately undo the user's choice.
   useEffect(() => {
-    const root = document.documentElement;
     apply(theme);
-    const observer = new MutationObserver(() => {
-      const wantsDark = theme === "dark";
-      if (root.classList.contains("dark") !== wantsDark || root.style.colorScheme !== theme) {
-        apply(theme);
-      }
-    });
-    observer.observe(root, { attributes: true, attributeFilter: ["class", "style"] });
-    return () => observer.disconnect();
   }, [theme]);
 
 
@@ -67,7 +57,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     const onChange = () => {
       const next = systemTheme();
       setTheme(next);
-      apply(next);
     };
     mq.addEventListener("change", onChange);
     return () => mq.removeEventListener("change", onChange);
@@ -77,7 +66,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     setModeState(next);
     const resolved: Theme = next === "system" ? systemTheme() : next;
     setTheme(resolved);
-    apply(resolved);
     try {
       if (next === "system") localStorage.removeItem(STORAGE_KEY);
       else localStorage.setItem(STORAGE_KEY, next);
