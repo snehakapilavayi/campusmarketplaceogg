@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Plus, Trash2 } from "lucide-react";
+import { Pencil, Plus, Trash2, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { logAdminAction, useAdminBanners, bannerState, type AdminBanner } from "@/lib/admin";
@@ -49,6 +49,50 @@ function AdminBanners() {
   const [draft, setDraft] = useState(emptyDraft);
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editDraft, setEditDraft] = useState(emptyDraft);
+
+  function startEdit(b: AdminBanner) {
+    setEditingId(b.id);
+    setEditDraft({
+      title: b.title ?? "",
+      description: b.description ?? "",
+      image_url: b.image_url ?? "",
+      accent: b.accent ?? "",
+      campus: b.campus ?? "",
+      starts_at: b.starts_at ?? "",
+      ends_at: b.ends_at ?? "",
+    });
+  }
+
+  async function saveEdit(id: string) {
+    if (!editDraft.title.trim()) {
+      toast.error("Give the banner a title");
+      return;
+    }
+    setSaving(true);
+    const { error: err } = await supabase
+      .from("event_banners")
+      .update({
+        title: editDraft.title.trim(),
+        description: editDraft.description.trim() || null,
+        image_url: editDraft.image_url.trim() || null,
+        accent: editDraft.accent.trim() || null,
+        campus: editDraft.campus.trim() || null,
+        starts_at: editDraft.starts_at || null,
+        ends_at: editDraft.ends_at || null,
+      })
+      .eq("id", id);
+    setSaving(false);
+    if (err) {
+      toast.error(err.message);
+      return;
+    }
+    await logAdminAction(userId, "banner.updated", `${id} · edited`);
+    setEditingId(null);
+    refresh();
+    toast.success("Banner updated");
+  }
   const { data: banners = [], isLoading, error } = useAdminBanners(isAdmin);
 
   const list = (banners as AdminBanner[]).filter((b) => {
