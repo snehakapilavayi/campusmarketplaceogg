@@ -137,7 +137,10 @@ function AuthPage() {
       toast.success("Welcome back");
       navigate({ to: destination });
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Something went wrong");
+      const raw = err instanceof Error ? err.message : "Something went wrong";
+      const isWeak = /weak|pwned|compromis|breach|easy to guess|leaked/i.test(raw);
+      toast.error(isWeak ? "Couldn't create your account. Please try again." : raw);
+
     } finally {
       setBusy(false);
     }
