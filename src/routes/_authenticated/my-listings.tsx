@@ -109,6 +109,23 @@ function MyListings() {
 
   }
 
+  async function deleteListing() {
+    if (!pendingDelete) return;
+    setDeleting(true);
+    const { error } = await supabase.from("listings").delete().eq("id", pendingDelete.id);
+    setDeleting(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    setPendingDelete(null);
+    queryClient.invalidateQueries({ queryKey: ["my-listings"] });
+    queryClient.invalidateQueries({ queryKey: ["listings"] });
+    toast.success("Listing deleted");
+  }
+
+
+
   return (
     <AppShell title="My listings">
       <div className="space-y-3 pt-4">
