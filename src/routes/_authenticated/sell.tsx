@@ -182,7 +182,7 @@ function SellPage() {
         deposit: type === "rent" ? (parsed.data.deposit ?? 0) : null,
         condition: condition as (typeof conditions)[number]["value"],
         category_id: categoryId,
-        status: "pending",
+        status: "approved",
       })
       .select("id")
       .single();
@@ -201,9 +201,10 @@ function SellPage() {
 
     setBusy(false);
     queryClient.invalidateQueries({ queryKey: ["my-listings"] });
+    queryClient.invalidateQueries({ queryKey: ["listings"] });
     celebrate();
     haptic([10, 40, 10]);
-    toast.success("Listing submitted — admin review is usually quick");
+    toast.success("Your listing is live 🎉");
     navigate({ to: "/my-listings" });
 
   }
@@ -431,7 +432,7 @@ function SellPage() {
         </div>
 
         <Button type="submit" size="lg" disabled={busy || uploading} className="w-full rounded-full">
-          {busy ? "Submitting…" : "Submit for review"}
+          {busy ? "Publishing…" : "Publish listing"}
         </Button>
       </form>
     </AppShell>
