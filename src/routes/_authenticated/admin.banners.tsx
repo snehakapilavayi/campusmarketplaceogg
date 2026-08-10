@@ -268,70 +268,149 @@ function AdminBanners() {
       ) : (
         list.map((b) => {
           const state = bannerState(b);
+          const editing = editingId === b.id;
           return (
             <div key={b.id} className="rounded-2xl border border-border bg-card p-4">
-              <div className="flex items-start justify-between gap-2">
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold">{b.title}</p>
-                  {b.description && (
-                    <p className="mt-0.5 line-clamp-2 text-sm text-muted-foreground">{b.description}</p>
-                  )}
+              {editing ? (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="text-sm font-semibold">Edit banner</p>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="h-8 rounded-full"
+                      onClick={() => setEditingId(null)}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor={`e-title-${b.id}`}>Title</Label>
+                    <Input
+                      id={`e-title-${b.id}`}
+                      value={editDraft.title}
+                      onChange={(e) => setEditDraft({ ...editDraft, title: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor={`e-desc-${b.id}`}>Description</Label>
+                    <Textarea
+                      id={`e-desc-${b.id}`}
+                      rows={2}
+                      value={editDraft.description}
+                      onChange={(e) => setEditDraft({ ...editDraft, description: e.target.value })}
+                    />
+                  </div>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <div className="space-y-1.5">
+                      <Label htmlFor={`e-campus-${b.id}`}>Campus</Label>
+                      <Input
+                        id={`e-campus-${b.id}`}
+                        value={editDraft.campus}
+                        onChange={(e) => setEditDraft({ ...editDraft, campus: e.target.value })}
+                        placeholder="Leave empty for all campuses"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor={`e-accent-${b.id}`}>Accent colour</Label>
+                      <Input
+                        id={`e-accent-${b.id}`}
+                        value={editDraft.accent}
+                        onChange={(e) => setEditDraft({ ...editDraft, accent: e.target.value })}
+                        placeholder="#E8A317"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor={`e-start-${b.id}`}>Starts on</Label>
+                      <Input
+                        id={`e-start-${b.id}`}
+                        type="date"
+                        value={editDraft.starts_at}
+                        onChange={(e) => setEditDraft({ ...editDraft, starts_at: e.target.value })}
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor={`e-end-${b.id}`}>Ends on</Label>
+                      <Input
+                        id={`e-end-${b.id}`}
+                        type="date"
+                        value={editDraft.ends_at}
+                        onChange={(e) => setEditDraft({ ...editDraft, ends_at: e.target.value })}
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor={`e-image-${b.id}`}>Image URL</Label>
+                    <Input
+                      id={`e-image-${b.id}`}
+                      value={editDraft.image_url}
+                      onChange={(e) => setEditDraft({ ...editDraft, image_url: e.target.value })}
+                      placeholder="https://…"
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <Button className="flex-1 rounded-full" disabled={saving} onClick={() => saveEdit(b.id)}>
+                      {saving ? "Saving…" : "Save changes"}
+                    </Button>
+                    <Button variant="outline" className="rounded-full" onClick={() => setEditingId(null)}>
+                      Cancel
+                    </Button>
+                  </div>
                 </div>
-                <span
-                  className={cn(
-                    "shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase",
-                    STATE_TONE[state],
-                  )}
-                >
-                  {state}
-                </span>
-              </div>
-              <p className="mt-2 text-[11px] text-muted-foreground">
-                {b.campus ? `Campus: ${b.campus}` : "All campuses"} ·{" "}
-                {b.starts_at ? `from ${b.starts_at}` : "no start date"} ·{" "}
-                {b.ends_at ? `until ${b.ends_at}` : "no end date"}
-              </p>
-              <div className="mt-3 flex flex-wrap items-center gap-2">
-                <Button
-                  size="sm"
-                  variant={b.active ? "outline" : "default"}
-                  className="h-8 rounded-full"
-                  onClick={() =>
-                    patch(b.id, { active: !b.active }, b.active ? "Banner unpublished" : "Banner published")
-                  }
-                >
-                  {b.active ? "Unpublish" : "Publish"}
-                </Button>
-                <Input
-                  type="date"
-                  value={b.starts_at ?? ""}
-                  onChange={(e) => patch(b.id, { starts_at: e.target.value || null }, "Schedule updated")}
-                  className="h-8 w-36 rounded-full text-xs"
-                  aria-label={`Start date for ${b.title}`}
-                />
-                <Input
-                  type="date"
-                  value={b.ends_at ?? ""}
-                  onChange={(e) => patch(b.id, { ends_at: e.target.value || null }, "Schedule updated")}
-                  className="h-8 w-36 rounded-full text-xs"
-                  aria-label={`End date for ${b.title}`}
-                />
-                <Input
-                  value={b.campus ?? ""}
-                  onChange={(e) => patch(b.id, { campus: e.target.value.trim() || null }, "Campus updated")}
-                  placeholder="All campuses"
-                  className="h-8 w-40 rounded-full text-xs"
-                  aria-label={`Campus for ${b.title}`}
-                />
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="h-8 rounded-full text-destructive"
-                  onClick={() => remove(b.id)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
+              ) : (
+                <>
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-semibold">{b.title}</p>
+                      {b.description && (
+                        <p className="mt-0.5 line-clamp-2 text-sm text-muted-foreground">{b.description}</p>
+                      )}
+                    </div>
+                    <span
+                      className={cn(
+                        "shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase",
+                        STATE_TONE[state],
+                      )}
+                    >
+                      {state}
+                    </span>
+                  </div>
+                  <p className="mt-2 text-[11px] text-muted-foreground">
+                    {b.campus ? `Campus: ${b.campus}` : "All campuses"} ·{" "}
+                    {b.starts_at ? `from ${b.starts_at}` : "no start date"} ·{" "}
+                    {b.ends_at ? `until ${b.ends_at}` : "no end date"}
+                  </p>
+                  <div className="mt-3 flex flex-wrap items-center gap-2">
+                    <Button
+                      size="sm"
+                      variant={b.active ? "outline" : "default"}
+                      className="h-8 rounded-full"
+                      onClick={() =>
+                        patch(b.id, { active: !b.active }, b.active ? "Banner unpublished" : "Banner published")
+                      }
+                    >
+                      {b.active ? "Unpublish" : "Publish"}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-8 rounded-full"
+                      onClick={() => startEdit(b)}
+                    >
+                      <Pencil className="mr-1 h-3.5 w-3.5" />
+                      Edit
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="h-8 rounded-full text-destructive"
+                      onClick={() => remove(b.id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </>
+              )}
             </div>
           );
         })
