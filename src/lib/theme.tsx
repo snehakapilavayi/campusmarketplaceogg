@@ -42,10 +42,23 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     setModeState(initialMode);
     setTheme(resolved);
     apply(resolved);
-    // Re-apply after hydration finishes patching <html> attributes.
-    const raf = requestAnimationFrame(() => apply(resolved));
-    return () => cancelAnimationFrame(raf);
   }, []);
+
+  // Hydration (and any other code touching <html>) can strip the theme class.
+  // Watch the root element and re-apply whenever it drifts from state.
+  useEffect(() => {
+    const root = document.documentElement;
+    apply(theme);
+    const observer = new MutationObserver(() => {
+      const wantsDark = theme === "dark";
+      if (root.classList.contains("dark") !== wantsDark || root.style.colorScheme !== theme) {
+        apply(theme);
+      }
+    });
+    observer.observe(root, { attributes: true, attributeFilter: ["class", "style"] });
+    return () => observer.disconnect();
+  }, [theme]);
+
 
   // Follow the OS when in system mode.
   useEffect(() => {
