@@ -217,13 +217,13 @@ function Landing() {
           <p className="flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1">
             <span>© 2026 Campus Marketplace · Made for Students, by Students</span>
             <span aria-hidden>·</span>
-            <Link to="/privacy" className="text-muted-foreground underline-offset-2 hover:underline">
+            <a href="#" className="text-muted-foreground underline-offset-2 hover:underline">
               Privacy
-            </Link>
+            </a>
             <span aria-hidden>·</span>
-            <Link to="/terms" className="text-muted-foreground underline-offset-2 hover:underline">
+            <a href="#" className="text-muted-foreground underline-offset-2 hover:underline">
               Terms
-            </Link>
+            </a>
             <span aria-hidden>·</span>
             <a
               href={SUPPORT_MAILTO}
