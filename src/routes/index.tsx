@@ -204,9 +204,6 @@ function Landing() {
       <footer className="border-t border-border">
         <div className="mx-auto flex max-w-6xl flex-col items-center gap-3 px-5 py-8 text-center text-xs text-muted-foreground">
           <Logo size={24} />
-          <Link to="/how-it-works" className="font-semibold text-foreground hover:text-primary">
-            How SwapSpace works
-          </Link>
           <a
             href={content.instagram_url}
             target="_blank"
@@ -217,8 +214,25 @@ function Landing() {
             <Instagram className="h-3.5 w-3.5" />
             @swapspace.in
           </a>
-          <SupportNote label="Have queries? Reach out to" />
-          <p>Campus-exclusive marketplace. Meet safely, on campus, in daylight.</p>
+          <p className="flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1">
+            <span>© 2026 Campus Marketplace · Made for Students, by Students</span>
+            <span aria-hidden>·</span>
+            <Link to="/privacy" className="text-muted-foreground underline-offset-2 hover:underline">
+              Privacy
+            </Link>
+            <span aria-hidden>·</span>
+            <Link to="/terms" className="text-muted-foreground underline-offset-2 hover:underline">
+              Terms
+            </Link>
+            <span aria-hidden>·</span>
+            <a
+              href={SUPPORT_MAILTO}
+              className="text-muted-foreground underline-offset-2 hover:underline"
+            >
+              Contact Us
+            </a>
+          </p>
+          <SupportLink />
         </div>
       </footer>
     </div>
