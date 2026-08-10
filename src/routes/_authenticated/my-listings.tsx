@@ -59,6 +59,9 @@ function deadlineNote(deadline: string | null) {
 function MyListings() {
   const { userId } = useAuth();
   const queryClient = useQueryClient();
+  const [pendingDelete, setPendingDelete] = useState<{ id: string; title: string } | null>(null);
+  const [deleting, setDeleting] = useState(false);
+
 
   const { data: listings = [], isLoading } = useQuery({
     queryKey: ["my-listings", userId],
