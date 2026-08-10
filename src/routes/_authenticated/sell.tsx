@@ -432,7 +432,7 @@ function SellPage() {
         </div>
 
         <Button type="submit" size="lg" disabled={busy || uploading} className="w-full rounded-full">
-          {busy ? "Submitting…" : "Submit for review"}
+          {busy ? "Publishing…" : "Publish listing"}
         </Button>
       </form>
     </AppShell>
