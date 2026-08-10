@@ -53,6 +53,7 @@ const appearanceOptions: { value: ThemeMode; label: string; icon: typeof Sun }[]
 
 function SettingsPage() {
   const { profile, signOut } = useAuth();
+  const { data: campuses = [] } = useCampuses();
   const { mode, setMode } = useTheme();
   const navigate = useNavigate();
   const removeAccount = useServerFn(deleteOwnAccount);
