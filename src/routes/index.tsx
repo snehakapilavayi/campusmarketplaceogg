@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Instagram, Recycle, ShieldCheck, Wallet } from "lucide-react";
 import { Logo, Mascot } from "@/components/brand";
-import { SupportNote } from "@/components/support";
+import { SUPPORT_MAILTO, SupportLink } from "@/components/support";
 import { Button } from "@/components/ui/button";
 import { useAppSettings } from "@/lib/settings";
 
