@@ -68,14 +68,15 @@ function MyListings() {
     }
     const { error } = await supabase
       .from("listings")
-      .update({ status: "pending", rejection_reason: null, resubmit_by: null })
+      .update({ status: "approved", rejection_reason: null, resubmit_by: null })
       .eq("id", id);
     if (error) {
       toast.error(error.message);
       return;
     }
     queryClient.invalidateQueries({ queryKey: ["my-listings"] });
-    toast.success("Sent back for review");
+    queryClient.invalidateQueries({ queryKey: ["listings"] });
+    toast.success("Listing is live again 🎉");
   }
 
   async function updateStatus(id: string, status: "completed" | "archived") {
