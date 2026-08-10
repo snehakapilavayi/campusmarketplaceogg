@@ -116,7 +116,7 @@ function ListingDetail() {
       requireAccount("login");
       return;
     }
-    wishlist.toggle(listing.id);
+    wishlist.toggle(id);
   }
 
   function handleCart() {
@@ -124,7 +124,7 @@ function ListingDetail() {
       requireAccount("login");
       return;
     }
-    cart.toggle(listing.id);
+    cart.toggle(id);
   }
 
   return (
