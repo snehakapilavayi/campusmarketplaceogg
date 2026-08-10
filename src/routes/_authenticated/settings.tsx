@@ -9,7 +9,7 @@ import { useTheme, type ThemeMode } from "@/lib/theme";
 import { deleteOwnAccount } from "@/lib/account.functions";
 import { AppShell } from "@/components/app-shell";
 import { CampusBadge } from "@/components/brand";
-import { SUPPORT_EMAIL, SupportLink } from "@/components/support";
+import { SUPPORT_MAILTO } from "@/components/support";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
