@@ -193,27 +193,63 @@ function MyListings() {
                       </div>
                     </div>
                   )}
-                  {(l.status === "approved" || l.status === "pending") && (
-                    <div className="mt-2 flex gap-2">
-                      <Button size="sm" variant="outline" className="h-8 rounded-full" onClick={() => updateStatus(l.id, "completed")}>
-                        Mark sold
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="h-8 rounded-full text-muted-foreground"
-                        onClick={() => updateStatus(l.id, "archived")}
-                      >
-                        Archive
-                      </Button>
-                    </div>
-                  )}
+                  <div className="mt-2 flex flex-wrap items-center gap-2">
+                    {(l.status === "approved" || l.status === "pending") && (
+                      <>
+                        <Button size="sm" variant="outline" className="h-8 rounded-full" onClick={() => updateStatus(l.id, "completed")}>
+                          Mark sold
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-8 rounded-full text-muted-foreground"
+                          onClick={() => updateStatus(l.id, "archived")}
+                        >
+                          Archive
+                        </Button>
+                      </>
+                    )}
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="h-8 rounded-full text-destructive hover:bg-destructive/10 hover:text-destructive"
+                      onClick={() => setPendingDelete({ id: l.id, title: l.title })}
+                    >
+                      <Trash2 className="mr-1.5 h-3.5 w-3.5" /> Delete
+                    </Button>
+                  </div>
                 </div>
               </div>
             );
           })
         )}
       </div>
+
+      <AlertDialog open={!!pendingDelete} onOpenChange={(open) => !open && setPendingDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete this listing?</AlertDialogTitle>
+            <AlertDialogDescription>
+              “{pendingDelete?.title}” will be removed from SwapSpace for good, along with its photos, saves and
+              cart entries. This can't be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleting}>Keep it</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={deleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={(e) => {
+                e.preventDefault();
+                deleteListing();
+              }}
+            >
+              {deleting ? "Deleting…" : "Delete listing"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </AppShell>
+
   );
 }
