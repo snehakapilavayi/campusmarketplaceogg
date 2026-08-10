@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Save } from "lucide-react";
+import { ArrowDown, ArrowUp, Building2, Plus, Save, Trash2 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import {
   useAppSettings,
@@ -16,6 +16,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import { useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useCampuses } from "@/lib/campuses";
+import { logAdminAction } from "@/lib/admin";
 
 export const Route = createFileRoute("/_authenticated/admin/settings")({
   head: () => ({
@@ -195,6 +199,8 @@ function AdminSettingsPage() {
         </Field>
       </Card>
 
+      <CampusesCard adminId={userId} />
+
       <Card
         title="Moderation"
         saving={saving === "moderation"}
@@ -247,6 +253,118 @@ function Card({
         </Button>
       </div>
       <div className="space-y-4">{children}</div>
+    </section>
+  );
+}
+
+function CampusesCard({ adminId }: { adminId: string | null }) {
+  const { data: campuses = [], refetch } = useCampuses(true);
+  const queryClient = useQueryClient();
+  const [name, setName] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  async function run(action: string, target: string, fn: () => Promise<{ error: unknown }>) {
+    setBusy(true);
+    try {
+      const { error } = await fn();
+      if (error) throw new Error((error as { message: string }).message);
+      await logAdminAction(adminId, action, target);
+      await refetch();
+      await queryClient.invalidateQueries({ queryKey: ["campuses"] });
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function move(index: number, dir: -1 | 1) {
+    const a = campuses[index];
+    const b = campuses[index + dir];
+    if (!a || !b) return;
+    await run("campus.reordered", a.name, async () => {
+      const r1 = await supabase.from("campuses").update({ sort_order: b.sort_order }).eq("id", a.id);
+      if (r1.error) return r1;
+      return supabase.from("campuses").update({ sort_order: a.sort_order }).eq("id", b.id);
+    });
+  }
+
+  return (
+    <section className="rounded-2xl border border-border bg-card p-5">
+      <h2 className="mb-4 flex items-center gap-2 font-display text-base font-bold">
+        <Building2 className="h-4 w-4 text-primary" aria-hidden /> Campuses
+      </h2>
+
+      <div className="space-y-2">
+        {campuses.map((c, i) => (
+          <div key={c.id} className="flex items-center gap-2 rounded-xl border border-border px-3 py-2">
+            <Input
+              defaultValue={c.name}
+              className="h-9 border-0 bg-transparent px-0 text-sm font-medium shadow-none focus-visible:ring-0"
+              onBlur={(e) => {
+                const next = e.target.value.trim();
+                if (!next || next === c.name) return;
+                void run("campus.renamed", next, () =>
+                  supabase.from("campuses").update({ name: next }).eq("id", c.id),
+                );
+              }}
+              aria-label={`Campus name for ${c.name}`}
+            />
+            <Switch
+              checked={c.active}
+              disabled={busy}
+              onCheckedChange={(v) =>
+                void run(v ? "campus.activated" : "campus.deactivated", c.name, () =>
+                  supabase.from("campuses").update({ active: v }).eq("id", c.id),
+                )
+              }
+              aria-label={`Toggle ${c.name}`}
+            />
+            <Button size="icon" variant="ghost" disabled={busy || i === 0} onClick={() => void move(i, -1)} aria-label="Move up">
+              <ArrowUp className="h-4 w-4" />
+            </Button>
+            <Button
+              size="icon"
+              variant="ghost"
+              disabled={busy || i === campuses.length - 1}
+              onClick={() => void move(i, 1)}
+              aria-label="Move down"
+            >
+              <ArrowDown className="h-4 w-4" />
+            </Button>
+            <Button
+              size="icon"
+              variant="ghost"
+              disabled={busy}
+              onClick={() =>
+                void run("campus.deleted", c.name, () => supabase.from("campuses").delete().eq("id", c.id))
+              }
+              aria-label={`Delete ${c.name}`}
+            >
+              <Trash2 className="h-4 w-4 text-destructive" />
+            </Button>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-4 flex gap-2">
+        <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Add a campus" />
+        <Button
+          className="shrink-0 rounded-full"
+          disabled={busy || !name.trim()}
+          onClick={() =>
+            void run("campus.added", name.trim(), async () => {
+              const res = await supabase
+                .from("campuses")
+                .insert({ name: name.trim(), sort_order: campuses.length });
+              if (!res.error) setName("");
+              return res;
+            })
+          }
+        >
+          <Plus className="mr-1.5 h-4 w-4" /> Add
+        </Button>
+      </div>
     </section>
   );
 }
