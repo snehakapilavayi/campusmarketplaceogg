@@ -123,12 +123,15 @@ function Onboarding() {
                 <Input id="fullName" value={fullName} onChange={(e) => setFullName(e.target.value)} maxLength={80} />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="campus">Select campus</Label>
+                <Label htmlFor="campus" className="flex items-center gap-1.5">
+                  <Building2 className="h-4 w-4 text-primary" aria-hidden />
+                  Select campus
+                </Label>
                 <Select value={campus} onValueChange={setCampus}>
-                  <SelectTrigger id="campus">
+                  <SelectTrigger id="campus" className="h-12 rounded-2xl border-border bg-background px-4">
                     <SelectValue placeholder="Select campus" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="rounded-2xl">
                     {campuses.map((c) => (
                       <SelectItem key={c.id} value={c.name}>
                         {c.name}
@@ -136,7 +139,9 @@ function Onboarding() {
                     ))}
                   </SelectContent>
                 </Select>
+                <p className="text-xs text-muted-foreground">More campuses coming soon.</p>
               </div>
+
               <div className="space-y-1.5">
                 <Label htmlFor="bio">Short bio</Label>
                 <Textarea
