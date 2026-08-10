@@ -215,18 +215,20 @@ function Market() {
         </div>
 
         {banner && (
-          <div className="relative rounded-3xl bg-secondary px-6 py-6 pr-28 text-secondary-foreground">
-            <div className="max-w-[70%]">
-              <p className="text-[11px] font-bold uppercase tracking-widest text-primary">Campus event</p>
-              <h2 className="mt-1 font-display text-xl font-extrabold">{banner.title}</h2>
-              {banner.description && (
-                <p className="mt-1 text-sm text-secondary-foreground/80">{banner.description}</p>
-              )}
+          <div className="relative overflow-hidden rounded-3xl bg-secondary px-6 py-6 text-secondary-foreground">
+            <div className="flex items-center gap-4">
+              <div className="min-w-0 flex-1">
+                <p className="text-[11px] font-bold uppercase tracking-widest text-primary">Campus event</p>
+                <h2 className="mt-1 font-display text-xl font-extrabold">{banner.title}</h2>
+                {banner.description && (
+                  <p className="mt-1 text-sm text-secondary-foreground/80">{banner.description}</p>
+                )}
+              </div>
+              <Mascot variant="point" size="sm" className="hidden shrink-0 self-end sm:block" alt="" />
             </div>
-            <Mascot variant="point" size="sm" className="absolute bottom-2 right-2" alt="" />
-
           </div>
         )}
+
 
         <Reveal>
           <section>
