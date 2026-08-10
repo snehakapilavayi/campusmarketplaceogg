@@ -272,9 +272,8 @@ function AuthPage() {
 
         {mode === "signup" && (
           <Field label="Confirm password" htmlFor="confirm" error={errors.confirm}>
-            <Input
+            <PasswordInput
               id="confirm"
-              type={showPassword ? "text" : "password"}
               value={confirm}
               onChange={(e) => {
                 setConfirm(e.target.value);
@@ -284,6 +283,7 @@ function AuthPage() {
               autoComplete="new-password"
               aria-invalid={!!errors.confirm}
             />
+
           </Field>
         )}
 
