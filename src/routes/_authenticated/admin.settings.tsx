@@ -85,13 +85,31 @@ function AdminSettingsPage() {
         <Field label="Tagline">
           <Input value={general.tagline} onChange={(e) => setGeneral({ ...general, tagline: e.target.value })} />
         </Field>
-        <Field label="Allowed college email domain">
+        <Field label="Allowed college email domains (comma separated)">
           <Input
-            value={general.allowed_email_domain}
-            onChange={(e) => setGeneral({ ...general, allowed_email_domain: e.target.value.trim() })}
-            placeholder="vishnu.edu.in"
+            value={general.allowed_email_domains.join(", ")}
+            onChange={(e) =>
+              setGeneral({
+                ...general,
+                allowed_email_domains: e.target.value.split(",").map((d) => d.trim().replace(/^@/, "")).filter(Boolean),
+              })
+            }
+            placeholder="edu.in"
           />
         </Field>
+        <Field label="Fresher domains (manually verified)">
+          <Input
+            value={general.fresher_domains.join(", ")}
+            onChange={(e) =>
+              setGeneral({
+                ...general,
+                fresher_domains: e.target.value.split(",").map((d) => d.trim().replace(/^@/, "")).filter(Boolean),
+              })
+            }
+            placeholder="gmail.com"
+          />
+        </Field>
+
         <Toggle
           label="Signups open"
           hint="Turn off to stop new student registrations."
@@ -148,7 +166,16 @@ function AdminSettingsPage() {
               onChange={(e) => setLimits({ ...limits, max_price: Number(e.target.value) })}
             />
           </Field>
+          <Field label="Listings allowed for unapproved freshers">
+            <Input
+              type="number"
+              min={0}
+              value={limits.fresher_max_listings}
+              onChange={(e) => setLimits({ ...limits, fresher_max_listings: Number(e.target.value) })}
+            />
+          </Field>
         </div>
+
       </Card>
 
       <Card title="Homepage & footer content" saving={saving === "content"} onSave={() => void persist("content", content)}>

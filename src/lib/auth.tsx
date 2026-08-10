@@ -9,6 +9,7 @@ export type Profile = {
   avatar_url: string | null;
   bio: string | null;
   campus: string | null;
+  account_type: string;
 
   verification: "pending" | "verified" | "rejected";
   tomato_rating: number;

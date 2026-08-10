@@ -17,7 +17,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useAuth } from "@/lib/auth";
-import { campusOptions, logAdminActions, riskReasons, useAdminStudents, useTrustSignals } from "@/lib/admin";
+import { campusOptions, logAdminActions, notifyUsers, riskReasons, useAdminStudents, useTrustSignals } from "@/lib/admin";
 import { downloadCsv } from "@/lib/csv";
 import type { Database } from "@/integrations/supabase/types";
 import { EmptyState, SwapCoin } from "@/components/brand";
@@ -32,9 +32,10 @@ export const Route = createFileRoute("/_authenticated/admin/students")({
   component: AdminStudents,
 });
 
-type Tab = "all" | "pending" | "verified" | "suspended" | "flagged";
+type Tab = "all" | "freshers" | "pending" | "verified" | "suspended" | "flagged";
 const TABS: { value: Tab; label: string }[] = [
   { value: "all", label: "All" },
+  { value: "freshers", label: "Freshers" },
   { value: "pending", label: "Unverified" },
   { value: "verified", label: "Verified" },
   { value: "suspended", label: "Suspended" },
@@ -59,6 +60,7 @@ function AdminStudents() {
       students.filter((s) => {
         if (!s.full_name.toLowerCase().includes(q.trim().toLowerCase())) return false;
         if (campus !== "all" && s.campus !== campus) return false;
+        if (tab === "freshers") return s.account_type === "fresher" && s.verification === "pending";
         if (tab === "pending") return s.verification === "pending";
         if (tab === "verified") return s.verification === "verified";
         if (tab === "suspended") return s.suspended;
@@ -80,6 +82,19 @@ function AdminStudents() {
       return;
     }
     await logAdminActions(userId, action, ids);
+    if (action === "student.verified" || action === "student.rejected") {
+      const approved = action === "student.verified";
+      await notifyUsers(
+        ids.map((id) => ({
+          userId: id,
+          title: approved ? "Your account is verified" : "Account verification declined",
+          message: approved
+            ? "You're all set — your listings can now go live on SwapSpace."
+            : "We couldn't verify your account. Reply to our support email if you think this is a mistake.",
+          icon: approved ? "check" : "alert",
+        })),
+      );
+    }
     queryClient.invalidateQueries({ queryKey: ["admin-students"] });
     queryClient.invalidateQueries({ queryKey: ["admin-stats"] });
     queryClient.invalidateQueries({ queryKey: ["admin-logs"] });
@@ -146,6 +161,8 @@ function AdminStudents() {
           description={
             tab === "flagged"
               ? "Nobody is showing low ratings, repeated rejections or multiple reports."
+              : tab === "freshers"
+              ? "No fresher accounts are waiting for approval."
               : "Try another search, tab or campus."
           }
         />
@@ -181,6 +198,11 @@ function AdminStudents() {
                       {s.verification === "verified" && (
                         <span className="rounded-full bg-success/15 px-2 py-0.5 text-[10px] font-semibold text-success">
                           verified
+                        </span>
+                      )}
+                      {s.account_type === "fresher" && (
+                        <span className="rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-semibold text-foreground">
+                          fresher
                         </span>
                       )}
                       {s.suspended && (

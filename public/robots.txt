@@ -13,4 +13,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://college-swap-link.lovable.app/sitemap.xml
+Sitemap: https://swapspace.lovable.app/sitemap.xml

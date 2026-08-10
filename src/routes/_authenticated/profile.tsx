@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { useTheme, type ThemeMode } from "@/lib/theme";
 import { AppShell } from "@/components/app-shell";
-import { CampusBadge, CoinRating, VerifiedBadge } from "@/components/brand";
+import { CoinRating, VerifiedBadge } from "@/components/brand";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -66,7 +66,7 @@ function ProfilePage() {
           </div>
           <h1 className="mt-3 font-display text-xl font-extrabold">{profile?.full_name ?? "Student"}</h1>
           <div className="mt-2 flex justify-center">
-            <CampusBadge campus={profile?.campus ?? "VITB"} />
+            <VerifiedBadge />
           </div>
           {profile?.bio && <p className="mt-1 text-sm text-muted-foreground">{profile.bio}</p>}
 

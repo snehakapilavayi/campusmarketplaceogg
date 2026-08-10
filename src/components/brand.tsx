@@ -212,13 +212,13 @@ export function VerifiedBadge({ compact = false }: { compact?: boolean }) {
       <svg viewBox="0 0 24 24" className="h-3 w-3 fill-primary" aria-hidden>
         <path d="M12 2l2.4 1.8 3-.2.9 2.9 2.4 1.8-1.2 2.7 1.2 2.7-2.4 1.8-.9 2.9-3-.2L12 22l-2.4-1.8-3 .2-.9-2.9L3.3 15.7 4.5 13 3.3 10.3l2.4-1.8.9-2.9 3 .2z" />
       </svg>
-      {compact ? "Verified" : "Vishnu Student Verified"}
+      {compact ? "Verified" : "Verified student"}
     </span>
   );
 }
 
 export function CampusBadge({
-  campus = "VITB",
+  campus = "Campus",
   className,
 }: {
   campus?: string | null;
@@ -234,7 +234,7 @@ export function CampusBadge({
       <svg viewBox="0 0 24 24" className="h-3 w-3 fill-primary" aria-hidden>
         <path d="M12 3l9 4.5-9 4.5-9-4.5L12 3zm7 8.2V16c0 1.7-3.1 3-7 3s-7-1.3-7-3v-4.8l7 3.5 7-3.5z" />
       </svg>
-      {campus?.trim() ? campus : "VITB"}
+      {campus?.trim() ? campus : "Campus"}
     </span>
   );
 }

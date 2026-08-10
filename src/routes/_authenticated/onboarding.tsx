@@ -10,6 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useQuery } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/_authenticated/onboarding")({
   head: () => ({
@@ -32,6 +34,18 @@ function Onboarding() {
   const [bio, setBio] = useState(profile?.bio ?? "");
   const [campus, setCampus] = useState(profile?.campus ?? "");
   const [busy, setBusy] = useState(false);
+
+  const { data: campuses = [] } = useQuery({
+    queryKey: ["campuses"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("campuses")
+        .select("id,name")
+        .eq("active", true)
+        .order("sort_order");
+      return data ?? [];
+    },
+  });
 
   async function finish() {
     if (fullName.trim().length < 2) {
@@ -109,14 +123,19 @@ function Onboarding() {
                 <Input id="fullName" value={fullName} onChange={(e) => setFullName(e.target.value)} maxLength={80} />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="campus">Campus</Label>
-                <Input
-                  id="campus"
-                  value={campus}
-                  onChange={(e) => setCampus(e.target.value)}
-                  maxLength={60}
-                  placeholder="Vishnu Institute of Technology"
-                />
+                <Label htmlFor="campus">Select campus</Label>
+                <Select value={campus} onValueChange={setCampus}>
+                  <SelectTrigger id="campus">
+                    <SelectValue placeholder="Select campus" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {campuses.map((c) => (
+                      <SelectItem key={c.id} value={c.name}>
+                        {c.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="bio">Short bio</Label>

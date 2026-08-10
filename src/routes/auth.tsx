@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { useAppSettings } from "@/lib/settings";
+import { classifyEmail, normalizeDomains, useAppSettings, type GeneralSettings } from "@/lib/settings";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { Logo, Mascot } from "@/components/brand";
@@ -13,37 +13,41 @@ import { Label } from "@/components/ui/label";
 const searchSchema = z.object({
   mode: z.enum(["login", "signup", "forgot"]).catch("login"),
   next: z.string().optional(),
+  fresher: z.union([z.literal("1"), z.literal(1), z.boolean()]).optional(),
 });
+
 
 export const Route = createFileRoute("/auth")({
   validateSearch: searchSchema,
   head: () => ({
     meta: [
       { title: "Log in or join — SwapSpace" },
-      { name: "description", content: "Sign in with your Vishnu college email to buy, rent and sell on campus." },
+      { name: "description", content: "Sign in with your college email to buy, rent and sell on campus." },
       { property: "og:title", content: "Log in or join — SwapSpace" },
-      { property: "og:description", content: "Sign in with your Vishnu college email to start swapping." },
+      { property: "og:description", content: "Sign in with your college email to start swapping." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://college-swap-link.lovable.app/auth" },
-      { property: "og:image", content: "https://college-swap-link.lovable.app/og-image.jpg" },
+      { property: "og:url", content: "https://swapspace.lovable.app/auth" },
+      { property: "og:image", content: "https://swapspace.lovable.app/og-image.jpg" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:image", content: "https://college-swap-link.lovable.app/og-image.jpg" },
+      { name: "twitter:image", content: "https://swapspace.lovable.app/og-image.jpg" },
     ],
-    links: [{ rel: "canonical", href: "https://college-swap-link.lovable.app/auth" }],
+    links: [{ rel: "canonical", href: "https://swapspace.lovable.app/auth" }],
   }),
   component: AuthPage,
 });
 
-const ADMIN_EMAIL = "admin@swapspace.in";
-
-function validateEmail(raw: string, domain: string) {
-  const suffix = `@${domain.replace(/^@/, "")}`;
+function validateEmail(raw: string, general: GeneralSettings, fresherLane: boolean) {
   const email = raw.trim().toLowerCase();
-  if (!email || email.length > 255) return "Enter your college email";
+  const eduList = normalizeDomains(general.allowed_email_domains, ["edu.in"]);
+  const fresherList = normalizeDomains(general.fresher_domains, ["gmail.com"]);
+  if (!email || email.length > 255) return "Enter your email address";
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return "Enter a valid email address";
-  if (email === ADMIN_EMAIL) return null;
-  if (!email.endsWith(suffix)) return `Use your Vishnu college email (…${suffix})`;
-  if (email.split("@")[0]!.length === 0) return "Enter your college email";
+  const lane = classifyEmail(email, general);
+  if (!lane) {
+    return fresherLane
+      ? `Freshers can join with ${fresherList.map((d) => `@${d}`).join(" or ")}`
+      : `Use your college email (…${eduList[0]})`;
+  }
   return null;
 }
 
@@ -51,9 +55,11 @@ function validateEmail(raw: string, domain: string) {
 type Errors = Partial<Record<"name" | "email" | "password" | "confirm", string>>;
 
 function AuthPage() {
-  const { mode, next } = Route.useSearch();
+  const { mode, next, fresher } = Route.useSearch();
   const { general } = useAppSettings();
-  const domain = general.allowed_email_domain.replace(/^@/, "");
+  const fresherLane = fresher === "1" || fresher === 1 || fresher === true;
+  const eduDomain = normalizeDomains(general.allowed_email_domains, ["edu.in"])[0]!;
+  const fresherDomain = normalizeDomains(general.fresher_domains, ["gmail.com"])[0]!;
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -65,6 +71,7 @@ function AuthPage() {
 
   const destination = next && next.startsWith("/") ? next : "/market";
 
+
   function clearError(key: keyof Errors) {
     setErrors((prev) => (prev[key] ? { ...prev, [key]: undefined } : prev));
   }
@@ -72,7 +79,7 @@ function AuthPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const nextErrors: Errors = {};
-    const emailError = validateEmail(email, domain);
+    const emailError = validateEmail(email, general, fresherLane);
     if (emailError) nextErrors.email = emailError;
 
     if (mode !== "forgot") {
@@ -120,7 +127,11 @@ function AuthPage() {
           });
           if (signInError) throw signInError;
         }
-        toast.success("Welcome to SwapSpace");
+        toast.success(
+          classifyEmail(cleanEmail, general) === "fresher"
+            ? "Account created — our team will verify you shortly"
+            : "Welcome to SwapSpace",
+        );
         navigate({ to: "/onboarding" });
         return;
       }
@@ -167,9 +178,20 @@ function AuthPage() {
         <p className="mt-1.5 text-sm text-muted-foreground">
           {mode === "forgot"
             ? "We'll email you a secure reset link."
-            : `Only @${domain} emails — it keeps SwapSpace students-only.`}
+            : fresherLane
+              ? `Fresher without a college email yet? Sign up with @${fresherDomain} — our team verifies you manually.`
+              : `Use your college email (…${eduDomain}) — it keeps SwapSpace students-only.`}
         </p>
       </div>
+
+      {mode === "signup" && fresherLane && (
+        <p className="mb-5 rounded-2xl border border-primary/30 bg-primary/10 px-4 py-3 text-xs font-medium text-foreground">
+          Fresher accounts are reviewed by the SwapSpace team before your listings go live. You can browse and chat
+          straight away.
+        </p>
+      )}
+
+
 
       <form onSubmit={handleSubmit} noValidate className="space-y-4">
         {mode === "signup" && (
@@ -188,7 +210,7 @@ function AuthPage() {
           </Field>
         )}
 
-        <Field label="College email" htmlFor="email" error={errors.email}>
+        <Field label={fresherLane ? "Email address" : "College email"} htmlFor="email" error={errors.email}>
           <Input
             id="email"
             type="email"
@@ -197,7 +219,7 @@ function AuthPage() {
               setEmail(e.target.value);
               clearError("email");
             }}
-            placeholder={`yourname@${domain}`}
+            placeholder={`yourname@${fresherLane ? fresherDomain : eduDomain}`}
             autoComplete="email"
             aria-invalid={!!errors.email}
           />
