@@ -48,3 +48,30 @@ export const deleteStudentAccounts = createServerFn({ method: "POST" })
     for (const id of data.ids) await purgeUser(supabaseAdmin, id);
     return { deleted: data.ids.length };
   });
+
+/** Admin-only: resolves student ids to their sign-up email addresses. */
+export const getStudentEmails = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { ids: string[] }) => ({
+    ids: Array.isArray(input?.ids) ? input.ids.slice(0, 500) : [],
+  }))
+  .handler(async ({ data, context }) => {
+    const { data: isAdmin, error: roleError } = await context.supabase.rpc("has_role", {
+      _user_id: context.userId,
+      _role: "admin",
+    });
+    if (roleError) throw new Error(roleError.message);
+    if (!isAdmin) throw new Error("Forbidden");
+    if (data.ids.length === 0) return {} as Record<string, string>;
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const wanted = new Set(data.ids);
+    const emails: Record<string, string> = {};
+    for (let page = 1; page <= 10; page += 1) {
+      const { data: list, error } = await supabaseAdmin.auth.admin.listUsers({ page, perPage: 200 });
+      if (error) throw new Error(error.message);
+      for (const u of list.users) if (wanted.has(u.id) && u.email) emails[u.id] = u.email;
+      if (list.users.length < 200) break;
+    }
+    return emails;
+  });

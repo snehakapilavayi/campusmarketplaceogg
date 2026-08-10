@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { ChevronRight, Laptop, Moon, Sun, Trash2, UserCog } from "lucide-react";
 import { useAuth } from "@/lib/auth";
+import { displayCampus, useCampuses } from "@/lib/campuses";
 import { useTheme, type ThemeMode } from "@/lib/theme";
 import { deleteOwnAccount } from "@/lib/account.functions";
 import { AppShell } from "@/components/app-shell";
@@ -52,6 +53,7 @@ const appearanceOptions: { value: ThemeMode; label: string; icon: typeof Sun }[]
 
 function SettingsPage() {
   const { profile, signOut } = useAuth();
+  const { data: campuses = [] } = useCampuses();
   const { mode, setMode } = useTheme();
   const navigate = useNavigate();
   const removeAccount = useServerFn(deleteOwnAccount);
@@ -157,7 +159,7 @@ function SettingsPage() {
 
         <Section title="Campus" description="SwapSpace is exclusive to verified students.">
           <div className="flex items-center justify-between gap-3">
-            <CampusBadge campus={profile?.campus ?? "Campus"} />
+            <CampusBadge campus={displayCampus(profile?.campus, campuses)} />
             <span className="text-xs text-muted-foreground">Locked to your college email</span>
           </div>
         </Section>

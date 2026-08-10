@@ -163,8 +163,8 @@ function Landing() {
             <Mascot variant="idea" size="sm" alt="" />
             <h2 className="mt-4 font-display text-xl font-extrabold">Fresher without one yet?</h2>
             <p className="mt-1.5 flex-1 text-sm text-muted-foreground">
-              Just joined campus and still waiting on your college ID? Sign up with Gmail — our team verifies fresher
-              accounts manually before listings go live.
+              Just joined campus and still waiting on your college ID? Sign up with your Gmail address and you're in
+              instantly — no waiting, no approval queue.
             </p>
             <Button asChild size="lg" variant="outline" className="mt-6 w-full rounded-full bg-card">
               <Link to="/auth" search={{ mode: "signup", fresher: "1" }}>

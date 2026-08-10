@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { deleteStudentAccounts } from "@/lib/account.functions";
+import { deleteStudentAccounts, getStudentEmails } from "@/lib/account.functions";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -32,9 +32,10 @@ export const Route = createFileRoute("/_authenticated/admin/students")({
   component: AdminStudents,
 });
 
-type Tab = "all" | "freshers" | "pending" | "verified" | "suspended" | "flagged";
-const TABS: { value: Tab; label: string }[] = [
+type Tab = "all" | "edu" | "freshers" | "pending" | "verified" | "suspended" | "flagged";
+const TAB_LABELS: { value: Tab; label: string }[] = [
   { value: "all", label: "All" },
+  { value: "edu", label: "College" },
   { value: "freshers", label: "Freshers" },
   { value: "pending", label: "Unverified" },
   { value: "verified", label: "Verified" },
@@ -55,12 +56,62 @@ function AdminStudents() {
 
   const campuses = useMemo(() => campusOptions(students), [students]);
 
+  const ids = useMemo(() => students.map((s) => s.id), [students]);
+  const fetchEmails = useServerFn(getStudentEmails);
+  const { data: emails = {} } = useQuery({
+    queryKey: ["admin-student-emails", ids.length],
+    enabled: isAdmin && ids.length > 0,
+    queryFn: () => fetchEmails({ data: { ids } }),
+    staleTime: 60_000,
+  });
+
+  const { data: listingCounts = {} } = useQuery({
+    queryKey: ["admin-student-listing-counts"],
+    enabled: isAdmin,
+    queryFn: async () => {
+      const { data } = await supabase.from("listings").select("seller_id").limit(5000);
+      const map: Record<string, number> = {};
+      (data ?? []).forEach((l) => {
+        map[l.seller_id] = (map[l.seller_id] ?? 0) + 1;
+      });
+      return map;
+    },
+    staleTime: 60_000,
+  });
+
+  const counts = useMemo(() => {
+    const c: Record<Tab, number> = {
+      all: students.length,
+      edu: 0,
+      freshers: 0,
+      pending: 0,
+      verified: 0,
+      suspended: 0,
+      flagged: 0,
+    };
+    students.forEach((s) => {
+      if (s.account_type === "fresher") c.freshers += 1;
+      else c.edu += 1;
+      if (s.verification === "pending") c.pending += 1;
+      if (s.verification === "verified") c.verified += 1;
+      if (s.suspended) c.suspended += 1;
+      if (riskReasons(s, signals).length > 0) c.flagged += 1;
+    });
+    return c;
+  }, [students, signals]);
+
+  const TABS = useMemo(
+    () => TAB_LABELS.map((t) => ({ ...t, label: `${t.label} (${counts[t.value]})` })),
+    [counts],
+  );
+
   const visible = useMemo(
     () =>
       students.filter((s) => {
         if (!s.full_name.toLowerCase().includes(q.trim().toLowerCase())) return false;
         if (campus !== "all" && s.campus !== campus) return false;
-        if (tab === "freshers") return s.account_type === "fresher" && s.verification === "pending";
+        if (tab === "freshers") return s.account_type === "fresher";
+        if (tab === "edu") return s.account_type !== "fresher";
         if (tab === "pending") return s.verification === "pending";
         if (tab === "verified") return s.verification === "verified";
         if (tab === "suspended") return s.suspended;
@@ -162,7 +213,7 @@ function AdminStudents() {
             tab === "flagged"
               ? "Nobody is showing low ratings, repeated rejections or multiple reports."
               : tab === "freshers"
-              ? "No fresher accounts are waiting for approval."
+              ? "No fresher accounts yet."
               : "Try another search, tab or campus."
           }
         />
@@ -224,6 +275,10 @@ function AdminStudents() {
                       · <SwapCoin size={12} className="-mt-0.5" /> {Number(s.tomato_rating).toFixed(1)} SwapCoins ·{" "}
                       {s.transactions_count} swaps
                       {s.campus ? ` · ${s.campus}` : ""}
+                    </p>
+                    <p className="truncate text-[11px] text-muted-foreground">
+                      {emails[s.id] ?? "—"} · joined {new Date(s.created_at).toLocaleDateString()} ·{" "}
+                      {listingCounts[s.id] ?? 0} listings
                     </p>
                     {reasons.length > 0 && (
                       <div className="mt-1">

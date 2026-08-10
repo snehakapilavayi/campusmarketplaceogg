@@ -1,3 +1,5 @@
+import { Building2 } from "lucide-react";
+import { useCampuses } from "@/lib/campuses";
 import { useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
@@ -11,7 +13,6 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useQuery } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/_authenticated/onboarding")({
   head: () => ({
@@ -35,17 +36,7 @@ function Onboarding() {
   const [campus, setCampus] = useState(profile?.campus ?? "");
   const [busy, setBusy] = useState(false);
 
-  const { data: campuses = [] } = useQuery({
-    queryKey: ["campuses"],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("campuses")
-        .select("id,name")
-        .eq("active", true)
-        .order("sort_order");
-      return data ?? [];
-    },
-  });
+  const { data: campuses = [] } = useCampuses();
 
   async function finish() {
     if (fullName.trim().length < 2) {
@@ -123,12 +114,15 @@ function Onboarding() {
                 <Input id="fullName" value={fullName} onChange={(e) => setFullName(e.target.value)} maxLength={80} />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="campus">Select campus</Label>
+                <Label htmlFor="campus" className="flex items-center gap-1.5">
+                  <Building2 className="h-4 w-4 text-primary" aria-hidden />
+                  Select campus
+                </Label>
                 <Select value={campus} onValueChange={setCampus}>
-                  <SelectTrigger id="campus">
+                  <SelectTrigger id="campus" className="h-12 rounded-2xl border-border bg-background px-4">
                     <SelectValue placeholder="Select campus" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="rounded-2xl">
                     {campuses.map((c) => (
                       <SelectItem key={c.id} value={c.name}>
                         {c.name}
@@ -136,7 +130,9 @@ function Onboarding() {
                     ))}
                   </SelectContent>
                 </Select>
+                <p className="text-xs text-muted-foreground">More campuses coming soon.</p>
               </div>
+
               <div className="space-y-1.5">
                 <Label htmlFor="bio">Short bio</Label>
                 <Textarea
