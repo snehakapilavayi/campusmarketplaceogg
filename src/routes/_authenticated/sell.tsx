@@ -182,7 +182,7 @@ function SellPage() {
         deposit: type === "rent" ? (parsed.data.deposit ?? 0) : null,
         condition: condition as (typeof conditions)[number]["value"],
         category_id: categoryId,
-        status: "pending",
+        status: "approved",
       })
       .select("id")
       .single();
