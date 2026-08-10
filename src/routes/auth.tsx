@@ -10,6 +10,8 @@ import { Logo, Mascot } from "@/components/brand";
 import { ThemeToggle } from "@/lib/theme";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/password-input";
+
 import { Label } from "@/components/ui/label";
 
 const searchSchema = z.object({
