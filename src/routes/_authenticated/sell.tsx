@@ -201,9 +201,10 @@ function SellPage() {
 
     setBusy(false);
     queryClient.invalidateQueries({ queryKey: ["my-listings"] });
+    queryClient.invalidateQueries({ queryKey: ["listings"] });
     celebrate();
     haptic([10, 40, 10]);
-    toast.success("Listing submitted — admin review is usually quick");
+    toast.success("Your listing is live 🎉");
     navigate({ to: "/my-listings" });
 
   }
