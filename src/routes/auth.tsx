@@ -10,6 +10,8 @@ import { Logo, Mascot } from "@/components/brand";
 import { ThemeToggle } from "@/lib/theme";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/password-input";
+
 import { Label } from "@/components/ui/label";
 
 const searchSchema = z.object({
@@ -272,9 +274,8 @@ function AuthPage() {
 
         {mode === "signup" && (
           <Field label="Confirm password" htmlFor="confirm" error={errors.confirm}>
-            <Input
+            <PasswordInput
               id="confirm"
-              type={showPassword ? "text" : "password"}
               value={confirm}
               onChange={(e) => {
                 setConfirm(e.target.value);
@@ -284,6 +285,7 @@ function AuthPage() {
               autoComplete="new-password"
               aria-invalid={!!errors.confirm}
             />
+
           </Field>
         )}
 
