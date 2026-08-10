@@ -59,10 +59,15 @@ export const defaultSettings: AppSettings = {
 export const settingsQueryKey = ["app-settings"] as const;
 
 async function fetchSettings(): Promise<AppSettings> {
-  const { data, error } = await supabase.from("app_settings").select("key,value");
-  if (error) throw error;
+  const [publicRes, adminRes] = await Promise.all([
+    supabase.rpc("get_public_settings"),
+    // Admin-only: returns rows (incl. moderation) for admins, empty otherwise.
+    supabase.from("app_settings").select("key,value"),
+  ]);
+  if (publicRes.error) throw publicRes.error;
   const merged = { ...defaultSettings };
-  for (const row of data ?? []) {
+  const rows = [...(publicRes.data ?? []), ...(adminRes.data ?? [])];
+  for (const row of rows) {
     const key = row.key as keyof AppSettings;
     if (key in merged) {
       merged[key] = { ...(merged[key] as object), ...((row.value ?? {}) as object) } as never;
