@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Instagram, Recycle, ShieldCheck, Wallet } from "lucide-react";
 import { Logo, Mascot } from "@/components/brand";
-import { SupportNote } from "@/components/support";
+import { SUPPORT_MAILTO, SupportLink } from "@/components/support";
 import { Button } from "@/components/ui/button";
 import { useAppSettings } from "@/lib/settings";
 
@@ -181,10 +181,10 @@ function Landing() {
           <div className="relative z-10 flex flex-col items-center gap-6 px-8 py-12 text-center md:flex-row md:items-end md:px-14 md:pb-0 md:pt-14 md:text-left">
             <div className="max-w-lg md:pb-14">
               <h2 className="font-display text-3xl font-extrabold text-ink-foreground md:text-4xl">
-                That spare desk lamp in your hostel room? Someone needs it today.
+                Why buy it when someone on campus already has it?
               </h2>
               <p className="mt-3 text-sm text-ink-foreground/80">
-                List it in under a minute. Get a SwapCoins rating for every good swap.
+                Swap what you have for what you need — simple, local, student-to-student.
               </p>
               <Button asChild size="lg" className="mt-7 rounded-full px-7">
                 <Link to="/auth" search={{ mode: "signup" }}>
@@ -204,9 +204,6 @@ function Landing() {
       <footer className="border-t border-border">
         <div className="mx-auto flex max-w-6xl flex-col items-center gap-3 px-5 py-8 text-center text-xs text-muted-foreground">
           <Logo size={24} />
-          <Link to="/how-it-works" className="font-semibold text-foreground hover:text-primary">
-            How SwapSpace works
-          </Link>
           <a
             href={content.instagram_url}
             target="_blank"
@@ -217,8 +214,25 @@ function Landing() {
             <Instagram className="h-3.5 w-3.5" />
             @swapspace.in
           </a>
-          <SupportNote label="Have queries? Reach out to" />
-          <p>Campus-exclusive marketplace. Meet safely, on campus, in daylight.</p>
+          <p className="flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1">
+            <span>© 2026 Campus Marketplace · Made for Students, by Students</span>
+            <span aria-hidden>·</span>
+            <a href="#" className="text-muted-foreground underline-offset-2 hover:underline">
+              Privacy
+            </a>
+            <span aria-hidden>·</span>
+            <a href="#" className="text-muted-foreground underline-offset-2 hover:underline">
+              Terms
+            </a>
+            <span aria-hidden>·</span>
+            <a
+              href={SUPPORT_MAILTO}
+              className="text-muted-foreground underline-offset-2 hover:underline"
+            >
+              Contact Us
+            </a>
+          </p>
+          <SupportLink />
         </div>
       </footer>
     </div>
