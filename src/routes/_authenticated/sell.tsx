@@ -56,7 +56,7 @@ const conditions = [
 ] as const;
 
 function SellPage() {
-  const { userId, profile } = useAuth();
+  const { userId } = useAuth();
   const { limits, moderation } = useAppSettings();
   const MAX_PHOTOS = limits.max_photos_per_listing;
   const navigate = useNavigate();
@@ -76,8 +76,6 @@ function SellPage() {
   const [busy, setBusy] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const isUnapprovedFresher = profile?.account_type === "fresher" && profile?.verification !== "verified";
-
   const { data: activeCount = 0 } = useQuery({
     queryKey: ["my-active-listing-count", userId],
     enabled: !!userId,
@@ -91,7 +89,7 @@ function SellPage() {
     },
   });
 
-  const listingCap = isUnapprovedFresher ? limits.fresher_max_listings : limits.max_active_listings;
+  const listingCap = limits.max_active_listings;
   const capReached = activeCount >= listingCap;
 
   const { data: categories = [] } = useQuery({
@@ -153,11 +151,7 @@ function SellPage() {
       return;
     }
     if (capReached) {
-      toast.error(
-        isUnapprovedFresher
-          ? `Fresher accounts can have ${listingCap} live listings until a SwapSpace admin verifies you.`
-          : `You've reached your limit of ${listingCap} active listings.`,
-      );
+      toast.error(`You've reached your limit of ${listingCap} active listings.`);
       return;
     }
     if (!categoryId) {
@@ -217,11 +211,6 @@ function SellPage() {
   return (
     <AppShell title="List an item">
       <form onSubmit={submit} className="space-y-6 pt-4">
-        {isUnapprovedFresher && (
-          <p className="rounded-2xl border border-primary/30 bg-primary/10 px-4 py-3 text-xs font-medium text-foreground">
-            Your fresher account is awaiting verification, so you can keep up to {listingCap} listings live for now.
-          </p>
-        )}
         <div className="flex items-center gap-3 rounded-3xl bg-accent p-4">
           <Mascot variant="idea" className="[&_img]:h-16" alt="" />
           <p className="text-sm text-accent-foreground">

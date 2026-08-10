@@ -10,7 +10,7 @@ export type GeneralSettings = {
   signups_enabled: boolean;
   /** Domains accepted as standard student accounts, e.g. ["edu.in"]. */
   allowed_email_domains: string[];
-  /** Domains accepted for freshers, verified manually by admins. */
+  /** Domains accepted for freshers signing up before their college email exists. */
   fresher_domains: string[];
 };
 
@@ -19,8 +19,6 @@ export type LimitSettings = {
   max_active_listings: number;
   max_price: number;
   min_price: number;
-  /** Active listings allowed while a fresher account is still unapproved. */
-  fresher_max_listings: number;
 };
 
 
@@ -58,7 +56,6 @@ export const defaultSettings: AppSettings = {
     max_active_listings: 10,
     max_price: 100000,
     min_price: 0,
-    fresher_max_listings: 2,
   },
   content: {
     hero_title: "Everything you need is already on campus.",

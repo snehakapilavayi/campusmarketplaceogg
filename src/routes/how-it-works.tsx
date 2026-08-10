@@ -52,7 +52,7 @@ const steps = [
   {
     icon: ShieldCheck,
     title: "Verify with your college email",
-    body: "Only verified college emails (and manually approved freshers) can join, so everyone you deal with is a student on your campus.",
+    body: "Only college emails and freshers' Gmail addresses can join, so everyone you deal with is a student on your campus.",
   },
   {
     icon: UploadCloud,

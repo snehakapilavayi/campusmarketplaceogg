@@ -97,7 +97,7 @@ function AdminSettingsPage() {
             placeholder="edu.in"
           />
         </Field>
-        <Field label="Fresher domains (manually verified)">
+        <Field label="Fresher domains (instant access)">
           <Input
             value={general.fresher_domains.join(", ")}
             onChange={(e) =>
@@ -164,14 +164,6 @@ function AdminSettingsPage() {
               min={1}
               value={limits.max_price}
               onChange={(e) => setLimits({ ...limits, max_price: Number(e.target.value) })}
-            />
-          </Field>
-          <Field label="Listings allowed for unapproved freshers">
-            <Input
-              type="number"
-              min={0}
-              value={limits.fresher_max_listings}
-              onChange={(e) => setLimits({ ...limits, fresher_max_listings: Number(e.target.value) })}
             />
           </Field>
         </div>

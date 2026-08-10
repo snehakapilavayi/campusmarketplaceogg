@@ -127,11 +127,7 @@ function AuthPage() {
           });
           if (signInError) throw signInError;
         }
-        toast.success(
-          classifyEmail(cleanEmail, general) === "fresher"
-            ? "Account created — our team will verify you shortly"
-            : "Welcome to SwapSpace",
-        );
+        toast.success("Welcome to SwapSpace");
         navigate({ to: "/onboarding" });
         return;
       }
@@ -179,15 +175,14 @@ function AuthPage() {
           {mode === "forgot"
             ? "We'll email you a secure reset link."
             : fresherLane
-              ? `Fresher without a college email yet? Sign up with @${fresherDomain} — our team verifies you manually.`
+              ? `No college email yet? Sign up with @${fresherDomain} and you're in straight away.`
               : `Use your college email (…${eduDomain}) — it keeps SwapSpace students-only.`}
         </p>
       </div>
 
       {mode === "signup" && fresherLane && (
         <p className="mb-5 rounded-2xl border border-primary/30 bg-primary/10 px-4 py-3 text-xs font-medium text-foreground">
-          Fresher accounts are reviewed by the SwapSpace team before your listings go live. You can browse and chat
-          straight away.
+          Fresher accounts are approved instantly — browse, chat and list from the moment you sign up.
         </p>
       )}
 
