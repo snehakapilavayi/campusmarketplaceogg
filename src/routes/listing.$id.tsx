@@ -107,6 +107,26 @@ function ListingDetail() {
     }
   }
 
+  function requireAccount(mode: "login" | "signup") {
+    navigate({ to: "/auth", search: { mode, next: `/listing/${id}` } });
+  }
+
+  function handleWishlist() {
+    if (!userId) {
+      requireAccount("login");
+      return;
+    }
+    wishlist.toggle(listing.id);
+  }
+
+  function handleCart() {
+    if (!userId) {
+      requireAccount("login");
+      return;
+    }
+    cart.toggle(listing.id);
+  }
+
   return (
     <div className="min-h-screen bg-background pb-32">
       <div className="relative">
@@ -155,7 +175,7 @@ function ListingDetail() {
           <div className="flex items-start justify-between gap-3">
             <h1 className="font-display text-2xl font-extrabold leading-tight">{listing.title}</h1>
             <button
-              onClick={() => wishlist.toggle(listing.id)}
+              onClick={handleWishlist}
               className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-border"
               aria-label="Save to wishlist"
             >
@@ -247,19 +267,36 @@ function ListingDetail() {
       </div>
 
       {!isOwner && (
-        <div className="fixed inset-x-0 bottom-[68px] z-30 border-t border-border bg-background/95 p-3 backdrop-blur-md">
-          <div className="mx-auto flex max-w-3xl gap-2">
-            <Button variant="outline" size="lg" className="flex-1 rounded-full" onClick={() => cart.toggle(listing.id)}>
-              <ShoppingBag className="mr-1.5 h-4 w-4" />
-              {cart.ids.includes(listing.id) ? "In cart" : "Add to cart"}
-            </Button>
-            <Button size="lg" className="flex-1 rounded-full" onClick={handleChat}>
-              <MessageCircle className="mr-1.5 h-4 w-4" /> Chat with seller
-            </Button>
+        <div className={cn(
+          "fixed inset-x-0 z-30 border-t border-border bg-background/95 p-3 backdrop-blur-md",
+          userId ? "bottom-[68px]" : "bottom-0",
+        )}>
+          <div className="mx-auto max-w-3xl">
+            {userId ? (
+              <div className="flex gap-2">
+                <Button variant="outline" size="lg" className="flex-1 rounded-full" onClick={handleCart}>
+                  <ShoppingBag className="mr-1.5 h-4 w-4" />
+                  {cart.ids.includes(listing.id) ? "In cart" : "Add to cart"}
+                </Button>
+                <Button size="lg" className="flex-1 rounded-full" onClick={handleChat}>
+                  <MessageCircle className="mr-1.5 h-4 w-4" /> Chat with seller
+                </Button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <p className="hidden flex-1 text-sm font-medium sm:block">Log in or sign up to buy this item.</p>
+                <Button variant="outline" size="lg" className="flex-1 rounded-full sm:flex-none" onClick={() => requireAccount("login")}>
+                  Log in
+                </Button>
+                <Button size="lg" className="flex-1 rounded-full sm:flex-none" onClick={() => requireAccount("signup")}>
+                  Sign up to buy
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       )}
-      <BottomNav />
+      {userId && <BottomNav />}
     </div>
   );
 }
