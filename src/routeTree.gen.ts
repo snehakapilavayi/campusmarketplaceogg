@@ -18,6 +18,7 @@ import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as MarketRouteImport } from './routes/market'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as ThemeTestRouteImport } from './routes/theme-test'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedCartRouteImport } from './routes/_authenticated/cart'
 import { Route as AuthenticatedMyListingsRouteImport } from './routes/_authenticated/my-listings'
@@ -83,6 +84,11 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ThemeTestRoute = ThemeTestRouteImport.update({
+  id: '/theme-test',
+  path: '/theme-test',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
@@ -213,6 +219,7 @@ export interface FileRoutesByFullPath {
   '/market': typeof MarketRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/theme-test': typeof ThemeTestRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/cart': typeof AuthenticatedCartRoute
   '/my-listings': typeof AuthenticatedMyListingsRoute
@@ -245,6 +252,7 @@ export interface FileRoutesByTo {
   '/market': typeof MarketRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/theme-test': typeof ThemeTestRoute
   '/cart': typeof AuthenticatedCartRoute
   '/my-listings': typeof AuthenticatedMyListingsRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
@@ -278,6 +286,7 @@ export interface FileRoutesById {
   '/market': typeof MarketRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/theme-test': typeof ThemeTestRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/cart': typeof AuthenticatedCartRoute
   '/_authenticated/my-listings': typeof AuthenticatedMyListingsRoute
@@ -312,6 +321,7 @@ export interface FileRouteTypes {
     | '/market'
     | '/reset-password'
     | '/sitemap.xml'
+    | '/theme-test'
     | '/admin'
     | '/cart'
     | '/my-listings'
@@ -344,6 +354,7 @@ export interface FileRouteTypes {
     | '/market'
     | '/reset-password'
     | '/sitemap.xml'
+    | '/theme-test'
     | '/cart'
     | '/my-listings'
     | '/notifications'
@@ -376,6 +387,7 @@ export interface FileRouteTypes {
     | '/market'
     | '/reset-password'
     | '/sitemap.xml'
+    | '/theme-test'
     | '/_authenticated/admin'
     | '/_authenticated/cart'
     | '/_authenticated/my-listings'
@@ -410,6 +422,7 @@ export interface RootRouteChildren {
   MarketRoute: typeof MarketRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  ThemeTestRoute: typeof ThemeTestRoute
   ListingIdRoute: typeof ListingIdRoute
 }
 
@@ -476,6 +489,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/theme-test': {
+      id: '/theme-test'
+      path: '/theme-test'
+      fullPath: '/theme-test'
+      preLoaderRoute: typeof ThemeTestRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin': {
@@ -705,6 +725,7 @@ const rootRouteChildren: RootRouteChildren = {
   MarketRoute: MarketRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  ThemeTestRoute: ThemeTestRoute,
   ListingIdRoute: ListingIdRoute,
 }
 export const routeTree = rootRouteImport
