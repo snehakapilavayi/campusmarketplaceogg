@@ -47,7 +47,7 @@ function AdminDashboard() {
 
   const campusRows = Object.entries(
     students.reduce<Record<string, number>>((acc, s) => {
-      const key = s.campus?.trim() || "Vishnu (VITB)";
+      const key = s.campus?.trim() || "Unassigned";
       acc[key] = (acc[key] ?? 0) + 1;
       return acc;
     }, {}),

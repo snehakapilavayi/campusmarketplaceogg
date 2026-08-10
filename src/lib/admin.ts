@@ -89,7 +89,7 @@ export function useAdminStudents(enabled: boolean) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("profiles")
-        .select("id,full_name,verification,tomato_rating,transactions_count,suspended,campus,created_at")
+        .select("id,full_name,verification,tomato_rating,transactions_count,suspended,campus,created_at,account_type")
         .order("created_at", { ascending: false })
         .limit(500);
       if (error) throw error;

@@ -8,7 +8,10 @@ export type GeneralSettings = {
   maintenance_mode: boolean;
   maintenance_message: string;
   signups_enabled: boolean;
-  allowed_email_domain: string;
+  /** Domains accepted as standard student accounts, e.g. ["edu.in"]. */
+  allowed_email_domains: string[];
+  /** Domains accepted for freshers, verified manually by admins. */
+  fresher_domains: string[];
 };
 
 export type LimitSettings = {
@@ -16,7 +19,10 @@ export type LimitSettings = {
   max_active_listings: number;
   max_price: number;
   min_price: number;
+  /** Active listings allowed while a fresher account is still unapproved. */
+  fresher_max_listings: number;
 };
+
 
 export type ContentSettings = {
   hero_title: string;
@@ -40,21 +46,55 @@ export type AppSettings = {
 export const defaultSettings: AppSettings = {
   general: {
     site_name: "SwapSpace",
-    tagline: "Campus-only buy, rent and swap for Vishnu students.",
+    tagline: "Campus-only buy, rent and swap for students.",
     maintenance_mode: false,
     maintenance_message: "SwapSpace is getting a quick tune-up. Back in a few minutes.",
     signups_enabled: true,
-    allowed_email_domain: "vishnu.edu.in",
+    allowed_email_domains: ["edu.in"],
+    fresher_domains: ["gmail.com"],
   },
-  limits: { max_photos_per_listing: 6, max_active_listings: 10, max_price: 100000, min_price: 0 },
+  limits: {
+    max_photos_per_listing: 6,
+    max_active_listings: 10,
+    max_price: 100000,
+    min_price: 0,
+    fresher_max_listings: 2,
+  },
   content: {
     hero_title: "Everything you need is already on campus.",
-    hero_subtitle: "Buy, rent and swap with verified Vishnu students. No strangers, no commission.",
+    hero_subtitle: "Buy, rent and swap with verified students. No strangers, no commission.",
     instagram_url: "https://www.instagram.com/swapspace.in/",
     support_email: "info.swapspace@gmail.com",
   },
   moderation: { blocklist: [], auto_flag: true },
 };
+
+/** Normalises a domain list coming from settings (admins may type "@edu.in"). */
+export function normalizeDomains(list: unknown, fallback: string[]) {
+  const arr = Array.isArray(list)
+    ? list
+    : typeof list === "string"
+      ? list.split(",")
+      : [];
+  const cleaned = arr
+    .map((d) => String(d).trim().toLowerCase().replace(/^@/, "").replace(/^\./, ""))
+    .filter(Boolean);
+  return cleaned.length > 0 ? cleaned : fallback;
+}
+
+export const ADMIN_EMAIL = "admin@swapspace.in";
+
+/** Which signup lane an email belongs to — null means the address isn't allowed. */
+export function classifyEmail(email: string, general: GeneralSettings): "edu" | "fresher" | null {
+  const clean = email.trim().toLowerCase();
+  if (clean === ADMIN_EMAIL) return "edu";
+  const matches = (domains: string[]) =>
+    domains.some((d) => clean.endsWith(`@${d}`) || clean.endsWith(`.${d}`));
+  if (matches(normalizeDomains(general.allowed_email_domains, ["edu.in"]))) return "edu";
+  if (matches(normalizeDomains(general.fresher_domains, ["gmail.com"]))) return "fresher";
+  return null;
+}
+
 
 export const settingsQueryKey = ["app-settings"] as const;
 

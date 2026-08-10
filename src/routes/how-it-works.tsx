@@ -4,7 +4,7 @@ import { Logo, Mascot } from "@/components/brand";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/lib/theme";
 
-const SITE = "https://college-swap-link.lovable.app";
+const SITE = "https://swapspace.lovable.app";
 
 export const Route = createFileRoute("/how-it-works")({
   head: () => ({
@@ -52,7 +52,7 @@ const steps = [
   {
     icon: ShieldCheck,
     title: "Verify with your college email",
-    body: "Only @vishnu.edu.in addresses can join, so everyone you deal with is a student on your campus.",
+    body: "Only verified college emails (and manually approved freshers) can join, so everyone you deal with is a student on your campus.",
   },
   {
     icon: UploadCloud,

@@ -20,12 +20,12 @@ export const Route = createFileRoute("/")({
         content: "Buy, rent and sell inside your campus. Verified students only.",
       },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://college-swap-link.lovable.app/" },
-      { property: "og:image", content: "https://college-swap-link.lovable.app/og-image.jpg" },
+      { property: "og:url", content: "https://swapspace.lovable.app/" },
+      { property: "og:image", content: "https://swapspace.lovable.app/og-image.jpg" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:image", content: "https://college-swap-link.lovable.app/og-image.jpg" },
+      { name: "twitter:image", content: "https://swapspace.lovable.app/og-image.jpg" },
     ],
-    links: [{ rel: "canonical", href: "https://college-swap-link.lovable.app/" }],
+    links: [{ rel: "canonical", href: "https://swapspace.lovable.app/" }],
   }),
   component: Landing,
 });
@@ -80,7 +80,7 @@ function Landing() {
         <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-5 pb-16 pt-8 md:grid-cols-2 md:pb-24 md:pt-14">
           <div>
             <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs font-semibold text-muted-foreground">
-              Built for Vishnu students
+              Built for students, by students
             </span>
             <h1 className="mt-5 font-display text-5xl font-extrabold leading-[1.05] md:text-6xl">
               {heroTitle}
@@ -111,7 +111,7 @@ function Landing() {
               <div className="h-8 w-px bg-border" />
               <div>
                 <p className="font-display text-xl font-bold text-foreground">1</p>
-                <p>campus, no strangers</p>
+                <p>campus at a time</p>
               </div>
             </div>
           </div>
@@ -143,12 +143,44 @@ function Landing() {
         </div>
       </section>
 
+      <section className="mx-auto max-w-6xl px-5 pb-8">
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="flex flex-col rounded-3xl border border-border bg-card p-6 shadow-[var(--shadow-soft)]">
+            <Mascot variant="happy" size="sm" alt="" />
+            <h2 className="mt-4 font-display text-xl font-extrabold">Have a college email?</h2>
+            <p className="mt-1.5 flex-1 text-sm text-muted-foreground">
+              Sign up with your <span className="font-semibold text-foreground">.edu.in</span> address and start
+              buying, renting and selling right away.
+            </p>
+            <Button asChild size="lg" className="mt-6 w-full rounded-full">
+              <Link to="/auth" search={{ mode: "signup" }}>
+                Join with college email
+              </Link>
+            </Button>
+          </div>
+
+          <div className="flex flex-col rounded-3xl border border-primary/40 bg-accent/60 p-6 shadow-[var(--shadow-soft)]">
+            <Mascot variant="idea" size="sm" alt="" />
+            <h2 className="mt-4 font-display text-xl font-extrabold">Fresher without one yet?</h2>
+            <p className="mt-1.5 flex-1 text-sm text-muted-foreground">
+              Just joined campus and still waiting on your college ID? Sign up with Gmail — our team verifies fresher
+              accounts manually before listings go live.
+            </p>
+            <Button asChild size="lg" variant="outline" className="mt-6 w-full rounded-full bg-card">
+              <Link to="/auth" search={{ mode: "signup", fresher: "1" }}>
+                Join as a fresher
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
       <section className="mx-auto max-w-6xl px-5 pb-20">
         <div className="relative overflow-hidden rounded-3xl bg-ink text-ink-foreground">
           <div className="brand-pattern-subtle pointer-events-none absolute inset-0" aria-hidden />
-          <div className="relative z-10 flex flex-col items-center gap-8 px-8 py-12 text-center md:flex-row md:px-14 md:py-14 md:text-left">
-            <div className="max-w-lg">
-              <h2 className="font-display text-3xl font-extrabold md:text-4xl">
+          <div className="relative z-10 flex flex-col items-center gap-6 px-8 py-12 text-center md:flex-row md:items-end md:px-14 md:pb-0 md:pt-14 md:text-left">
+            <div className="max-w-lg md:pb-14">
+              <h2 className="font-display text-3xl font-extrabold text-ink-foreground md:text-4xl">
                 That spare desk lamp in your hostel room? Someone needs it today.
               </h2>
               <p className="mt-3 text-sm text-ink-foreground/80">
@@ -160,12 +192,13 @@ function Landing() {
                 </Link>
               </Button>
             </div>
-            <div className="shrink-0 md:ml-auto">
-              <Mascot variant="point" size="xl" halo float alt="" />
+            <div className="w-40 shrink-0 self-end md:ml-auto md:w-56">
+              <Mascot variant="point" size="xl" alt="" className="w-full [&_img]:h-auto [&_img]:w-full" />
             </div>
           </div>
         </div>
       </section>
+
 
 
       <footer className="border-t border-border">

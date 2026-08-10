@@ -14,7 +14,7 @@ import { ShareSheet } from "@/components/share-sheet";
 import { cn } from "@/lib/utils";
 
 
-const SITE = "https://college-swap-link.lovable.app";
+const SITE = "https://swapspace.lovable.app";
 
 export const Route = createFileRoute("/listing/$id")({
   head: ({ params }) => ({

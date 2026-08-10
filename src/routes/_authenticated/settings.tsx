@@ -155,9 +155,9 @@ function SettingsPage() {
           </div>
         </Section>
 
-        <Section title="Campus" description="SwapSpace is exclusive to Vishnu students.">
+        <Section title="Campus" description="SwapSpace is exclusive to verified students.">
           <div className="flex items-center justify-between gap-3">
-            <CampusBadge campus={profile?.campus ?? "VITB"} />
+            <CampusBadge campus={profile?.campus ?? "Campus"} />
             <span className="text-xs text-muted-foreground">Locked to your college email</span>
           </div>
         </Section>

@@ -67,6 +67,30 @@ export type Database = {
         }
         Relationships: []
       }
+      campuses: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          name: string
+          sort_order: number
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          name: string
+          sort_order?: number
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          name?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
       cart: {
         Row: {
           created_at: string
@@ -374,6 +398,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          account_type: string
           avatar_url: string | null
           bio: string | null
           campus: string | null
@@ -388,6 +413,7 @@ export type Database = {
           verification: Database["public"]["Enums"]["verification_status"]
         }
         Insert: {
+          account_type?: string
           avatar_url?: string | null
           bio?: string | null
           campus?: string | null
@@ -402,6 +428,7 @@ export type Database = {
           verification?: Database["public"]["Enums"]["verification_status"]
         }
         Update: {
+          account_type?: string
           avatar_url?: string | null
           bio?: string | null
           campus?: string | null
