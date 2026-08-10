@@ -16,7 +16,7 @@ export type ListingCardData = {
   badge: string | null;
   condition: string;
   listing_images?: { url: string; sort_order: number }[];
-  profiles?: { full_name: string; tomato_rating: number } | null;
+  profiles?: { full_name: string; swapcoin_rating: number } | null;
 };
 
 export function ListingCard({
@@ -105,7 +105,7 @@ export function ListingCard({
             {listing.profiles && (
               <div className="flex items-center justify-between pt-0.5">
                 <span className="line-clamp-1 text-[11px] text-muted-foreground">{listing.profiles.full_name}</span>
-                <CoinRating value={listing.profiles.tomato_rating} showValue={false} className="text-[9px]" />
+                <CoinRating value={listing.profiles.swapcoin_rating} showValue={false} className="text-[9px]" />
               </div>
             )}
           </div>

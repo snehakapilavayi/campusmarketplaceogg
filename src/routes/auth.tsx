@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
+import { Eye, EyeOff } from "lucide-react";
+
 import { classifyEmail, normalizeDomains, useAppSettings, type GeneralSettings } from "@/lib/settings";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
@@ -64,6 +66,8 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
   const [name, setName] = useState("");
   const [errors, setErrors] = useState<Errors>({});
   const [busy, setBusy] = useState(false);
@@ -240,18 +244,29 @@ function AuthPage() {
               ) : null
             }
           >
-            <Input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-                clearError("password");
-              }}
-              placeholder="At least 6 characters"
-              autoComplete={mode === "signup" ? "new-password" : "current-password"}
-              aria-invalid={!!errors.password}
-            />
+            <div className="relative">
+              <Input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  clearError("password");
+                }}
+                placeholder="At least 6 characters"
+                autoComplete={mode === "signup" ? "new-password" : "current-password"}
+                aria-invalid={!!errors.password}
+                className="pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((v) => !v)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                className="absolute inset-y-0 right-0 grid w-10 place-items-center text-muted-foreground hover:text-foreground"
+              >
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
           </Field>
         )}
 
@@ -259,7 +274,7 @@ function AuthPage() {
           <Field label="Confirm password" htmlFor="confirm" error={errors.confirm}>
             <Input
               id="confirm"
-              type="password"
+              type={showPassword ? "text" : "password"}
               value={confirm}
               onChange={(e) => {
                 setConfirm(e.target.value);
@@ -271,6 +286,7 @@ function AuthPage() {
             />
           </Field>
         )}
+
 
         <Button type="submit" disabled={busy} className="w-full rounded-full" size="lg">
           {busy ? "Please wait…" : mode === "signup" ? "Create account" : mode === "forgot" ? "Send reset link" : "Log in"}

@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery, useQueryClient } from "@tanstack/react-query";
+import { OG_IMAGE, siteUrl } from "@/lib/site";
+
 import { Search, SlidersHorizontal } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/app-shell";
@@ -26,18 +28,19 @@ export const Route = createFileRoute("/market")({
       { property: "og:title", content: "Marketplace — SwapSpace" },
       { property: "og:description", content: "Browse what students are selling and renting on campus." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://swapspace.lovable.app/market" },
-      { property: "og:image", content: "https://swapspace.lovable.app/og-image.jpg" },
+      { property: "og:url", content: siteUrl("/market") },
+      { property: "og:image", content: OG_IMAGE },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:image", content: "https://swapspace.lovable.app/og-image.jpg" },
+      { name: "twitter:image", content: OG_IMAGE },
     ],
-    links: [{ rel: "canonical", href: "https://swapspace.lovable.app/market" }],
+    links: [{ rel: "canonical", href: siteUrl("/market") }],
+
   }),
   component: Market,
 });
 
 const LISTING_SELECT =
-  "id,title,price,type,rent_period,badge,condition,created_at,featured,category_id,listing_images(url,sort_order),profiles(full_name,tomato_rating)";
+  "id,title,price,type,rent_period,badge,condition,created_at,featured,category_id,listing_images(url,sort_order),profiles(full_name,swapcoin_rating)";
 
 type Filter = "all" | "sell" | "rent";
 
@@ -115,6 +118,22 @@ function Market() {
   });
 
   const visible = useMemo(() => (data?.pages ?? []).flat(), [data]);
+
+  // Realtime: new/updated approved listings show up without a refresh.
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    const channel = supabase
+      .channel("market-listings")
+      .on("postgres_changes", { event: "*", schema: "public", table: "listings" }, () => {
+        queryClient.invalidateQueries({ queryKey: ["listings"] });
+      })
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
+
+
 
   // Intersection sentinel → load the next page automatically.
   const sentinelRef = useRef<HTMLDivElement>(null);

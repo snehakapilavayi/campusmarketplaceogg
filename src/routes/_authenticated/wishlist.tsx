@@ -32,7 +32,7 @@ function WishlistPage() {
       const { data } = await supabase
         .from("wishlist")
         .select(
-          "listing_id,listings(id,title,price,type,rent_period,badge,condition,listing_images(url,sort_order),profiles(full_name,tomato_rating))",
+          "listing_id,listings(id,title,price,type,rent_period,badge,condition,listing_images(url,sort_order),profiles(full_name,swapcoin_rating))",
         )
         .eq("user_id", userId!)
         .order("created_at", { ascending: false });

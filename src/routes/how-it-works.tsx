@@ -4,7 +4,7 @@ import { Logo, Mascot } from "@/components/brand";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/lib/theme";
 
-const SITE = "https://swapspace.lovable.app";
+import { SITE } from "@/lib/site";
 
 export const Route = createFileRoute("/how-it-works")({
   head: () => ({

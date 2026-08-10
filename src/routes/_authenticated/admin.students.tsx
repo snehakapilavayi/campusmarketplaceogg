@@ -176,7 +176,7 @@ function AdminStudents() {
         s.campus ?? "",
         s.verification,
         s.suspended ? "yes" : "no",
-        Number(s.tomato_rating).toFixed(1),
+        Number(s.swapcoin_rating).toFixed(1),
         s.transactions_count,
         riskReasons(s, signals).join(" | "),
         new Date(s.created_at).toLocaleDateString(),
@@ -272,7 +272,7 @@ function AdminStudents() {
                       >
                         {s.verification}
                       </span>{" "}
-                      · <SwapCoin size={12} className="-mt-0.5" /> {Number(s.tomato_rating).toFixed(1)} SwapCoins ·{" "}
+                      · <SwapCoin size={12} className="-mt-0.5" /> {Number(s.swapcoin_rating).toFixed(1)} SwapCoins ·{" "}
                       {s.transactions_count} swaps
                       {s.campus ? ` · ${s.campus}` : ""}
                     </p>

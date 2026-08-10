@@ -19,8 +19,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { celebrate, haptic } from "@/lib/motion";
+import { MarkSoldDialog, type SoldTarget } from "@/components/mark-sold-dialog";
+
 import { cn } from "@/lib/utils";
+
 
 
 export const Route = createFileRoute("/_authenticated/my-listings")({
@@ -60,6 +62,7 @@ function MyListings() {
   const { userId } = useAuth();
   const queryClient = useQueryClient();
   const [pendingDelete, setPendingDelete] = useState<{ id: string; title: string } | null>(null);
+  const [pendingSold, setPendingSold] = useState<SoldTarget | null>(null);
   const [deleting, setDeleting] = useState(false);
 
 
@@ -69,7 +72,9 @@ function MyListings() {
     queryFn: async () => {
       const { data } = await supabase
         .from("listings")
-        .select("id,title,price,type,rent_period,status,rejection_reason,resubmit_by,listing_images(url,sort_order)")
+        .select(
+          "id,title,price,type,rent_period,status,rejection_reason,resubmit_by,sold_at,listing_images(url,sort_order)",
+        )
         .eq("seller_id", userId!)
         .order("created_at", { ascending: false });
       return data ?? [];
@@ -94,20 +99,17 @@ function MyListings() {
     toast.success("Listing is live again 🎉");
   }
 
-  async function updateStatus(id: string, status: "completed" | "archived") {
-    const { error } = await supabase.from("listings").update({ status }).eq("id", id);
+  async function archive(id: string) {
+    const { error } = await supabase.from("listings").update({ status: "archived" }).eq("id", id);
     if (error) {
       toast.error(error.message);
       return;
     }
     queryClient.invalidateQueries({ queryKey: ["my-listings"] });
-    if (status === "completed") {
-      celebrate();
-      haptic([10, 40, 10]);
-    }
-    toast.success(status === "completed" ? "Marked as sold 🎉" : "Listing archived");
-
+    queryClient.invalidateQueries({ queryKey: ["listings"] });
+    toast.success("Listing archived");
   }
+
 
   async function deleteListing() {
     if (!pendingDelete) return;
@@ -193,22 +195,34 @@ function MyListings() {
                       </div>
                     </div>
                   )}
+                  {l.status === "completed" && (
+                    <p className="mt-1.5 text-[11px] font-semibold text-success">
+                      Sold{l.sold_at ? ` on ${new Date(l.sold_at).toLocaleDateString()}` : ""} · hidden from the
+                      marketplace
+                    </p>
+                  )}
                   <div className="mt-2 flex flex-wrap items-center gap-2">
                     {(l.status === "approved" || l.status === "pending") && (
                       <>
-                        <Button size="sm" variant="outline" className="h-8 rounded-full" onClick={() => updateStatus(l.id, "completed")}>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-8 rounded-full"
+                          onClick={() => setPendingSold({ id: l.id, title: l.title })}
+                        >
                           Mark sold
                         </Button>
                         <Button
                           size="sm"
                           variant="ghost"
                           className="h-8 rounded-full text-muted-foreground"
-                          onClick={() => updateStatus(l.id, "archived")}
+                          onClick={() => archive(l.id)}
                         >
                           Archive
                         </Button>
                       </>
                     )}
+
                     <Button
                       size="sm"
                       variant="ghost"
@@ -249,7 +263,10 @@ function MyListings() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <MarkSoldDialog target={pendingSold} sellerId={userId!} onClose={() => setPendingSold(null)} />
     </AppShell>
+
 
   );
 }

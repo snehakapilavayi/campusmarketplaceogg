@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-const SITE = "https://swapspace.lovable.app";
+import { SITE } from "@/lib/site";
 const routes = ["/", "/how-it-works", "/market", "/categories", "/auth"];
 
 export const Route = createFileRoute("/sitemap.xml")({

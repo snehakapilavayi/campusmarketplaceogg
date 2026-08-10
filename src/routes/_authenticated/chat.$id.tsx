@@ -52,7 +52,7 @@ function Conversation() {
       const otherId = data.buyer_id === userId ? data.seller_id : data.buyer_id;
       const { data: other } = await supabase
         .from("profiles")
-        .select("id,full_name,avatar_url,tomato_rating")
+        .select("id,full_name,avatar_url,swapcoin_rating")
         .eq("id", otherId)
         .maybeSingle();
       return { ...data, other };
