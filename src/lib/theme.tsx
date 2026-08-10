@@ -36,19 +36,18 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>("light");
 
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
+    let stored: string | null = null;
+    try {
+      stored = localStorage.getItem(STORAGE_KEY);
+    } catch {
+      /* ignore */
+    }
     const initialMode: ThemeMode = stored === "light" || stored === "dark" ? stored : "system";
     const resolved: Theme = initialMode === "system" ? systemTheme() : initialMode;
     setModeState(initialMode);
     setTheme(resolved);
+    apply(resolved);
   }, []);
-
-  // Theme state is the single owner of the root class. A MutationObserver here
-  // can race a click with stale state and immediately undo the user's choice.
-  useEffect(() => {
-    apply(theme);
-  }, [theme]);
-
 
   // Follow the OS when in system mode.
   useEffect(() => {
@@ -57,6 +56,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     const onChange = () => {
       const next = systemTheme();
       setTheme(next);
+      apply(next);
     };
     mq.addEventListener("change", onChange);
     return () => mq.removeEventListener("change", onChange);
@@ -66,6 +66,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     setModeState(next);
     const resolved: Theme = next === "system" ? systemTheme() : next;
     setTheme(resolved);
+    // Apply synchronously so the click always wins, even if a render is pending.
+    apply(resolved);
     try {
       if (next === "system") localStorage.removeItem(STORAGE_KEY);
       else localStorage.setItem(STORAGE_KEY, next);
@@ -77,6 +79,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const toggleTheme = useCallback(() => {
     setMode(theme === "dark" ? "light" : "dark");
   }, [theme, setMode]);
+
 
   return (
     <ThemeContext.Provider value={{ theme, mode, setMode, toggleTheme }}>{children}</ThemeContext.Provider>
