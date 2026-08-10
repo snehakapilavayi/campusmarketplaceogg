@@ -263,7 +263,7 @@ function CampusesCard({ adminId }: { adminId: string | null }) {
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
 
-  async function run(action: string, target: string, fn: () => Promise<{ error: unknown }>) {
+  async function run(action: string, target: string, fn: () => PromiseLike<{ error: unknown }>) {
     setBusy(true);
     try {
       const { error } = await fn();
