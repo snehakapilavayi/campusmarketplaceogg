@@ -59,7 +59,7 @@ export const defaultSettings: AppSettings = {
 export const settingsQueryKey = ["app-settings"] as const;
 
 async function fetchSettings(): Promise<AppSettings> {
-  const { data, error } = await supabase.from("app_settings").select("key,value");
+  const { data, error } = await supabase.rpc("get_public_settings");
   if (error) throw error;
   const merged = { ...defaultSettings };
   for (const row of data ?? []) {
