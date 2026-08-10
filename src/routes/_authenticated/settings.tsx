@@ -9,7 +9,7 @@ import { useTheme, type ThemeMode } from "@/lib/theme";
 import { deleteOwnAccount } from "@/lib/account.functions";
 import { AppShell } from "@/components/app-shell";
 import { CampusBadge } from "@/components/brand";
-import { SUPPORT_EMAIL, SupportLink } from "@/components/support";
+import { SUPPORT_MAILTO } from "@/components/support";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
@@ -126,10 +126,10 @@ function SettingsPage() {
         <Section title="Help & support" description="Stuck with a listing, a chat or your account?">
           <div className="space-y-2 text-sm">
             <p className="text-muted-foreground">
-              Email the SwapSpace team at <SupportLink /> and we'll get back to you.
+              Have a question? Tap below and your mail app will open straight to the SwapSpace team.
             </p>
             <Button asChild variant="outline" className="rounded-full">
-              <a href={`mailto:${SUPPORT_EMAIL}?subject=SwapSpace%20support`}>Email support</a>
+              <a href={SUPPORT_MAILTO}>Contact us</a>
             </Button>
           </div>
         </Section>
