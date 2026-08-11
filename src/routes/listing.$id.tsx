@@ -22,6 +22,7 @@ import { cn } from "@/lib/utils";
 
 
 import { SITE } from "@/lib/site";
+import { getListingMeta } from "@/lib/listing.functions";
 
 export const Route = createFileRoute("/listing/$id")({
   loader: async ({ params }) => ({ meta: await getListingMeta({ data: { id: params.id } }) }),
