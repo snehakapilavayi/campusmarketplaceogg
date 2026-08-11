@@ -14,6 +14,23 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAppSettings } from "@/lib/settings";
 import { SupportNote, ContactUsButton } from "@/components/support";
 
+export function BackButton({ className }: { className?: string }) {
+  const router = useRouter();
+  return (
+    <button
+      type="button"
+      onClick={() => router.history.back()}
+      aria-label="Go back"
+      className={cn(
+        "grid h-10 w-10 shrink-0 place-items-center rounded-full transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-95",
+        className,
+      )}
+    >
+      <ArrowLeft className="h-5 w-5" />
+    </button>
+  );
+}
+
 export function AppHeader({ title, actions = true }: { title?: string | undefined; actions?: boolean }) {
   const { userId } = useAuth();
   const queryClient = useQueryClient();
