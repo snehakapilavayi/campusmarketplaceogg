@@ -145,14 +145,29 @@ function CartPage() {
                         <span className="text-xs text-muted-foreground">/{item.rent_period ?? "day"}</span>
                       )}
                     </p>
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      <Button size="sm" variant="outline" className="h-8 rounded-full" onClick={() => contact(item)}>
+                    <div className="mt-2 flex flex-wrap items-center gap-2">
+                      <Button
+                        size="sm"
+                        className="h-8 rounded-full"
+                        disabled={busy !== null}
+                        onClick={() => buyNow(item)}
+                      >
+                        {busy === item.id ? "Opening…" : "Buy now"}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="h-8 rounded-full"
+                        disabled={busy !== null}
+                        onClick={() => contact(item)}
+                      >
                         <MessageCircle className="mr-1 h-3.5 w-3.5" /> Message
                       </Button>
                       <Button
                         size="sm"
                         variant="ghost"
-                        className="h-8 rounded-full text-muted-foreground"
+                        aria-label={`Remove ${item.title} from cart`}
+                        className="h-8 rounded-full text-muted-foreground hover:text-destructive"
                         onClick={() => cart.toggle(item.id)}
                       >
                         <Trash2 className="h-3.5 w-3.5" />
@@ -164,14 +179,32 @@ function CartPage() {
             })}
 
             <div className="rounded-2xl border border-border bg-card p-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Estimated total</span>
-                <span className="font-display text-xl font-extrabold">{currency(total)}</span>
-              </div>
-              <p className="mt-2 text-xs text-muted-foreground">
-                SwapSpace doesn't process payments. Pay each seller directly when you meet on campus.
+              <p className="text-xs text-muted-foreground">
+                SwapSpace doesn't process payments. “Buy now” messages the seller so you can agree on a campus
+                handover — pay them directly when you meet.
               </p>
             </div>
+
+            {/* Sticky checkout bar: sits above the bottom nav on every screen size. */}
+            <div className="sticky bottom-[76px] z-20 -mx-1 rounded-3xl border border-border bg-background/95 p-3 shadow-[var(--shadow-lift)] backdrop-blur-md">
+              <div className="flex items-center gap-3">
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs text-muted-foreground">
+                    Estimated total · {items.length} item{items.length === 1 ? "" : "s"}
+                  </p>
+                  <p className="font-display text-xl font-extrabold">{currency(total)}</p>
+                </div>
+                <Button
+                  size="lg"
+                  className="shrink-0 rounded-full"
+                  disabled={busy !== null}
+                  onClick={buyAll}
+                >
+                  {busy === "all" ? "Starting…" : "Buy now"}
+                </Button>
+              </div>
+            </div>
+
           </>
         )}
       </div>
