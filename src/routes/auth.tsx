@@ -7,6 +7,7 @@ import { classifyEmail, normalizeDomains, useAppSettings, type GeneralSettings }
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { Logo, Mascot } from "@/components/brand";
+import { BackButton } from "@/components/app-shell";
 import { ThemeToggle } from "@/lib/theme";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
