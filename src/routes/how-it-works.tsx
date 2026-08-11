@@ -89,7 +89,7 @@ function HowItWorks() {
       <header className="mx-auto flex h-20 max-w-6xl items-center justify-between gap-3 px-5">
         <Logo to="/" />
         <div className="flex items-center gap-1 sm:gap-2">
-          <ThemeToggle />
+          
           <Button asChild variant="ghost" className="hidden rounded-full sm:inline-flex">
             <Link to="/market">Browse</Link>
           </Button>
