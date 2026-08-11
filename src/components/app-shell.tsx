@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Link, useNavigate, useRouter, useRouterState } from "@tanstack/react-router";
 import { motion, useReducedMotion } from "motion/react";
-import { ArrowLeft, Bell, Bike, Heart, Home, LayoutGrid, MessageCircle, Plus, Search, User } from "lucide-react";
+import { ArrowLeft, Bell, Bike, Heart, Home, LayoutGrid, MessageCircle, Plus, Search, ShoppingCart, User } from "lucide-react";
 import { toast } from "sonner";
 import { Logo } from "@/components/brand";
 import { cn } from "@/lib/utils";
@@ -165,6 +165,7 @@ export function AppHeader({ title, actions = true }: { title?: string | undefine
 const navItems = [
   { to: "/market", label: "Home", icon: Home },
   { to: "/categories", label: "Categories", icon: LayoutGrid },
+  { to: "/cart", label: "Cart", icon: ShoppingCart },
   { to: "/profile", label: "Account", icon: User },
 ] as const;
 
@@ -182,7 +183,7 @@ export function BottomNav() {
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border/70 bg-background/95 backdrop-blur-md">
-      <div className="mx-auto grid max-w-5xl grid-cols-4 items-end px-1 pb-[max(env(safe-area-inset-bottom),0.25rem)] sm:px-2">
+      <div className="mx-auto grid max-w-5xl grid-cols-5 items-end px-1 pb-[max(env(safe-area-inset-bottom),0.25rem)] sm:px-2">
         {items.slice(0, 2).map((item) => (
           <NavLink key={item.label} {...item} active={isActive(item.to)} />
         ))}
