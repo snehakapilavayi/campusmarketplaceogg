@@ -183,7 +183,7 @@ export function BottomNav() {
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border/70 bg-background/95 backdrop-blur-md">
-      <div className="mx-auto grid max-w-5xl grid-cols-4 items-end px-1 pb-[max(env(safe-area-inset-bottom),0.25rem)] sm:px-2">
+      <div className="mx-auto grid max-w-5xl grid-cols-5 items-end px-1 pb-[max(env(safe-area-inset-bottom),0.25rem)] sm:px-2">
         {items.slice(0, 2).map((item) => (
           <NavLink key={item.label} {...item} active={isActive(item.to)} />
         ))}
