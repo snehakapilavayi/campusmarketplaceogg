@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
+import { Link, useNavigate, useRouter, useRouterState } from "@tanstack/react-router";
 import { motion, useReducedMotion } from "motion/react";
-import { Bell, Bike, Heart, Home, LayoutGrid, MessageCircle, Plus, Search, ShoppingBag, User } from "lucide-react";
+import { ArrowLeft, Bell, Bike, Heart, Home, LayoutGrid, MessageCircle, Plus, Search, ShoppingBag, User } from "lucide-react";
 import { toast } from "sonner";
 import { Logo } from "@/components/brand";
 import { cn } from "@/lib/utils";
