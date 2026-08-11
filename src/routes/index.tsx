@@ -1,5 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Instagram, Recycle, ShieldCheck, Wallet } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { ArrowRight, HandCoins, Instagram, MessageCircle, Recycle, ShieldCheck, UploadCloud, Wallet } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { VerifiedBadge } from "@/components/brand";
 import { Logo, Mascot } from "@/components/brand";
 import { SUPPORT_MAILTO, SupportLink } from "@/components/support";
 import { Button } from "@/components/ui/button";
@@ -47,6 +50,57 @@ const perks = [
     body: "Need a calculator for one exam? Rent it by the day instead of buying new.",
   },
 ];
+
+const steps = [
+  {
+    icon: UploadCloud,
+    title: "List",
+    body: "Post what you want to sell, rent, or swap in under a minute.",
+  },
+  {
+    icon: MessageCircle,
+    title: "Chat",
+    body: "Message verified students directly, negotiate price or swap terms.",
+  },
+  {
+    icon: HandCoins,
+    title: "Meet & Pay",
+    body: "Meet on campus, pay cash or UPI. SwapSpace never touches your money.",
+  },
+];
+
+/** Real counts only — nothing is shown until there is genuine data to show. */
+function LiveStats() {
+  const { data } = useQuery({
+    queryKey: ["landing-stats"],
+    staleTime: 5 * 60 * 1000,
+    queryFn: async () => {
+      const [listings, students] = await Promise.all([
+        supabase.from("listings").select("id", { count: "exact", head: true }).eq("status", "approved"),
+        supabase.from("profiles").select("id", { count: "exact", head: true }).eq("verified", true),
+      ]);
+      return { listings: listings.count ?? 0, students: students.count ?? 0 };
+    },
+  });
+
+  const items: { value: string; label: string }[] = [{ value: "0%", label: "commission" }];
+  if ((data?.listings ?? 0) > 0) items.unshift({ value: String(data!.listings), label: "live listings" });
+  if ((data?.students ?? 0) > 0) items.push({ value: String(data!.students), label: "verified students" });
+
+  return (
+    <div className="mt-8 flex items-center gap-6 text-sm text-muted-foreground">
+      {items.map((item, i) => (
+        <div key={item.label} className="flex items-center gap-6">
+          {i > 0 && <div className="h-8 w-px bg-border" />}
+          <div>
+            <p className="font-display text-xl font-bold text-foreground">{item.value}</p>
+            <p>{item.label}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 function splitHero(text: string): [string, string] {
   const parts = text.split("|");
@@ -98,22 +152,7 @@ function Landing() {
                 <Link to="/market">Browse listings</Link>
               </Button>
             </div>
-            <div className="mt-8 flex items-center gap-6 text-sm text-muted-foreground">
-              <div>
-                <p className="font-display text-xl font-bold text-foreground">7</p>
-                <p>categories</p>
-              </div>
-              <div className="h-8 w-px bg-border" />
-              <div>
-                <p className="font-display text-xl font-bold text-foreground">0%</p>
-                <p>commission</p>
-              </div>
-              <div className="h-8 w-px bg-border" />
-              <div>
-                <p className="font-display text-xl font-bold text-foreground">1</p>
-                <p>campus at a time</p>
-              </div>
-            </div>
+            <LiveStats />
           </div>
 
           <div className="relative flex justify-center">
@@ -140,6 +179,71 @@ function Landing() {
               <p className="mt-1.5 text-sm text-muted-foreground">{perk.body}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-5 pb-14">
+        <h2 className="font-display text-2xl font-extrabold">How it works</h2>
+        <p className="mt-1.5 text-sm text-muted-foreground">Three steps, start to handover.</p>
+        <ol className="mt-6 grid gap-4 md:grid-cols-3">
+          {steps.map((step, i) => (
+            <li
+              key={step.title}
+              className="relative rounded-3xl border border-border bg-card p-6 shadow-[var(--shadow-soft)]"
+            >
+              <div className="flex items-center gap-3">
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-primary font-display text-base font-extrabold text-primary-foreground">
+                  {i + 1}
+                </span>
+                <step.icon className="h-5 w-5 text-muted-foreground" aria-hidden />
+              </div>
+              <h3 className="mt-4 font-display text-lg font-bold">{step.title}</h3>
+              <p className="mt-1.5 text-sm text-muted-foreground">{step.body}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-5 pb-14">
+        <div className="grid items-center gap-6 rounded-3xl border border-border bg-card p-6 shadow-[var(--shadow-soft)] sm:p-8 md:grid-cols-2">
+          <div>
+            <VerifiedBadge />
+            <h2 className="mt-4 font-display text-2xl font-extrabold">This is what verified looks like</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Every listing carries the seller's verification badge, so you always know you're dealing with a real
+              student on your campus — exactly as it appears in the marketplace.
+            </p>
+            <Button asChild variant="outline" className="mt-6 rounded-full">
+              <Link to="/market">See real listings</Link>
+            </Button>
+          </div>
+          <div className="mx-auto w-full max-w-[13rem]">
+            <div className="overflow-hidden rounded-2xl border border-border bg-background shadow-[var(--shadow-soft)]">
+              <div className="relative aspect-square bg-muted">
+                <span className="absolute left-2 top-2 rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary-foreground">
+                  For sale
+                </span>
+                <div className="absolute inset-0 grid place-items-center">
+                  <Mascot variant="happy" size="sm" alt="" />
+                </div>
+                <span className="absolute bottom-2 left-2">
+                  <VerifiedBadge compact />
+                </span>
+              </div>
+              <div className="space-y-1 p-3">
+                <p className="line-clamp-1 text-sm font-semibold">Casio FX-991EX calculator</p>
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <span className="rounded-full bg-primary/15 px-2 py-0.5 font-display text-xs font-bold text-foreground ring-1 ring-primary/30">
+                    ₹850
+                  </span>
+                  <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-semibold text-muted-foreground">
+                    Like new
+                  </span>
+                </div>
+                <p className="pt-0.5 text-[11px] text-muted-foreground">Sample listing preview</p>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -217,13 +321,13 @@ function Landing() {
           <p className="flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1">
             <span>© 2026 Campus Marketplace · Made for Students, by Students</span>
             <span aria-hidden>·</span>
-            <a href="#" className="text-muted-foreground underline-offset-2 hover:underline">
+            <Link to="/privacy" className="text-muted-foreground underline-offset-2 hover:underline">
               Privacy
-            </a>
+            </Link>
             <span aria-hidden>·</span>
-            <a href="#" className="text-muted-foreground underline-offset-2 hover:underline">
+            <Link to="/terms" className="text-muted-foreground underline-offset-2 hover:underline">
               Terms
-            </a>
+            </Link>
             <span aria-hidden>·</span>
             <a
               href={SUPPORT_MAILTO}
