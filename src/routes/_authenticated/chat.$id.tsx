@@ -338,6 +338,18 @@ function Conversation() {
           </form>
         </div>
       </div>
+
+      {conversation && userId && (
+        <RateDialog
+          open={rateOpen}
+          onClose={() => setRateOpen(false)}
+          reviewerId={userId}
+          reviewedId={conversation.seller_id}
+          reviewedName={conversation.other?.full_name ?? "the seller"}
+          listingId={listing?.id ?? null}
+        />
+      )}
     </div>
+
   );
 }
