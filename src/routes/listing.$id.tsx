@@ -22,24 +22,63 @@ import { cn } from "@/lib/utils";
 
 
 import { SITE } from "@/lib/site";
+import { getListingMeta } from "@/lib/listing.functions";
 
 export const Route = createFileRoute("/listing/$id")({
-  head: ({ params }) => ({
-    meta: [
-      { title: "Listing — SwapSpace" },
-      { name: "description", content: "See item details, condition and seller rating before you meet on campus." },
-      { property: "og:title", content: "Listing — SwapSpace" },
-      { property: "og:description", content: "See item details and seller rating on SwapSpace." },
-      { property: "og:type", content: "product" },
-      { property: "og:url", content: `${SITE}/listing/${params.id}` },
-      { property: "og:image", content: `${SITE}/og-image.jpg` },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:image", content: `${SITE}/og-image.jpg` },
-    ],
-    links: [{ rel: "canonical", href: `${SITE}/listing/${params.id}` }],
-  }),
+  loader: async ({ params }) => ({ meta: await getListingMeta({ data: { id: params.id } }) }),
+  head: ({ params, loaderData }) => {
+    const m = loaderData?.meta;
+    const price = m ? `₹${Math.round(Number(m.price))}${m.type === "rent" ? "/rental" : ""}` : null;
+    const title = m ? `${m.title} — ${price} on SwapSpace` : "Listing — SwapSpace";
+    const description = m
+      ? (m.description?.trim()?.slice(0, 155) ??
+        `${m.title} available for ${price} from a verified student. Meet on campus, pay in person.`)
+      : "See item details, condition and seller rating before you meet on campus.";
+    const image = m?.image ?? `${SITE}/og-image.jpg`;
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "product" },
+        { property: "og:url", content: `${SITE}/listing/${params.id}` },
+        { property: "og:image", content: image },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:image", content: image },
+      ],
+      links: [{ rel: "canonical", href: `${SITE}/listing/${params.id}` }],
+    };
+  },
+  errorComponent: () => (
+    <div className="mx-auto max-w-md px-6 py-20">
+      <EmptyState
+        title="We couldn't load this listing"
+        description="It may have been removed, or the connection dropped. Try again in a moment."
+        action={
+          <Button asChild className="mt-2 rounded-full">
+            <Link to="/market">Back to market</Link>
+          </Button>
+        }
+      />
+    </div>
+  ),
+  notFoundComponent: () => (
+    <div className="mx-auto max-w-md px-6 py-20">
+      <EmptyState
+        title="Listing not found"
+        description="This item is no longer listed on SwapSpace."
+        action={
+          <Button asChild className="mt-2 rounded-full">
+            <Link to="/market">Browse the market</Link>
+          </Button>
+        }
+      />
+    </div>
+  ),
   component: ListingDetail,
 });
+
 
 
 function ListingDetail() {

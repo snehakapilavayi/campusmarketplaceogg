@@ -1,6 +1,6 @@
 import { Building2 } from "lucide-react";
 import { useCampuses } from "@/lib/campuses";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -37,6 +37,11 @@ function Onboarding() {
   const [busy, setBusy] = useState(false);
 
   const { data: campuses = [] } = useCampuses();
+
+  // Only one campus today — preselect it so there is zero friction.
+  useEffect(() => {
+    if (!campus && campuses.length === 1) setCampus(campuses[0]!.name);
+  }, [campuses, campus]);
 
   async function finish() {
     if (fullName.trim().length < 2) {
@@ -130,7 +135,6 @@ function Onboarding() {
                     ))}
                   </SelectContent>
                 </Select>
-                <p className="text-xs text-muted-foreground">More campuses coming soon.</p>
               </div>
 
               <div className="space-y-1.5">
