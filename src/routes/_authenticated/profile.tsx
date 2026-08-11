@@ -1,13 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ChevronRight, Laptop, LogOut, Moon, Package, Settings as SettingsIcon, ShieldCheck, Sun } from "lucide-react";
+import { ChevronRight, LogOut, Package, Settings as SettingsIcon, ShieldCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
-import { useTheme, type ThemeMode } from "@/lib/theme";
 import { AppShell } from "@/components/app-shell";
-import { CoinRating, VerifiedBadge } from "@/components/brand";
+import { CoinRating, currency, DealClosedBadge, EmptyState, VerifiedBadge } from "@/components/brand";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({
