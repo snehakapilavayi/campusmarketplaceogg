@@ -65,6 +65,52 @@ export function useCart() {
   return useToggleList("cart", { added: "Added to cart", removed: "Removed from cart" });
 }
 
+function inr(value: number | string) {
+  return `₹${Number(value).toLocaleString("en-IN")}`;
+}
+
+/**
+ * "Buy now" is a conversation starter, never a payment. It opens (or reuses) the
+ * thread with the seller, seeds a clear intent message and hands back the thread id.
+ */
+export async function startDeal(item: {
+  listingId: string;
+  sellerId: string;
+  buyerId: string;
+  title: string;
+  price: number | string;
+}) {
+  const conversationId = await openConversation(item.listingId, item.sellerId, item.buyerId);
+  const { data: mine } = await supabase
+    .from("messages")
+    .select("id")
+    .eq("conversation_id", conversationId)
+    .eq("sender_id", item.buyerId)
+    .limit(1);
+  if (!mine || mine.length === 0) {
+    await supabase.from("messages").insert({
+      conversation_id: conversationId,
+      sender_id: item.buyerId,
+      content: `Hi! I'd like to buy ${item.title} for ${inr(item.price)} — when can we meet on campus?`,
+    });
+  }
+  return conversationId;
+}
+
+/** Drops a "Deal closed" line into the thread so both sides see the outcome. */
+export async function postDealClosedMessage(listingId: string, sellerId: string, buyerId: string) {
+  try {
+    const conversationId = await openConversation(listingId, sellerId, buyerId);
+    await supabase.from("messages").insert({
+      conversation_id: conversationId,
+      sender_id: sellerId,
+      content: `✅ Deal closed — swapped on ${new Date().toLocaleDateString()}`,
+    });
+  } catch {
+    /* the sale is already recorded; the thread note is best-effort */
+  }
+}
+
 export async function openConversation(listingId: string, sellerId: string, buyerId: string) {
   const { data: existing } = await supabase
     .from("conversations")

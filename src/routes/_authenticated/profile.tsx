@@ -1,13 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ChevronRight, Laptop, LogOut, Moon, Package, Settings as SettingsIcon, ShieldCheck, Sun } from "lucide-react";
+import { ChevronRight, LogOut, Package, Settings as SettingsIcon, ShieldCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
-import { useTheme, type ThemeMode } from "@/lib/theme";
 import { AppShell } from "@/components/app-shell";
-import { CoinRating, VerifiedBadge } from "@/components/brand";
+import { CoinRating, currency, EmptyState, VerifiedBadge } from "@/components/brand";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({
@@ -21,15 +19,8 @@ export const Route = createFileRoute("/_authenticated/profile")({
   component: ProfilePage,
 });
 
-const themeOptions: { value: ThemeMode; label: string; icon: typeof Sun }[] = [
-  { value: "light", label: "Light", icon: Sun },
-  { value: "dark", label: "Dark", icon: Moon },
-  { value: "system", label: "System", icon: Laptop },
-];
-
 function ProfilePage() {
   const { profile, userId, isAdmin, signOut } = useAuth();
-  const { mode, setMode } = useTheme();
 
 
 
@@ -90,32 +81,8 @@ function ProfilePage() {
           {isAdmin && <Row to="/admin" icon={ShieldCheck} label="Admin portal" />}
         </div>
 
-        <section className="rounded-3xl border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
-          <h2 className="font-display text-base font-bold">Appearance</h2>
-          <p className="mb-4 mt-1 text-xs text-muted-foreground">Choose how SwapSpace looks on this device.</p>
-          <div className="grid grid-cols-3 gap-2">
-            {themeOptions.map((option) => {
-              const active = mode === option.value;
-              return (
-                <button
-                  key={option.value}
-                  type="button"
-                  onClick={() => setMode(option.value)}
-                  aria-pressed={active}
-                  className={cn(
-                    "flex min-h-11 flex-col items-center gap-1.5 rounded-2xl border px-3 py-3 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                    active
-                      ? "border-primary bg-primary/10 text-foreground"
-                      : "border-border bg-background text-muted-foreground hover:bg-muted",
-                  )}
-                >
-                  <option.icon className={cn("h-5 w-5", active && "text-primary")} />
-                  {option.label}
-                </button>
-              );
-            })}
-          </div>
-        </section>
+        <PurchasesSection userId={userId} />
+
 
         <Button variant="outline" className="w-full rounded-full" onClick={signOut}>
           <LogOut className="mr-2 h-4 w-4" /> Sign out
@@ -146,3 +113,60 @@ function Row({ to, icon: Icon, label }: { to: string; icon: typeof Package; labe
     </Link>
   );
 }
+
+/** Closed deals where this student was the buyer. */
+function PurchasesSection({ userId }: { userId: string | null }) {
+  const { data: purchases = [], isLoading } = useQuery({
+    queryKey: ["purchases", userId],
+    enabled: !!userId,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("listings")
+        .select("id,title,price,sold_at,profiles!listings_seller_id_fkey(full_name)")
+        .eq("buyer_id", userId!)
+        .order("sold_at", { ascending: false });
+      return data ?? [];
+    },
+  });
+
+  return (
+    <section className="rounded-3xl border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
+      <h2 className="font-display text-base font-bold">Purchases</h2>
+      <p className="mb-4 mt-1 text-xs text-muted-foreground">Deals you closed on campus.</p>
+      {isLoading ? (
+        <div className="space-y-2">
+          {[0, 1].map((i) => (
+            <div key={i} className="h-14 animate-pulse rounded-2xl bg-muted" />
+          ))}
+        </div>
+      ) : purchases.length === 0 ? (
+        <EmptyState
+          title="No deals yet"
+          description="Once you close a swap, it shows up here with the seller and date."
+        />
+      ) : (
+        <ul className="space-y-2">
+          {purchases.map((p) => (
+            <li key={p.id}>
+              <Link
+                to="/listing/$id"
+                params={{ id: p.id }}
+                className="flex items-center gap-3 rounded-2xl border border-border p-3 transition-colors hover:bg-muted/60"
+              >
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-semibold">{p.title}</p>
+                  <p className="truncate text-xs text-muted-foreground">
+                    From {p.profiles?.full_name ?? "a student"}
+                    {p.sold_at && ` · ${new Date(p.sold_at).toLocaleDateString()}`}
+                  </p>
+                </div>
+                <span className="shrink-0 font-display text-sm font-bold text-primary">{currency(p.price)}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
+

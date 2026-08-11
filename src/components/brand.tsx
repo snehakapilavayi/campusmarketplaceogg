@@ -205,6 +205,29 @@ export function EmptyState({
   );
 }
 
+/** Brand-green "Deal closed" marker shown wherever a sold listing appears. */
+export function DealClosedBadge({
+  soldAt,
+  className,
+}: {
+  soldAt?: string | null;
+  className?: string;
+}) {
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center gap-1 rounded-full bg-success px-2.5 py-0.5 text-[11px] font-bold text-success-foreground",
+        className,
+      )}
+    >
+      <svg viewBox="0 0 24 24" className="h-3 w-3 fill-current" aria-hidden>
+        <path d="M9.6 16.6L5 12l1.4-1.4 3.2 3.2 8-8L19 7.2z" />
+      </svg>
+      Deal closed{soldAt ? ` · ${new Date(soldAt).toLocaleDateString()}` : ""}
+    </span>
+  );
+}
+
 
 export function VerifiedBadge({ compact = false }: { compact?: boolean }) {
   return (

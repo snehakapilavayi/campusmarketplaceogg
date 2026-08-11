@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { MessageCircle, Trash2 } from "lucide-react";
@@ -8,7 +9,7 @@ import { AppShell } from "@/components/app-shell";
 import { currency, EmptyState } from "@/components/brand";
 import { ListSkeleton } from "@/components/skeletons";
 import { Button } from "@/components/ui/button";
-import { openConversation, useCart } from "@/lib/marketplace";
+import { openConversation, startDeal, useCart } from "@/lib/marketplace";
 
 export const Route = createFileRoute("/_authenticated/cart")({
   head: () => ({
@@ -51,6 +52,7 @@ function CartPage() {
   });
 
   const total = items.reduce((sum, i) => sum + Number(i.price), 0);
+  const [busy, setBusy] = useState<string | null>(null);
 
   async function contact(item: CartRow) {
     try {
@@ -60,6 +62,52 @@ function CartPage() {
       toast.error("Couldn't open the chat");
     }
   }
+
+  /** Buy now = start the deal in chat. SwapSpace never handles the payment. */
+  async function buyNow(item: CartRow) {
+    setBusy(item.id);
+    try {
+      const id = await startDeal({
+        listingId: item.id,
+        sellerId: item.seller_id,
+        buyerId: userId!,
+        title: item.title,
+        price: item.price,
+      });
+      navigate({ to: "/chat/$id", params: { id } });
+    } catch {
+      toast.error("Couldn't start the deal. Try again.");
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function buyAll() {
+    const first = items[0];
+    if (!first) return;
+    setBusy("all");
+    try {
+      for (const item of items) {
+        await startDeal({
+          listingId: item.id,
+          sellerId: item.seller_id,
+          buyerId: userId!,
+          title: item.title,
+          price: item.price,
+        });
+      }
+      const id = await openConversation(first.id, first.seller_id, userId!);
+      toast.success(
+        items.length > 1 ? `Messaged ${items.length} sellers — check your chats` : "Deal started with the seller",
+      );
+      navigate({ to: "/chat/$id", params: { id } });
+    } catch {
+      toast.error("Couldn't start the deals. Try again.");
+    } finally {
+      setBusy(null);
+    }
+  }
+
 
   return (
     <AppShell title="Cart">
@@ -97,14 +145,29 @@ function CartPage() {
                         <span className="text-xs text-muted-foreground">/{item.rent_period ?? "day"}</span>
                       )}
                     </p>
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      <Button size="sm" variant="outline" className="h-8 rounded-full" onClick={() => contact(item)}>
+                    <div className="mt-2 flex flex-wrap items-center gap-2">
+                      <Button
+                        size="sm"
+                        className="h-8 rounded-full"
+                        disabled={busy !== null}
+                        onClick={() => buyNow(item)}
+                      >
+                        {busy === item.id ? "Opening…" : "Buy now"}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="h-8 rounded-full"
+                        disabled={busy !== null}
+                        onClick={() => contact(item)}
+                      >
                         <MessageCircle className="mr-1 h-3.5 w-3.5" /> Message
                       </Button>
                       <Button
                         size="sm"
                         variant="ghost"
-                        className="h-8 rounded-full text-muted-foreground"
+                        aria-label={`Remove ${item.title} from cart`}
+                        className="h-8 rounded-full text-muted-foreground hover:text-destructive"
                         onClick={() => cart.toggle(item.id)}
                       >
                         <Trash2 className="h-3.5 w-3.5" />
@@ -116,14 +179,32 @@ function CartPage() {
             })}
 
             <div className="rounded-2xl border border-border bg-card p-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Estimated total</span>
-                <span className="font-display text-xl font-extrabold">{currency(total)}</span>
-              </div>
-              <p className="mt-2 text-xs text-muted-foreground">
-                SwapSpace doesn't process payments. Pay each seller directly when you meet on campus.
+              <p className="text-xs text-muted-foreground">
+                SwapSpace doesn't process payments. “Buy now” messages the seller so you can agree on a campus
+                handover — pay them directly when you meet.
               </p>
             </div>
+
+            {/* Sticky checkout bar: sits above the bottom nav on every screen size. */}
+            <div className="sticky bottom-[76px] z-20 -mx-1 rounded-3xl border border-border bg-background/95 p-3 shadow-[var(--shadow-lift)] backdrop-blur-md">
+              <div className="flex items-center gap-3">
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs text-muted-foreground">
+                    Estimated total · {items.length} item{items.length === 1 ? "" : "s"}
+                  </p>
+                  <p className="font-display text-xl font-extrabold">{currency(total)}</p>
+                </div>
+                <Button
+                  size="lg"
+                  className="shrink-0 rounded-full"
+                  disabled={busy !== null}
+                  onClick={buyAll}
+                >
+                  {busy === "all" ? "Starting…" : "Buy now"}
+                </Button>
+              </div>
+            </div>
+
           </>
         )}
       </div>

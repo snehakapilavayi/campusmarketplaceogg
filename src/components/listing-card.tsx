@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { Link } from "@tanstack/react-router";
 import { motion, useMotionValue, useReducedMotion, useTransform } from "motion/react";
 import { Heart } from "lucide-react";
-import { currency, CoinRating, conditionLabels } from "@/components/brand";
+import { currency, CoinRating, conditionLabels, DealClosedBadge } from "@/components/brand";
 import { SmartImage } from "@/components/smart-image";
 import { haptic, springy } from "@/lib/motion";
 import { cn } from "@/lib/utils";
@@ -15,6 +15,8 @@ export type ListingCardData = {
   rent_period: string | null;
   badge: string | null;
   condition: string;
+  status?: string | null;
+  sold_at?: string | null;
   listing_images?: { url: string; sort_order: number }[];
   profiles?: { full_name: string; swapcoin_rating: number } | null;
 };
@@ -35,6 +37,7 @@ export function ListingCard({
   const swiped = useRef(false);
 
   const canSwipe = !!onToggleWish && !wished && !reduce;
+  const sold = listing.status === "completed" || !!listing.sold_at;
 
   return (
     <div className="relative">
@@ -83,12 +86,19 @@ export function ListingCard({
             >
               {listing.type === "rent" ? "For rent" : "For sale"}
             </span>
-            {listing.badge && (
+            {listing.badge && !sold && (
               <span className="absolute right-2 top-2 rounded-full bg-background/90 px-2 py-0.5 text-[10px] font-semibold">
                 {listing.badge}
               </span>
             )}
+            {sold && (
+              <>
+                <span className="pointer-events-none absolute inset-0 bg-background/55" aria-hidden />
+                <DealClosedBadge soldAt={listing.sold_at} className="absolute right-2 top-2" />
+              </>
+            )}
           </div>
+
           <div className="space-y-1 p-3">
             <p className="line-clamp-1 text-sm font-semibold">{listing.title}</p>
             <div className="flex flex-wrap items-center gap-1.5">

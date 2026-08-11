@@ -7,7 +7,8 @@ import { Check, CheckCheck, ChevronLeft, Send } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
-import { currency } from "@/components/brand";
+import { currency, DealClosedBadge } from "@/components/brand";
+import { RateDialog } from "@/components/rate-dialog";
 import { MessageSkeleton } from "@/components/skeletons";
 import { haptic, springy } from "@/lib/motion";
 import { Input } from "@/components/ui/input";
@@ -45,7 +46,9 @@ function Conversation() {
     queryFn: async () => {
       const { data } = await supabase
         .from("conversations")
-        .select("id,buyer_id,seller_id,listings(id,title,price,type,rent_period,listing_images(url,sort_order))")
+        .select(
+          "id,buyer_id,seller_id,listings(id,title,price,type,rent_period,status,sold_at,buyer_id,listing_images(url,sort_order))",
+        )
         .eq("id", id)
         .maybeSingle();
       if (!data) return null;
@@ -58,6 +61,7 @@ function Conversation() {
       return { ...data, other };
     },
   });
+
 
   type Msg = {
     id: string;
@@ -166,10 +170,19 @@ function Conversation() {
 
   const listing = conversation?.listings;
   const image = [...(listing?.listing_images ?? [])].sort((a, b) => a.sort_order - b.sort_order)[0]?.url;
+  const sold = !!listing && (listing.status === "completed" || !!listing.sold_at);
+  const isBuyer = conversation?.buyer_id === userId;
+  const [rateOpen, setRateOpen] = useState(false);
 
   return (
-    <div className="flex min-h-[100dvh] flex-col overscroll-none bg-background">
+    <div className="relative flex min-h-[100dvh] flex-col overscroll-none bg-background">
+      {/* Fixed brand pattern layer, masked so it fades behind the message list. */}
+      <div
+        aria-hidden
+        className="brand-pattern-subtle pointer-events-none fixed inset-0 z-0 opacity-70 [mask-image:radial-gradient(120%_80%_at_50%_0%,transparent_10%,var(--color-foreground)_70%)]"
+      />
       <header className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur-md">
+
         <div className="mx-auto flex h-14 max-w-3xl items-center gap-2 px-3 sm:h-16 sm:gap-3">
           <Link to="/chat" className="grid h-9 w-9 place-items-center rounded-full hover:bg-muted" aria-label="Back">
             <ChevronLeft className="h-5 w-5" />
@@ -195,11 +208,26 @@ function Conversation() {
                 {listing.type === "rent" && <span className="font-medium text-muted-foreground">/{listing.rent_period ?? "day"}</span>}
               </p>
             </div>
+            {sold && <DealClosedBadge soldAt={listing.sold_at} />}
           </Link>
         )}
       </header>
 
-      <div className="mx-auto w-full max-w-3xl flex-1 space-y-2 px-3 py-4">
+      <div className="relative z-10 mx-auto w-full max-w-3xl flex-1 space-y-2 px-3 py-4">
+        {sold && (
+          <div className="mx-auto flex max-w-md flex-col items-center gap-2 rounded-2xl border border-border bg-card/90 px-4 py-3 text-center shadow-[var(--shadow-soft)] backdrop-blur">
+            <DealClosedBadge soldAt={listing?.sold_at} />
+            <p className="text-xs text-muted-foreground">
+              This swap is complete. Meet safely and keep it kind.
+            </p>
+            {isBuyer && conversation && (
+              <Button size="sm" className="rounded-full" onClick={() => setRateOpen(true)}>
+                Rate with SwapCoins
+              </Button>
+            )}
+          </div>
+        )}
+
         {isLoading && <MessageSkeleton />}
         {!isLoading && messages.length === 0 && (
           <p className="py-8 text-center text-sm text-muted-foreground">
@@ -271,7 +299,7 @@ function Conversation() {
 
       </div>
 
-      <div className="sticky bottom-0 border-t border-border bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-md">
+      <div className="sticky bottom-0 z-10 border-t border-border bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-md">
         <div className="mx-auto max-w-3xl px-3 py-3">
           {!isLoading && messages.length === 0 && (
             <div className="no-scrollbar mb-2 flex gap-2 overflow-x-auto">
@@ -310,6 +338,18 @@ function Conversation() {
           </form>
         </div>
       </div>
+
+      {conversation && userId && (
+        <RateDialog
+          open={rateOpen}
+          onClose={() => setRateOpen(false)}
+          reviewerId={userId}
+          reviewedId={conversation.seller_id}
+          reviewedName={conversation.other?.full_name ?? "the seller"}
+          listingId={listing?.id ?? null}
+        />
+      )}
     </div>
+
   );
 }
