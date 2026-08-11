@@ -52,6 +52,7 @@ function CartPage() {
   });
 
   const total = items.reduce((sum, i) => sum + Number(i.price), 0);
+  const [busy, setBusy] = useState<string | null>(null);
 
   async function contact(item: CartRow) {
     try {
@@ -61,6 +62,52 @@ function CartPage() {
       toast.error("Couldn't open the chat");
     }
   }
+
+  /** Buy now = start the deal in chat. SwapSpace never handles the payment. */
+  async function buyNow(item: CartRow) {
+    setBusy(item.id);
+    try {
+      const id = await startDeal({
+        listingId: item.id,
+        sellerId: item.seller_id,
+        buyerId: userId!,
+        title: item.title,
+        price: item.price,
+      });
+      navigate({ to: "/chat/$id", params: { id } });
+    } catch {
+      toast.error("Couldn't start the deal. Try again.");
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function buyAll() {
+    const first = items[0];
+    if (!first) return;
+    setBusy("all");
+    try {
+      for (const item of items) {
+        await startDeal({
+          listingId: item.id,
+          sellerId: item.seller_id,
+          buyerId: userId!,
+          title: item.title,
+          price: item.price,
+        });
+      }
+      const id = await openConversation(first.id, first.seller_id, userId!);
+      toast.success(
+        items.length > 1 ? `Messaged ${items.length} sellers — check your chats` : "Deal started with the seller",
+      );
+      navigate({ to: "/chat/$id", params: { id } });
+    } catch {
+      toast.error("Couldn't start the deals. Try again.");
+    } finally {
+      setBusy(null);
+    }
+  }
+
 
   return (
     <AppShell title="Cart">
