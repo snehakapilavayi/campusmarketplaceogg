@@ -169,10 +169,19 @@ function Conversation() {
 
   const listing = conversation?.listings;
   const image = [...(listing?.listing_images ?? [])].sort((a, b) => a.sort_order - b.sort_order)[0]?.url;
+  const sold = !!listing && (listing.status === "completed" || !!listing.sold_at);
+  const isBuyer = conversation?.buyer_id === userId;
+  const [rateOpen, setRateOpen] = useState(false);
 
   return (
-    <div className="flex min-h-[100dvh] flex-col overscroll-none bg-background">
+    <div className="relative flex min-h-[100dvh] flex-col overscroll-none bg-background">
+      {/* Fixed brand pattern layer, masked so it fades behind the message list. */}
+      <div
+        aria-hidden
+        className="brand-pattern-subtle pointer-events-none fixed inset-0 z-0 opacity-70 [mask-image:radial-gradient(120%_80%_at_50%_0%,transparent_10%,var(--color-foreground)_70%)]"
+      />
       <header className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur-md">
+
         <div className="mx-auto flex h-14 max-w-3xl items-center gap-2 px-3 sm:h-16 sm:gap-3">
           <Link to="/chat" className="grid h-9 w-9 place-items-center rounded-full hover:bg-muted" aria-label="Back">
             <ChevronLeft className="h-5 w-5" />
