@@ -256,21 +256,22 @@ function Conversation() {
               >
                 {m.content}
               </div>
-              {isLastMine && (
-                <span className="mt-1 flex items-center gap-1 pr-1 text-[10px] font-medium text-muted-foreground">
-                  {m.pending ? (
-                    <>Sending…</>
+              <span className={cn("mt-1 flex items-center gap-1 text-[10px] font-medium text-muted-foreground", mine ? "pr-1" : "pl-1")}>
+                <time dateTime={m.created_at}>{formatTime(m.created_at)}</time>
+                {isLastMine && (
+                  m.pending ? (
+                    <>· Sending…</>
                   ) : m.read_at ? (
                     <>
-                      <CheckCheck className="h-3 w-3 text-primary" /> Seen
+                      · <CheckCheck className="h-3 w-3 text-primary" /> Seen
                     </>
                   ) : (
                     <>
-                      <Check className="h-3 w-3" /> Sent
+                      · <Check className="h-3 w-3" /> Sent
                     </>
-                  )}
-                </span>
-              )}
+                  )
+                )}
+              </span>
             </motion.div>
           );
         })}
