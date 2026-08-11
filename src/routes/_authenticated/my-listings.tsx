@@ -64,6 +64,7 @@ function MyListings() {
   const [pendingDelete, setPendingDelete] = useState<{ id: string; title: string } | null>(null);
   const [pendingSold, setPendingSold] = useState<SoldTarget | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [tab, setTab] = useState<"active" | "deals">("active");
 
 
   const { data: listings = [], isLoading } = useQuery({
