@@ -50,6 +50,32 @@ export const Route = createFileRoute("/listing/$id")({
       links: [{ rel: "canonical", href: `${SITE}/listing/${params.id}` }],
     };
   },
+  errorComponent: () => (
+    <div className="mx-auto max-w-md px-6 py-20">
+      <EmptyState
+        title="We couldn't load this listing"
+        description="It may have been removed, or the connection dropped. Try again in a moment."
+        action={
+          <Button asChild className="mt-2 rounded-full">
+            <Link to="/market">Back to market</Link>
+          </Button>
+        }
+      />
+    </div>
+  ),
+  notFoundComponent: () => (
+    <div className="mx-auto max-w-md px-6 py-20">
+      <EmptyState
+        title="Listing not found"
+        description="This item is no longer listed on SwapSpace."
+        action={
+          <Button asChild className="mt-2 rounded-full">
+            <Link to="/market">Browse the market</Link>
+          </Button>
+        }
+      />
+    </div>
+  ),
   component: ListingDetail,
 });
 

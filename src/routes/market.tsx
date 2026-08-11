@@ -280,12 +280,16 @@ function Market() {
             </div>
           ) : visible.length === 0 ? (
             <EmptyState
-              title="Nothing here yet"
-              description={emptyMessage}
+              title={hasFilters ? "Nothing matches that yet" : "Be the first to list"}
+              description={
+                hasFilters
+                  ? emptyMessage
+                  : "The market is brand new. Post the first item and it shows up here instantly for everyone on campus."
+              }
               action={
                 <div className="mt-2 flex flex-wrap justify-center gap-2">
                   <Button asChild className="rounded-full">
-                    <Link to="/sell">List an item</Link>
+                    <Link to="/sell">{hasFilters ? "List an item" : "Be the first to list \u2192"}</Link>
                   </Button>
                   {hasFilters && (
                     <Button
