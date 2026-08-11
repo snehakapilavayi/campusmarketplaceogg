@@ -165,6 +165,7 @@ export function AppHeader({ title, actions = true }: { title?: string | undefine
 const navItems = [
   { to: "/market", label: "Home", icon: Home },
   { to: "/categories", label: "Categories", icon: LayoutGrid },
+  { to: "/cart", label: "Cart", icon: ShoppingCart },
   { to: "/profile", label: "Account", icon: User },
 ] as const;
 
