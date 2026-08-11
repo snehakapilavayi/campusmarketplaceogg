@@ -1,15 +1,22 @@
-import { useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronLeft, Flag, Heart, MessageCircle, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { CampusBadge, conditionLabels, currency, EmptyState, CoinRating, VerifiedBadge } from "@/components/brand";
+import {
+  CampusBadge,
+  conditionLabels,
+  currency,
+  DealClosedBadge,
+  EmptyState,
+  CoinRating,
+  VerifiedBadge,
+} from "@/components/brand";
 import { BottomNav } from "@/components/app-shell";
 import { Button } from "@/components/ui/button";
-import { openConversation, useCart, useWishlist } from "@/lib/marketplace";
+import { ImageGallery } from "@/components/gallery";
+import { openConversation, startDeal, useCart, useWishlist } from "@/lib/marketplace";
 import { useAuth } from "@/lib/auth";
-import { SmartImage } from "@/components/smart-image";
 import { ShareSheet } from "@/components/share-sheet";
 import { cn } from "@/lib/utils";
 
