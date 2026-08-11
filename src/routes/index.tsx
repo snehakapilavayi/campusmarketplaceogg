@@ -77,7 +77,7 @@ function LiveStats() {
     queryFn: async () => {
       const [listings, students] = await Promise.all([
         supabase.from("listings").select("id", { count: "exact", head: true }).eq("status", "approved"),
-        supabase.from("profiles").select("id", { count: "exact", head: true }).eq("verified", true),
+        supabase.from("profiles").select("id", { count: "exact", head: true }).eq("verification", "verified"),
       ]);
       return { listings: listings.count ?? 0, students: students.count ?? 0 };
     },
