@@ -306,43 +306,52 @@ function Conversation() {
 
       <div className="sticky bottom-0 z-10 border-t border-border bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-md">
         <div className="mx-auto max-w-3xl px-3 py-3">
-          {!isLoading && messages.length === 0 && (
-            <div className="no-scrollbar mb-2 flex gap-2 overflow-x-auto">
-              {quickReplies.map((q) => (
-                <button
-                  key={q}
-                  onClick={() => send(q)}
-                  className="shrink-0 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium hover:bg-muted"
-                >
-                  {q}
-                </button>
-              ))}
+          {sold ? (
+            <div className="flex items-center justify-center gap-2 rounded-2xl border border-border bg-muted/60 px-4 py-3 text-center text-xs font-medium text-muted-foreground">
+              <Lock className="h-3.5 w-3.5" />
+              This chat is closed — the deal is complete.
             </div>
+          ) : (
+            <>
+              {!isLoading && messages.length === 0 && (
+                <div className="no-scrollbar mb-2 flex gap-2 overflow-x-auto">
+                  {quickReplies.map((q) => (
+                    <button
+                      key={q}
+                      onClick={() => send(q)}
+                      className="shrink-0 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium hover:bg-muted"
+                    >
+                      {q}
+                    </button>
+                  ))}
+                </div>
+              )}
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  send(draft);
+                }}
+                className="flex gap-2"
+              >
+                <Input
+                  value={draft}
+                  onChange={(e) => {
+                    setDraft(e.target.value);
+                    notifyTyping();
+                  }}
+                  placeholder="Type a message…"
+                  maxLength={500}
+                  className="h-11 rounded-full"
+                />
+                <Button type="submit" size="icon" className="h-11 w-11 shrink-0 rounded-full" aria-label="Send">
+                  <Send className="h-4 w-4" />
+                </Button>
+              </form>
+            </>
           )}
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              send(draft);
-            }}
-            className="flex gap-2"
-          >
-            <Input
-              value={draft}
-              onChange={(e) => {
-                setDraft(e.target.value);
-                notifyTyping();
-              }}
-
-              placeholder="Type a message…"
-              maxLength={500}
-              className="h-11 rounded-full"
-            />
-            <Button type="submit" size="icon" className="h-11 w-11 shrink-0 rounded-full" aria-label="Send">
-              <Send className="h-4 w-4" />
-            </Button>
-          </form>
         </div>
       </div>
+
 
       {conversation && userId && (
         <RateDialog
