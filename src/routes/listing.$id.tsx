@@ -146,48 +146,49 @@ function ListingDetail() {
     cart.toggle(id);
   }
 
+  async function handleBuyNow() {
+    if (!userId) {
+      requireAccount("login");
+      return;
+    }
+    try {
+      const conversationId = await startDeal({
+        listingId: id,
+        sellerId: listing!.seller_id,
+        buyerId: userId,
+        title: listing!.title,
+        price: listing!.price,
+      });
+      navigate({ to: "/chat/$id", params: { id: conversationId } });
+    } catch {
+      toast.error("Couldn't start the deal. Try again.");
+    }
+  }
+
   return (
     <div className="min-h-screen bg-background pb-32">
       <div className="relative">
-        <div className="aspect-square w-full bg-muted sm:aspect-[16/10]">
-          {images[active] ? (
-            <SmartImage
-              src={images[active].url}
-              alt={listing.title}
-              layoutId={active === 0 ? `listing-${listing.id}` : undefined}
-              className="h-full w-full"
-            />
-          ) : (
-            <div className="grid h-full place-items-center text-sm text-muted-foreground">No photo</div>
-          )}
-        </div>
+        <ImageGallery images={images} alt={listing.title} layoutId={`listing-${listing.id}`} />
         <Link
           to="/market"
-          className="absolute left-4 top-4 grid h-10 w-10 place-items-center rounded-full bg-background/90 shadow-[var(--shadow-soft)]"
+          className="absolute left-4 top-4 z-10 grid h-10 w-10 place-items-center rounded-full bg-background/90 shadow-[var(--shadow-soft)] transition-transform hover:scale-105 active:scale-95"
           aria-label="Back"
         >
           <ChevronLeft className="h-5 w-5" />
         </Link>
-        <div className="absolute right-4 top-4">
+        <div className="absolute right-4 top-4 z-10">
           <ShareSheet
             url={`${SITE}/listing/${listing.id}`}
             title={listing.title}
           />
         </div>
-
-        {images.length > 1 && (
-          <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5">
-            {images.map((img, i) => (
-              <button
-                key={img.url}
-                onClick={() => setActive(i)}
-                aria-label={`Photo ${i + 1}`}
-                className={cn("h-1.5 rounded-full transition-all", i === active ? "w-6 bg-primary" : "w-1.5 bg-background/80")}
-              />
-            ))}
+        {sold && (
+          <div className="absolute inset-x-0 top-16 z-10 flex justify-center">
+            <DealClosedBadge soldAt={listing.sold_at} className="px-3 py-1 text-xs shadow-[var(--shadow-soft)]" />
           </div>
         )}
       </div>
+
 
       <div className="mx-auto max-w-3xl space-y-5 px-4 pt-5">
         <div>
