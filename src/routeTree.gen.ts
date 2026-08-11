@@ -16,6 +16,7 @@ import { Route as BrandRouteImport } from './routes/brand'
 import { Route as CategoriesRouteImport } from './routes/categories'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as MarketRouteImport } from './routes/market'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
@@ -73,6 +74,11 @@ const HowItWorksRoute = HowItWorksRouteImport.update({
 const MarketRoute = MarketRouteImport.update({
   id: '/market',
   path: '/market',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -211,6 +217,7 @@ export interface FileRoutesByFullPath {
   '/categories': typeof CategoriesRoute
   '/how-it-works': typeof HowItWorksRoute
   '/market': typeof MarketRoute
+  '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
@@ -243,6 +250,7 @@ export interface FileRoutesByTo {
   '/categories': typeof CategoriesRoute
   '/how-it-works': typeof HowItWorksRoute
   '/market': typeof MarketRoute
+  '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/cart': typeof AuthenticatedCartRoute
@@ -276,6 +284,7 @@ export interface FileRoutesById {
   '/categories': typeof CategoriesRoute
   '/how-it-works': typeof HowItWorksRoute
   '/market': typeof MarketRoute
+  '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
@@ -310,6 +319,7 @@ export interface FileRouteTypes {
     | '/categories'
     | '/how-it-works'
     | '/market'
+    | '/privacy'
     | '/reset-password'
     | '/sitemap.xml'
     | '/admin'
@@ -342,6 +352,7 @@ export interface FileRouteTypes {
     | '/categories'
     | '/how-it-works'
     | '/market'
+    | '/privacy'
     | '/reset-password'
     | '/sitemap.xml'
     | '/cart'
@@ -374,6 +385,7 @@ export interface FileRouteTypes {
     | '/categories'
     | '/how-it-works'
     | '/market'
+    | '/privacy'
     | '/reset-password'
     | '/sitemap.xml'
     | '/_authenticated/admin'
@@ -408,6 +420,7 @@ export interface RootRouteChildren {
   CategoriesRoute: typeof CategoriesRoute
   HowItWorksRoute: typeof HowItWorksRoute
   MarketRoute: typeof MarketRoute
+  PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   ListingIdRoute: typeof ListingIdRoute
@@ -462,6 +475,13 @@ declare module '@tanstack/react-router' {
       path: '/market'
       fullPath: '/market'
       preLoaderRoute: typeof MarketRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reset-password': {
@@ -703,6 +723,7 @@ const rootRouteChildren: RootRouteChildren = {
   CategoriesRoute: CategoriesRoute,
   HowItWorksRoute: HowItWorksRoute,
   MarketRoute: MarketRoute,
+  PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   ListingIdRoute: ListingIdRoute,
