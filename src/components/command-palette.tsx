@@ -8,7 +8,6 @@ import {
   Plus,
   Search,
   ShieldCheck,
-  ShoppingBag,
   User,
 } from "lucide-react";
 import {
@@ -103,9 +102,6 @@ export function CommandPalette() {
           </CommandItem>
           <CommandItem value="wishlist saved" onSelect={() => go(() => navigate({ to: "/wishlist" }))}>
             <Heart className="mr-2 h-4 w-4" /> Wishlist
-          </CommandItem>
-          <CommandItem value="cart" onSelect={() => go(() => navigate({ to: "/cart" }))}>
-            <ShoppingBag className="mr-2 h-4 w-4" /> Cart
           </CommandItem>
           <CommandItem value="chat messages" onSelect={() => go(() => navigate({ to: "/chat" }))}>
             <MessageCircle className="mr-2 h-4 w-4" /> Messages
