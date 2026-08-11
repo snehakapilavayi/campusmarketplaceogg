@@ -292,18 +292,28 @@ function ListingDetail() {
 
       {!isOwner && (
         <div className={cn(
-          "fixed inset-x-0 z-30 border-t border-border bg-background/95 p-3 backdrop-blur-md",
+          "fixed inset-x-0 z-30 border-t border-border bg-background/95 p-3 pb-[max(env(safe-area-inset-bottom),0.75rem)] backdrop-blur-md",
           userId ? "bottom-[68px]" : "bottom-0",
         )}>
           <div className="mx-auto max-w-3xl">
-            {userId ? (
+            {sold ? (
+              <div className="flex items-center justify-center gap-2 py-1 text-sm font-semibold text-muted-foreground">
+                <DealClosedBadge soldAt={listing.sold_at} />
+                <span>This item has already been swapped.</span>
+              </div>
+            ) : userId ? (
               <div className="flex gap-2">
-                <Button variant="outline" size="lg" className="flex-1 rounded-full" onClick={handleCart}>
-                  <ShoppingBag className="mr-1.5 h-4 w-4" />
-                  {cart.ids.includes(listing.id) ? "In cart" : "Add to cart"}
+                <Button variant="outline" size="lg" className="rounded-full px-4" onClick={handleCart}>
+                  <ShoppingBag className="h-4 w-4" />
+                  <span className="sr-only sm:not-sr-only sm:ml-1.5">
+                    {cart.ids.includes(listing.id) ? "In cart" : "Add to cart"}
+                  </span>
                 </Button>
-                <Button size="lg" className="flex-1 rounded-full" onClick={handleChat}>
-                  <MessageCircle className="mr-1.5 h-4 w-4" /> Chat with seller
+                <Button variant="outline" size="lg" className="flex-1 rounded-full" onClick={handleChat}>
+                  <MessageCircle className="mr-1.5 h-4 w-4" /> Chat
+                </Button>
+                <Button size="lg" className="flex-1 rounded-full" onClick={handleBuyNow}>
+                  Buy now
                 </Button>
               </div>
             ) : (
@@ -320,6 +330,7 @@ function ListingDetail() {
           </div>
         </div>
       )}
+
       {userId && <BottomNav />}
     </div>
   );
