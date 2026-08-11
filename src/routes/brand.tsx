@@ -64,7 +64,10 @@ function BrandGuide() {
 
       <div className="relative mx-auto w-full max-w-5xl px-4 py-10 sm:px-6 sm:py-16">
         <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 sm:flex sm:justify-between">
-          <Logo to="/" size={36} />
+          <div className="flex items-center gap-2">
+            <BackButton />
+            <Logo to="/" size={36} />
+          </div>
           <Button asChild variant="outline" size="sm" className="rounded-full shrink-0">
             <Link to="/">Back home</Link>
           </Button>
