@@ -85,12 +85,19 @@ export function ListingCard({
             >
               {listing.type === "rent" ? "For rent" : "For sale"}
             </span>
-            {listing.badge && (
+            {listing.badge && !sold && (
               <span className="absolute right-2 top-2 rounded-full bg-background/90 px-2 py-0.5 text-[10px] font-semibold">
                 {listing.badge}
               </span>
             )}
+            {sold && (
+              <>
+                <span className="pointer-events-none absolute inset-0 bg-background/55" aria-hidden />
+                <DealClosedBadge soldAt={listing.sold_at} className="absolute right-2 top-2" />
+              </>
+            )}
           </div>
+
           <div className="space-y-1 p-3">
             <p className="line-clamp-1 text-sm font-semibold">{listing.title}</p>
             <div className="flex flex-wrap items-center gap-1.5">
