@@ -45,7 +45,9 @@ function Conversation() {
     queryFn: async () => {
       const { data } = await supabase
         .from("conversations")
-        .select("id,buyer_id,seller_id,listings(id,title,price,type,rent_period,listing_images(url,sort_order))")
+        .select(
+          "id,buyer_id,seller_id,listings(id,title,price,type,rent_period,status,sold_at,buyer_id,listing_images(url,sort_order))",
+        )
         .eq("id", id)
         .maybeSingle();
       if (!data) return null;
@@ -58,6 +60,7 @@ function Conversation() {
       return { ...data, other };
     },
   });
+
 
   type Msg = {
     id: string;
