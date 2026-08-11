@@ -15,6 +15,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
+// Renders a timestamp in the viewer's own device timezone/locale (e.g. "2:14 pm").
+function formatTime(iso: string) {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  return d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+}
+
 
 export const Route = createFileRoute("/_authenticated/chat/$id")({
   head: () => ({
@@ -179,7 +186,7 @@ function Conversation() {
       {/* Fixed brand pattern layer, masked so it fades behind the message list. */}
       <div
         aria-hidden
-        className="brand-pattern-subtle pointer-events-none fixed inset-0 z-0 opacity-70 [mask-image:radial-gradient(120%_80%_at_50%_0%,transparent_10%,var(--color-foreground)_70%)]"
+        className="brand-pattern-subtle pointer-events-none fixed inset-0 z-0 opacity-25 [mask-image:linear-gradient(to_bottom,transparent_0%,var(--color-foreground)_45%,color-mix(in_oklab,var(--color-foreground)_60%,transparent)_80%,transparent_100%)]"
       />
       <header className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur-md">
 
@@ -256,21 +263,22 @@ function Conversation() {
               >
                 {m.content}
               </div>
-              {isLastMine && (
-                <span className="mt-1 flex items-center gap-1 pr-1 text-[10px] font-medium text-muted-foreground">
-                  {m.pending ? (
-                    <>Sending…</>
+              <span className={cn("mt-1 flex items-center gap-1 text-[10px] font-medium text-muted-foreground", mine ? "pr-1" : "pl-1")}>
+                <time dateTime={m.created_at}>{formatTime(m.created_at)}</time>
+                {isLastMine && (
+                  m.pending ? (
+                    <>· Sending…</>
                   ) : m.read_at ? (
                     <>
-                      <CheckCheck className="h-3 w-3 text-primary" /> Seen
+                      · <CheckCheck className="h-3 w-3 text-primary" /> Seen
                     </>
                   ) : (
                     <>
-                      <Check className="h-3 w-3" /> Sent
+                      · <Check className="h-3 w-3" /> Sent
                     </>
-                  )}
-                </span>
-              )}
+                  )
+                )}
+              </span>
             </motion.div>
           );
         })}
