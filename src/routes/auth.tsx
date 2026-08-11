@@ -145,7 +145,9 @@ function AuthPage() {
     } catch (err) {
       const raw = err instanceof Error ? err.message : "Something went wrong";
       const isWeak = /weak|pwned|compromis|breach|easy to guess|leaked/i.test(raw);
-      toast.error(isWeak ? "Couldn't create your account. Please try again." : raw);
+      toast.error(isWeak ? "Please pick a slightly longer password and try again." : raw);
+
+
 
     } finally {
       setBusy(false);
