@@ -112,6 +112,7 @@ function ListingDetail() {
   const images = [...(listing.listing_images ?? [])].sort((a, b) => a.sort_order - b.sort_order);
   const seller = listing.profiles;
   const isOwner = userId === listing.seller_id;
+  const sold = listing.status === "completed" || !!listing.sold_at;
 
   async function handleChat() {
     if (!userId) {
