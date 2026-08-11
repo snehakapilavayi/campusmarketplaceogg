@@ -39,7 +39,8 @@ function ResetPassword() {
     const { error } = await supabase.auth.updateUser({ password });
     setBusy(false);
     if (error) {
-      toast.error(error.message);
+      const isWeak = /weak|pwned|compromis|breach|easy to guess|leaked/i.test(error.message);
+      toast.error(isWeak ? "Couldn't update your password. Please choose a different one." : error.message);
       return;
     }
     toast.success("Password updated");
