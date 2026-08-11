@@ -90,32 +90,8 @@ function ProfilePage() {
           {isAdmin && <Row to="/admin" icon={ShieldCheck} label="Admin portal" />}
         </div>
 
-        <section className="rounded-3xl border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
-          <h2 className="font-display text-base font-bold">Appearance</h2>
-          <p className="mb-4 mt-1 text-xs text-muted-foreground">Choose how SwapSpace looks on this device.</p>
-          <div className="grid grid-cols-3 gap-2">
-            {themeOptions.map((option) => {
-              const active = mode === option.value;
-              return (
-                <button
-                  key={option.value}
-                  type="button"
-                  onClick={() => setMode(option.value)}
-                  aria-pressed={active}
-                  className={cn(
-                    "flex min-h-11 flex-col items-center gap-1.5 rounded-2xl border px-3 py-3 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                    active
-                      ? "border-primary bg-primary/10 text-foreground"
-                      : "border-border bg-background text-muted-foreground hover:bg-muted",
-                  )}
-                >
-                  <option.icon className={cn("h-5 w-5", active && "text-primary")} />
-                  {option.label}
-                </button>
-              );
-            })}
-          </div>
-        </section>
+        <PurchasesSection userId={userId} />
+
 
         <Button variant="outline" className="w-full rounded-full" onClick={signOut}>
           <LogOut className="mr-2 h-4 w-4" /> Sign out
