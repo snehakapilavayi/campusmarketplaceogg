@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { MessageCircle, Trash2 } from "lucide-react";
@@ -8,7 +9,7 @@ import { AppShell } from "@/components/app-shell";
 import { currency, EmptyState } from "@/components/brand";
 import { ListSkeleton } from "@/components/skeletons";
 import { Button } from "@/components/ui/button";
-import { openConversation, useCart } from "@/lib/marketplace";
+import { openConversation, startDeal, useCart } from "@/lib/marketplace";
 
 export const Route = createFileRoute("/_authenticated/cart")({
   head: () => ({
