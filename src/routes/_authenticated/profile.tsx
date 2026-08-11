@@ -113,3 +113,62 @@ function Row({ to, icon: Icon, label }: { to: string; icon: typeof Package; labe
     </Link>
   );
 }
+
+/** Closed deals where this student was the buyer. */
+function PurchasesSection({ userId }: { userId: string | null }) {
+  const { data: purchases = [], isLoading } = useQuery({
+    queryKey: ["purchases", userId],
+    enabled: !!userId,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("listings")
+        .select("id,title,price,sold_at,profiles!listings_seller_id_fkey(full_name)")
+        .eq("buyer_id", userId!)
+        .order("sold_at", { ascending: false });
+      return data ?? [];
+    },
+  });
+
+  return (
+    <section className="rounded-3xl border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
+      <h2 className="font-display text-base font-bold">Purchases</h2>
+      <p className="mb-4 mt-1 text-xs text-muted-foreground">Deals you closed on campus.</p>
+      {isLoading ? (
+        <div className="space-y-2">
+          {[0, 1].map((i) => (
+            <div key={i} className="h-14 animate-pulse rounded-2xl bg-muted" />
+          ))}
+        </div>
+      ) : purchases.length === 0 ? (
+        <EmptyState
+          title="No deals yet"
+          description="Once you close a swap, it shows up here with the seller and date."
+        />
+      ) : (
+        <ul className="space-y-2">
+          {purchases.map((p) => (
+            <li key={p.id}>
+              <Link
+                to="/listing/$id"
+                params={{ id: p.id }}
+                className="flex items-center gap-3 rounded-2xl border border-border p-3 transition-colors hover:bg-muted/60"
+              >
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-semibold">{p.title}</p>
+                  <p className="truncate text-xs text-muted-foreground">
+                    From {p.profiles?.full_name ?? "a student"}
+                    {p.sold_at && ` · ${new Date(p.sold_at).toLocaleDateString()}`}
+                  </p>
+                </div>
+                <span className="shrink-0 font-display text-sm font-bold text-primary">{currency(p.price)}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
+
+export { DealClosedBadge };
+
