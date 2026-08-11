@@ -15,6 +15,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
+// Renders a timestamp in the viewer's own device timezone/locale (e.g. "2:14 pm").
+function formatTime(iso: string) {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  return d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+}
+
 
 export const Route = createFileRoute("/_authenticated/chat/$id")({
   head: () => ({
