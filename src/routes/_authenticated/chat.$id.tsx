@@ -183,11 +183,8 @@ function Conversation() {
 
   return (
     <div className="relative flex min-h-[100dvh] flex-col overscroll-none bg-background">
-      {/* Fixed brand pattern layer, masked so it fades behind the message list. */}
-      <div
-        aria-hidden
-        className="brand-pattern-subtle pointer-events-none fixed inset-0 z-0 opacity-25 [mask-image:linear-gradient(to_bottom,transparent_0%,var(--color-foreground)_45%,color-mix(in_oklab,var(--color-foreground)_60%,transparent)_80%,transparent_100%)]"
-      />
+      {/* Same soft, minimal brand wash used across the rest of the app. */}
+      <div aria-hidden className="brand-pattern-subtle pointer-events-none fixed inset-0 z-0" />
       <header className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur-md">
 
         <div className="mx-auto flex h-14 max-w-3xl items-center gap-2 px-3 sm:h-16 sm:gap-3">
