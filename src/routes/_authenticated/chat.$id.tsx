@@ -207,11 +207,26 @@ function Conversation() {
                 {listing.type === "rent" && <span className="font-medium text-muted-foreground">/{listing.rent_period ?? "day"}</span>}
               </p>
             </div>
+            {sold && <DealClosedBadge soldAt={listing.sold_at} />}
           </Link>
         )}
       </header>
 
-      <div className="mx-auto w-full max-w-3xl flex-1 space-y-2 px-3 py-4">
+      <div className="relative z-10 mx-auto w-full max-w-3xl flex-1 space-y-2 px-3 py-4">
+        {sold && (
+          <div className="mx-auto flex max-w-md flex-col items-center gap-2 rounded-2xl border border-border bg-card/90 px-4 py-3 text-center shadow-[var(--shadow-soft)] backdrop-blur">
+            <DealClosedBadge soldAt={listing?.sold_at} />
+            <p className="text-xs text-muted-foreground">
+              This swap is complete. Meet safely and keep it kind.
+            </p>
+            {isBuyer && conversation && (
+              <Button size="sm" className="rounded-full" onClick={() => setRateOpen(true)}>
+                Rate with SwapCoins
+              </Button>
+            )}
+          </div>
+        )}
+
         {isLoading && <MessageSkeleton />}
         {!isLoading && messages.length === 0 && (
           <p className="py-8 text-center text-sm text-muted-foreground">
