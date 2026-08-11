@@ -141,11 +141,12 @@ export function AppHeader({ title, actions = true }: { title?: string | undefine
   );
 }
 
+// Home sits in the first slot, Account takes the far-right slot.
 const navItems = [
-  { to: "/profile", label: "Account", icon: User },
+  { to: "/market", label: "Home", icon: Home },
   { to: "/categories", label: "Categories", icon: LayoutGrid },
   { to: "/cart", label: "Cart", icon: ShoppingBag },
-  { to: "/market", label: "Home", icon: Home },
+  { to: "/profile", label: "Account", icon: User },
 ] as const;
 
 export function BottomNav() {
