@@ -5,7 +5,7 @@
  */
 const configured = import.meta.env['VITE_SITE_URL'] as string | undefined;
 
-export const SITE = (configured?.replace(/\/+$/, "") || "https://swapspace.lovable.app");
+export const SITE = (configured?.replace(/\/+$/, "") || "https://swapspace.online");
 
 export const siteUrl = (path = "/") => `${SITE}${path.startsWith("/") ? path : `/${path}`}`;
 
