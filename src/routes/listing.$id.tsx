@@ -48,7 +48,7 @@ function ListingDetail() {
   const { userId } = useAuth();
   const wishlist = useWishlist();
   const cart = useCart();
-  const [active, setActive] = useState(0);
+  
 
   const { data: listing, isLoading } = useQuery({
     queryKey: ["listing", id],
