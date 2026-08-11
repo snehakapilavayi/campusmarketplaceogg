@@ -37,6 +37,7 @@ export function ListingCard({
   const swiped = useRef(false);
 
   const canSwipe = !!onToggleWish && !wished && !reduce;
+  const sold = listing.status === "completed" || !!listing.sold_at;
 
   return (
     <div className="relative">
