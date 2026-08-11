@@ -128,24 +128,56 @@ function MyListings() {
 
 
 
+  const isDeal = (l: (typeof listings)[number]) => l.status === "completed" || !!l.sold_at;
+  const visible = listings.filter((l) => (tab === "deals" ? isDeal(l) : !isDeal(l)));
+  const dealCount = listings.filter(isDeal).length;
+
   return (
     <AppShell title="My listings">
       <div className="space-y-3 pt-4">
+        <div className="flex gap-2 rounded-full border border-border bg-card p-1">
+          {([
+            { id: "active", label: "Listings" },
+            { id: "deals", label: `Deals${dealCount ? ` (${dealCount})` : ""}` },
+          ] as const).map((t) => (
+            <button
+              key={t.id}
+              type="button"
+              onClick={() => setTab(t.id)}
+              aria-pressed={tab === t.id}
+              className={cn(
+                "min-h-9 flex-1 rounded-full px-3 text-sm font-semibold transition-colors",
+                tab === t.id ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted",
+              )}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+
         {isLoading ? (
           <ListSkeleton count={3} />
-        ) : listings.length === 0 ? (
-          <EmptyState
-            variant="idea"
-            title="You haven't listed anything"
-            description="That spare lamp or last semester's textbook could be someone's find today."
-            action={
-              <Button asChild className="mt-2 rounded-full">
-                <Link to="/sell">List an item</Link>
-              </Button>
-            }
-          />
+        ) : visible.length === 0 ? (
+          tab === "deals" ? (
+            <EmptyState
+              title="No closed deals yet"
+              description="When you mark an item sold, the swap shows up here with the date and price."
+            />
+          ) : (
+            <EmptyState
+              variant="idea"
+              title="You haven't listed anything"
+              description="That spare lamp or last semester's textbook could be someone's find today."
+              action={
+                <Button asChild className="mt-2 rounded-full">
+                  <Link to="/sell">List an item</Link>
+                </Button>
+              }
+            />
+          )
         ) : (
-          listings.map((l) => {
+          visible.map((l) => {
+
             const image = [...(l.listing_images ?? [])].sort((a, b) => a.sort_order - b.sort_order)[0]?.url;
             return (
               <div key={l.id} className="flex gap-3 rounded-2xl border border-border bg-card p-2.5 shadow-[var(--shadow-soft)] sm:p-3">
