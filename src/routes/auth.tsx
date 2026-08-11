@@ -351,6 +351,9 @@ function Shell({ children }: { children: React.ReactNode }) {
   return (
     <div className="relative min-h-screen bg-background">
       <div className="brand-pattern pointer-events-none absolute inset-x-0 top-0 h-64" aria-hidden />
+      <div className="absolute left-4 top-4 z-10 sm:left-6">
+        <BackButton />
+      </div>
       <div className="relative mx-auto flex min-h-screen w-full max-w-md flex-col justify-center px-5 py-10">
         <div className="mb-6 flex justify-center">
           <Logo to="/" size={36} />
