@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { Link } from "@tanstack/react-router";
 import { motion, useMotionValue, useReducedMotion, useTransform } from "motion/react";
 import { Heart } from "lucide-react";
-import { currency, CoinRating, conditionLabels } from "@/components/brand";
+import { currency, CoinRating, conditionLabels, DealClosedBadge } from "@/components/brand";
 import { SmartImage } from "@/components/smart-image";
 import { haptic, springy } from "@/lib/motion";
 import { cn } from "@/lib/utils";
@@ -15,6 +15,8 @@ export type ListingCardData = {
   rent_period: string | null;
   badge: string | null;
   condition: string;
+  status?: string | null;
+  sold_at?: string | null;
   listing_images?: { url: string; sort_order: number }[];
   profiles?: { full_name: string; swapcoin_rating: number } | null;
 };
