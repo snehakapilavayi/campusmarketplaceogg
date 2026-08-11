@@ -179,7 +179,7 @@ function Conversation() {
       {/* Fixed brand pattern layer, masked so it fades behind the message list. */}
       <div
         aria-hidden
-        className="brand-pattern-subtle pointer-events-none fixed inset-0 z-0 opacity-70 [mask-image:radial-gradient(120%_80%_at_50%_0%,transparent_10%,var(--color-foreground)_70%)]"
+        className="brand-pattern-subtle pointer-events-none fixed inset-0 z-0 opacity-25 [mask-image:linear-gradient(to_bottom,transparent_0%,var(--color-foreground)_45%,color-mix(in_oklab,var(--color-foreground)_60%,transparent)_80%,transparent_100%)]"
       />
       <header className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur-md">
 
