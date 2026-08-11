@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
+import { Link, useNavigate, useRouter, useRouterState } from "@tanstack/react-router";
 import { motion, useReducedMotion } from "motion/react";
-import { Bell, Bike, Heart, Home, LayoutGrid, MessageCircle, Plus, Search, ShoppingBag, User } from "lucide-react";
+import { ArrowLeft, Bell, Bike, Heart, Home, LayoutGrid, MessageCircle, Plus, Search, ShoppingBag, User } from "lucide-react";
 import { toast } from "sonner";
 import { Logo } from "@/components/brand";
 import { cn } from "@/lib/utils";
@@ -13,6 +13,23 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAppSettings } from "@/lib/settings";
 import { SupportNote, ContactUsButton } from "@/components/support";
+
+export function BackButton({ className }: { className?: string }) {
+  const router = useRouter();
+  return (
+    <button
+      type="button"
+      onClick={() => router.history.back()}
+      aria-label="Go back"
+      className={cn(
+        "grid h-10 w-10 shrink-0 place-items-center rounded-full transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-95",
+        className,
+      )}
+    >
+      <ArrowLeft className="h-5 w-5" />
+    </button>
+  );
+}
 
 export function AppHeader({ title, actions = true }: { title?: string | undefined; actions?: boolean }) {
   const { userId } = useAuth();
@@ -73,7 +90,10 @@ export function AppHeader({ title, actions = true }: { title?: string | undefine
     <header className="sticky top-0 z-30 border-b border-border/70 bg-background/85 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-5xl items-center justify-between gap-2 px-3 sm:px-4">
         {title ? (
-          <h1 className="min-w-0 truncate font-display text-lg font-bold">{title}</h1>
+          <div className="flex min-w-0 items-center gap-1">
+            <BackButton />
+            <h1 className="min-w-0 truncate font-display text-lg font-bold">{title}</h1>
+          </div>
         ) : (
           <Logo />
         )}

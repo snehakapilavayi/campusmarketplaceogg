@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, CheckCircle2, HandCoins, Instagram, MessageCircle, ShieldCheck, Sparkles, UploadCloud } from "lucide-react";
 import { Logo, Mascot } from "@/components/brand";
+import { BackButton } from "@/components/app-shell";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/lib/theme";
 
@@ -87,7 +88,10 @@ function HowItWorks() {
   return (
     <div className="min-h-screen bg-background">
       <header className="mx-auto flex h-20 max-w-6xl items-center justify-between gap-3 px-5">
-        <Logo to="/" />
+        <div className="flex items-center gap-2">
+          <BackButton />
+          <Logo to="/" />
+        </div>
         <div className="flex items-center gap-1 sm:gap-2">
           
           <Button asChild variant="ghost" className="hidden rounded-full sm:inline-flex">
