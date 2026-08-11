@@ -4,7 +4,7 @@ import { ChevronRight, LogOut, Package, Settings as SettingsIcon, ShieldCheck } 
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { AppShell } from "@/components/app-shell";
-import { CoinRating, currency, DealClosedBadge, EmptyState, VerifiedBadge } from "@/components/brand";
+import { CoinRating, currency, EmptyState, VerifiedBadge } from "@/components/brand";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated/profile")({
@@ -169,6 +169,4 @@ function PurchasesSection({ userId }: { userId: string | null }) {
     </section>
   );
 }
-
-export { DealClosedBadge };
 
