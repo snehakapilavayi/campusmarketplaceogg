@@ -53,7 +53,11 @@ function validateEmail(raw: string, general: GeneralSettings, fresherLane: boole
       ? `Freshers can join with ${fresherList.map((d) => `@${d}`).join(" or ")}`
       : `Use your college email (…${eduList[0]})`;
   }
+  if (lane === "fresher" && !fresherLane) {
+    return `Use your college email (…${eduList[0]}) — ${fresherList.map((d) => `@${d}`).join("/")} is only for the freshers join link`;
+  }
   return null;
+
 }
 
 
@@ -122,7 +126,8 @@ function AuthPage() {
           password,
           options: {
             emailRedirectTo: `${window.location.origin}${destination}`,
-            data: { full_name: name.trim() },
+            data: { full_name: name.trim(), fresher: fresherLane },
+
           },
         });
         if (error) throw error;
