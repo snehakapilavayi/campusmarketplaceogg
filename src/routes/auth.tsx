@@ -126,7 +126,8 @@ function AuthPage() {
           password,
           options: {
             emailRedirectTo: `${window.location.origin}${destination}`,
-            data: { full_name: name.trim() },
+            data: { full_name: name.trim(), fresher: fresherLane },
+
           },
         });
         if (error) throw error;
