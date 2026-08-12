@@ -94,7 +94,7 @@ function AuthPage() {
     if (emailError) nextErrors.email = emailError;
 
     if (mode !== "forgot") {
-      if (password.length < 6) nextErrors.password = "Use at least 6 characters";
+      if (password.length === 0) nextErrors.password = "Enter a password";
     }
     if (mode === "signup" && !general.signups_enabled) {
       toast.error("New signups are paused right now. Check back soon.");
