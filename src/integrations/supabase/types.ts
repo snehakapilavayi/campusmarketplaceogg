@@ -601,11 +601,29 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_public_seller_card: {
+        Args: { _id: string }
+        Returns: {
+          avatar_url: string
+          campus: string
+          full_name: string
+          id: string
+          swapcoin_rating: number
+          verification: Database["public"]["Enums"]["verification_status"]
+        }[]
+      }
       get_public_settings: {
         Args: never
         Returns: {
           key: string
           value: Json
+        }[]
+      }
+      get_public_stats: {
+        Args: never
+        Returns: {
+          listing_count: number
+          student_count: number
         }[]
       }
       get_seller_rating_stats: {
