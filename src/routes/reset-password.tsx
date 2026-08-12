@@ -27,8 +27,8 @@ function ResetPassword() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (password.length < 8) {
-      toast.error("Password must be at least 8 characters");
+    if (password.length === 0) {
+      toast.error("Enter a password");
       return;
     }
     if (password !== confirm) {
