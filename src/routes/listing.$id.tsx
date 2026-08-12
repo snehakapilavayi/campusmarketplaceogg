@@ -94,14 +94,16 @@ function ListingDetail() {
     queryFn: async () => {
       const { data } = await supabase
         .from("listings")
-        .select(
-          "*,listing_images(url,sort_order),categories(name,icon),profiles(id,full_name,avatar_url,swapcoin_rating,verification,campus)",
-        )
+        .select("*,listing_images(url,sort_order),categories(name,icon)")
         .eq("id", id)
         .maybeSingle();
-      return data;
+      if (!data) return data;
+      // Seller card comes from a safe read-only helper (profiles are not public).
+      const { data: card } = await supabase.rpc("get_public_seller_card", { _id: data.seller_id });
+      return { ...data, profiles: card?.[0] ?? null };
     },
   });
+
 
   // Public reputation summary — aggregates only, safe for signed-out visitors.
   const { data: repStats } = useQuery({

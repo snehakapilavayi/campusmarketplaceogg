@@ -75,12 +75,11 @@ function LiveStats() {
     queryKey: ["landing-stats"],
     staleTime: 5 * 60 * 1000,
     queryFn: async () => {
-      const [listings, students] = await Promise.all([
-        supabase.from("listings").select("id", { count: "exact", head: true }).eq("status", "approved"),
-        supabase.from("profiles").select("id", { count: "exact", head: true }).eq("verification", "verified"),
-      ]);
-      return { listings: listings.count ?? 0, students: students.count ?? 0 };
+      const { data } = await supabase.rpc("get_public_stats");
+      const row = data?.[0];
+      return { listings: row?.listing_count ?? 0, students: row?.student_count ?? 0 };
     },
+
   });
 
   const items: { value: string; label: string }[] = [{ value: "0%", label: "commission" }];
