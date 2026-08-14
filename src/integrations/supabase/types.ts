@@ -601,6 +601,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_public_profile_cards: {
+        Args: { _ids: string[] }
+        Returns: {
+          avatar_url: string
+          full_name: string
+          id: string
+        }[]
+      }
       get_public_seller_card: {
         Args: { _id: string }
         Returns: {

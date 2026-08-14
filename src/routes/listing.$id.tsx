@@ -128,10 +128,9 @@ function ListingDetail() {
         .limit(3);
       const rows = data ?? [];
       if (rows.length === 0) return [];
-      const { data: reviewers } = await supabase
-        .from("profiles")
-        .select("id,full_name")
-        .in("id", rows.map((r) => r.reviewer_id));
+      const { data: reviewers } = await supabase.rpc("get_public_profile_cards", {
+        _ids: rows.map((r) => r.reviewer_id),
+      });
       const names = new Map((reviewers ?? []).map((p) => [p.id, p.full_name]));
       return rows.map((r) => ({ ...r, reviewer_name: names.get(r.reviewer_id) ?? "Student" }));
     },
