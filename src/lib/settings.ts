@@ -59,7 +59,7 @@ export const defaultSettings: AppSettings = {
   },
   content: {
     hero_title: "Everything you need is already on campus.",
-    hero_subtitle: "Your next textbook might be sitting in your senior's room. Find it on SwapSpace -- textbooks, calculators, lab coats & more from people on your campus. Meet. Swap. Done.",
+    hero_subtitle: "Your next textbook might be sitting in your senior's room. Find it on SwapSpace — textbooks, calculators, lab coats & more from people on your campus. Meet. Swap. Done.",
     instagram_url: "https://www.instagram.com/swapspace.in/",
     support_email: "info.swapspace@gmail.com",
   },
