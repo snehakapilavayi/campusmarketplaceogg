@@ -55,7 +55,7 @@ const steps = [
   {
     icon: UploadCloud,
     title: "List",
-    body: "Post what you want to sell, rent, or swap in under a minute.",
+    body: "Post what you want to sell, rent, or buy in under a minute.",
   },
   {
     icon: MessageCircle,
