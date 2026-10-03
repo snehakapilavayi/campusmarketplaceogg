@@ -288,6 +288,21 @@ function AdminStudents() {
                   </div>
                 </div>
                 <div className="mt-2 flex flex-wrap gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-8 rounded-full"
+                    onClick={() =>
+                      void patch(
+                        [s.id],
+                        { trusted_seller: !s.trusted_seller },
+                        s.trusted_seller ? "student.untrusted" : "student.trusted_seller",
+                        s.trusted_seller ? "Trusted Seller badge removed" : "Trusted Seller badge awarded",
+                      )
+                    }
+                  >
+                    {s.trusted_seller ? "Remove Trusted Seller" : "Trusted Seller"}
+                  </Button>
                   {s.verification !== "verified" && (
                     <Button
                       size="sm"

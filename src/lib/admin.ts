@@ -97,7 +97,7 @@ export function useAdminStudents(enabled: boolean) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("profiles")
-        .select("id,full_name,verification,swapcoin_rating,transactions_count,suspended,campus,created_at,account_type")
+        .select("id,full_name,verification,swapcoin_rating,transactions_count,suspended,campus,created_at,account_type,trusted_seller")
         .order("created_at", { ascending: false })
         .limit(500);
       if (error) throw error;
