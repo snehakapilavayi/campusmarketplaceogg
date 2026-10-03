@@ -35,6 +35,7 @@ import { Route as AuthenticatedAdminBannersRouteImport } from './routes/_authent
 import { Route as AuthenticatedAdminBroadcastRouteImport } from './routes/_authenticated/admin.broadcast'
 import { Route as AuthenticatedAdminCategoriesRouteImport } from './routes/_authenticated/admin.categories'
 import { Route as AuthenticatedAdminChatsRouteImport } from './routes/_authenticated/admin.chats'
+import { Route as AuthenticatedAdminCollegesRouteImport } from './routes/_authenticated/admin.colleges'
 import { Route as AuthenticatedAdminListingsRouteImport } from './routes/_authenticated/admin.listings'
 import { Route as AuthenticatedAdminLogsRouteImport } from './routes/_authenticated/admin.logs'
 import { Route as AuthenticatedAdminReportsRouteImport } from './routes/_authenticated/admin.reports'
@@ -176,6 +177,12 @@ const AuthenticatedAdminChatsRoute = AuthenticatedAdminChatsRouteImport.update({
   path: '/chats',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedAdminCollegesRoute =
+  AuthenticatedAdminCollegesRouteImport.update({
+    id: '/colleges',
+    path: '/colleges',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminListingsRoute =
   AuthenticatedAdminListingsRouteImport.update({
     id: '/listings',
@@ -241,6 +248,7 @@ export interface FileRoutesByFullPath {
   '/admin/broadcast': typeof AuthenticatedAdminBroadcastRoute
   '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/admin/chats': typeof AuthenticatedAdminChatsRoute
+  '/admin/colleges': typeof AuthenticatedAdminCollegesRoute
   '/admin/listings': typeof AuthenticatedAdminListingsRoute
   '/admin/logs': typeof AuthenticatedAdminLogsRoute
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
@@ -274,6 +282,7 @@ export interface FileRoutesByTo {
   '/admin/broadcast': typeof AuthenticatedAdminBroadcastRoute
   '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/admin/chats': typeof AuthenticatedAdminChatsRoute
+  '/admin/colleges': typeof AuthenticatedAdminCollegesRoute
   '/admin/listings': typeof AuthenticatedAdminListingsRoute
   '/admin/logs': typeof AuthenticatedAdminLogsRoute
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
@@ -310,6 +319,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/broadcast': typeof AuthenticatedAdminBroadcastRoute
   '/_authenticated/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/_authenticated/admin/chats': typeof AuthenticatedAdminChatsRoute
+  '/_authenticated/admin/colleges': typeof AuthenticatedAdminCollegesRoute
   '/_authenticated/admin/listings': typeof AuthenticatedAdminListingsRoute
   '/_authenticated/admin/logs': typeof AuthenticatedAdminLogsRoute
   '/_authenticated/admin/reports': typeof AuthenticatedAdminReportsRoute
@@ -346,6 +356,7 @@ export interface FileRouteTypes {
     | '/admin/broadcast'
     | '/admin/categories'
     | '/admin/chats'
+    | '/admin/colleges'
     | '/admin/listings'
     | '/admin/logs'
     | '/admin/reports'
@@ -379,6 +390,7 @@ export interface FileRouteTypes {
     | '/admin/broadcast'
     | '/admin/categories'
     | '/admin/chats'
+    | '/admin/colleges'
     | '/admin/listings'
     | '/admin/logs'
     | '/admin/reports'
@@ -414,6 +426,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/broadcast'
     | '/_authenticated/admin/categories'
     | '/_authenticated/admin/chats'
+    | '/_authenticated/admin/colleges'
     | '/_authenticated/admin/listings'
     | '/_authenticated/admin/logs'
     | '/_authenticated/admin/reports'
@@ -623,6 +636,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminChatsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/colleges': {
+      id: '/_authenticated/admin/colleges'
+      path: '/colleges'
+      fullPath: '/admin/colleges'
+      preLoaderRoute: typeof AuthenticatedAdminCollegesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/listings': {
       id: '/_authenticated/admin/listings'
       path: '/listings'
@@ -680,6 +700,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminBroadcastRoute: typeof AuthenticatedAdminBroadcastRoute
   AuthenticatedAdminCategoriesRoute: typeof AuthenticatedAdminCategoriesRoute
   AuthenticatedAdminChatsRoute: typeof AuthenticatedAdminChatsRoute
+  AuthenticatedAdminCollegesRoute: typeof AuthenticatedAdminCollegesRoute
   AuthenticatedAdminListingsRoute: typeof AuthenticatedAdminListingsRoute
   AuthenticatedAdminLogsRoute: typeof AuthenticatedAdminLogsRoute
   AuthenticatedAdminReportsRoute: typeof AuthenticatedAdminReportsRoute
@@ -693,6 +714,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminBroadcastRoute: AuthenticatedAdminBroadcastRoute,
   AuthenticatedAdminCategoriesRoute: AuthenticatedAdminCategoriesRoute,
   AuthenticatedAdminChatsRoute: AuthenticatedAdminChatsRoute,
+  AuthenticatedAdminCollegesRoute: AuthenticatedAdminCollegesRoute,
   AuthenticatedAdminListingsRoute: AuthenticatedAdminListingsRoute,
   AuthenticatedAdminLogsRoute: AuthenticatedAdminLogsRoute,
   AuthenticatedAdminReportsRoute: AuthenticatedAdminReportsRoute,
