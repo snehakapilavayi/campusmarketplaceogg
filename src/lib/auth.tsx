@@ -17,7 +17,10 @@ export type Profile = {
   profile_complete: boolean;
 };
 
+export type AdminRole = "super_admin" | "college_admin" | "moderator";
+
 type AuthValue = {
+  adminRole: { role: AdminRole; collegeId: string | null } | null;
   session: Session | null;
   userId: string | null;
   loading: boolean;
@@ -32,6 +35,7 @@ const AuthContext = createContext<AuthValue>({
   loading: true,
   profile: null,
   isAdmin: false,
+  adminRole: null,
   signOut: async () => {},
 });
 
@@ -92,7 +96,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         userId,
         loading,
         profile: profile ?? null,
-        isAdmin: !!isAdmin,
+        isAdmin,
+        adminRole: adminRole ?? null,
         signOut,
       }}
     >
@@ -102,3 +107,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 }
 
 export const useAuth = () => useContext(AuthContext);
+
+/** Server-resolved admin role + college scope for the signed-in user. */
+export const useAdminRole = () => useContext(AuthContext).adminRole;
