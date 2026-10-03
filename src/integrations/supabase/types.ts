@@ -18,22 +18,34 @@ export type Database = {
         Row: {
           action: string
           admin_id: string
+          after: Json | null
+          before: Json | null
+          college_id: string | null
           created_at: string
           id: string
+          reason: string | null
           target: string | null
         }
         Insert: {
           action: string
           admin_id: string
+          after?: Json | null
+          before?: Json | null
+          college_id?: string | null
           created_at?: string
           id?: string
+          reason?: string | null
           target?: string | null
         }
         Update: {
           action?: string
           admin_id?: string
+          after?: Json | null
+          before?: Json | null
+          college_id?: string | null
           created_at?: string
           id?: string
+          reason?: string | null
           target?: string | null
         }
         Relationships: [
@@ -42,6 +54,13 @@ export type Database = {
             columns: ["admin_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "admin_logs_college_id_fkey"
+            columns: ["college_id"]
+            isOneToOne: false
+            referencedRelation: "colleges"
             referencedColumns: ["id"]
           },
         ]
@@ -147,6 +166,39 @@ export type Database = {
         }
         Relationships: []
       }
+      colleges: {
+        Row: {
+          active: boolean
+          city: string | null
+          created_at: string
+          domain_suffix: string | null
+          id: string
+          logo_url: string | null
+          name: string
+          slug: string
+        }
+        Insert: {
+          active?: boolean
+          city?: string | null
+          created_at?: string
+          domain_suffix?: string | null
+          id?: string
+          logo_url?: string | null
+          name: string
+          slug: string
+        }
+        Update: {
+          active?: boolean
+          city?: string | null
+          created_at?: string
+          domain_suffix?: string | null
+          id?: string
+          logo_url?: string | null
+          name?: string
+          slug?: string
+        }
+        Relationships: []
+      }
       conversations: {
         Row: {
           buyer_id: string
@@ -187,6 +239,7 @@ export type Database = {
           accent: string | null
           active: boolean
           campus: string | null
+          college_id: string | null
           description: string | null
           ends_at: string | null
           id: string
@@ -198,6 +251,7 @@ export type Database = {
           accent?: string | null
           active?: boolean
           campus?: string | null
+          college_id?: string | null
           description?: string | null
           ends_at?: string | null
           id?: string
@@ -209,6 +263,7 @@ export type Database = {
           accent?: string | null
           active?: boolean
           campus?: string | null
+          college_id?: string | null
           description?: string | null
           ends_at?: string | null
           id?: string
@@ -216,7 +271,15 @@ export type Database = {
           starts_at?: string | null
           title?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "event_banners_college_id_fkey"
+            columns: ["college_id"]
+            isOneToOne: false
+            referencedRelation: "colleges"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       listing_images: {
         Row: {
@@ -260,6 +323,7 @@ export type Database = {
           badge: string | null
           buyer_id: string | null
           category_id: string | null
+          college_id: string | null
           condition: Database["public"]["Enums"]["item_condition"]
           created_at: string
           deposit: number | null
@@ -283,6 +347,7 @@ export type Database = {
           badge?: string | null
           buyer_id?: string | null
           category_id?: string | null
+          college_id?: string | null
           condition?: Database["public"]["Enums"]["item_condition"]
           created_at?: string
           deposit?: number | null
@@ -306,6 +371,7 @@ export type Database = {
           badge?: string | null
           buyer_id?: string | null
           category_id?: string | null
+          college_id?: string | null
           condition?: Database["public"]["Enums"]["item_condition"]
           created_at?: string
           deposit?: number | null
@@ -329,6 +395,13 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "listings_college_id_fkey"
+            columns: ["college_id"]
+            isOneToOne: false
+            referencedRelation: "colleges"
             referencedColumns: ["id"]
           },
           {
@@ -414,6 +487,7 @@ export type Database = {
           avatar_url: string | null
           bio: string | null
           campus: string | null
+          college_id: string | null
           created_at: string
           email_prefs: Json
           full_name: string
@@ -430,6 +504,7 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           campus?: string | null
+          college_id?: string | null
           created_at?: string
           email_prefs?: Json
           full_name?: string
@@ -446,6 +521,7 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           campus?: string | null
+          college_id?: string | null
           created_at?: string
           email_prefs?: Json
           full_name?: string
@@ -457,7 +533,15 @@ export type Database = {
           updated_at?: string
           verification?: Database["public"]["Enums"]["verification_status"]
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_college_id_fkey"
+            columns: ["college_id"]
+            isOneToOne: false
+            referencedRelation: "colleges"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       ratings: {
         Row: {
@@ -515,57 +599,91 @@ export type Database = {
       }
       reports: {
         Row: {
+          assigned_to: string | null
+          college_id: string | null
           created_at: string
           description: string | null
+          escalated_at: string | null
           id: string
           reason: string
           reporter_id: string
+          resolution_note: string | null
           status: Database["public"]["Enums"]["report_status"]
           target_id: string | null
           target_type: string
         }
         Insert: {
+          assigned_to?: string | null
+          college_id?: string | null
           created_at?: string
           description?: string | null
+          escalated_at?: string | null
           id?: string
           reason: string
           reporter_id: string
+          resolution_note?: string | null
           status?: Database["public"]["Enums"]["report_status"]
           target_id?: string | null
           target_type: string
         }
         Update: {
+          assigned_to?: string | null
+          college_id?: string | null
           created_at?: string
           description?: string | null
+          escalated_at?: string | null
           id?: string
           reason?: string
           reporter_id?: string
+          resolution_note?: string | null
           status?: Database["public"]["Enums"]["report_status"]
           target_id?: string | null
           target_type?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "reports_college_id_fkey"
+            columns: ["college_id"]
+            isOneToOne: false
+            referencedRelation: "colleges"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
+          college_id: string | null
           created_at: string
+          created_by: string | null
           id: string
           role: Database["public"]["Enums"]["app_role"]
           user_id: string
         }
         Insert: {
+          college_id?: string | null
           created_at?: string
+          created_by?: string | null
           id?: string
           role: Database["public"]["Enums"]["app_role"]
           user_id: string
         }
         Update: {
+          college_id?: string | null
           created_at?: string
+          created_by?: string | null
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "user_roles_college_id_fkey"
+            columns: ["college_id"]
+            isOneToOne: false
+            referencedRelation: "colleges"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       wishlist: {
         Row: {
@@ -601,6 +719,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_my_admin_role: {
+        Args: never
+        Returns: {
+          college_id: string
+          role: string
+        }[]
+      }
       get_public_profile_cards: {
         Args: { _ids: string[] }
         Returns: {
@@ -650,7 +775,12 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "student" | "admin"
+      app_role:
+        | "student"
+        | "admin"
+        | "moderator"
+        | "college_admin"
+        | "super_admin"
       item_condition: "brand_new" | "like_new" | "good" | "fair" | "used"
       listing_status:
         | "draft"
@@ -661,7 +791,12 @@ export type Database = {
         | "archived"
       listing_type: "sell" | "rent"
       rent_period: "day" | "week" | "month"
-      report_status: "pending" | "under_review" | "resolved" | "rejected"
+      report_status:
+        | "pending"
+        | "under_review"
+        | "resolved"
+        | "rejected"
+        | "escalated"
       verification_status: "pending" | "verified" | "rejected"
     }
     CompositeTypes: {
@@ -790,7 +925,13 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["student", "admin"],
+      app_role: [
+        "student",
+        "admin",
+        "moderator",
+        "college_admin",
+        "super_admin",
+      ],
       item_condition: ["brand_new", "like_new", "good", "fair", "used"],
       listing_status: [
         "draft",
@@ -802,7 +943,13 @@ export const Constants = {
       ],
       listing_type: ["sell", "rent"],
       rent_period: ["day", "week", "month"],
-      report_status: ["pending", "under_review", "resolved", "rejected"],
+      report_status: [
+        "pending",
+        "under_review",
+        "resolved",
+        "rejected",
+        "escalated",
+      ],
       verification_status: ["pending", "verified", "rejected"],
     },
   },
