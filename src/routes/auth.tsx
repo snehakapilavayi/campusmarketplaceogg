@@ -145,7 +145,8 @@ function AuthPage() {
         return;
       }
 
-      const { error } = await supabase.auth.signInWithPassword({ email: cleanEmail, password: pw });
+      let { error } = await supabase.auth.signInWithPassword({ email: cleanEmail, password: pw });
+      if (error && pw !== password) ({ error } = await supabase.auth.signInWithPassword({ email: cleanEmail, password }));
       if (error) throw error;
       toast.success("Welcome back");
       navigate({ to: destination });
