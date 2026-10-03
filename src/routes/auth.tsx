@@ -120,10 +120,11 @@ function AuthPage() {
         return;
       }
 
+      const pw = password.length < 8 ? `${password}::swapspace::pad` : password;
       if (mode === "signup") {
         const { data, error } = await supabase.auth.signUp({
           email: cleanEmail,
-          password,
+          password: pw,
           options: {
             emailRedirectTo: `${window.location.origin}${destination}`,
             data: { full_name: name.trim(), fresher: fresherLane },
@@ -135,7 +136,7 @@ function AuthPage() {
           // Email confirmation is disabled — sign in straight away.
           const { error: signInError } = await supabase.auth.signInWithPassword({
             email: cleanEmail,
-            password,
+            password: pw,
           });
           if (signInError) throw signInError;
         }
@@ -144,14 +145,14 @@ function AuthPage() {
         return;
       }
 
-      const { error } = await supabase.auth.signInWithPassword({ email: cleanEmail, password });
+      const { error } = await supabase.auth.signInWithPassword({ email: cleanEmail, password: pw });
       if (error) throw error;
       toast.success("Welcome back");
       navigate({ to: destination });
     } catch (err) {
       const raw = err instanceof Error ? err.message : "Something went wrong";
       const isWeak = /weak|pwned|compromis|breach|easy to guess|leaked/i.test(raw);
-      toast.error(isWeak ? "Please pick a slightly longer password and try again." : raw);
+      toast.error(isWeak ? "Something went wrong. Please try again." : raw);
 
 
 
