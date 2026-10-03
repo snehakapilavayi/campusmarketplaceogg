@@ -67,19 +67,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
   });
 
-  const { data: isAdmin } = useQuery({
-    queryKey: ["is-admin", userId],
+  const { data: adminRole } = useQuery({
+    queryKey: ["admin-role", userId],
     enabled: !!userId,
     queryFn: async () => {
-      const { data } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", userId!)
-        .eq("role", "admin")
-        .maybeSingle();
-      return !!data;
+      const { data } = await supabase.rpc("get_my_admin_role");
+      const row = Array.isArray(data) ? data[0] : data;
+      return row ? { role: row.role as AdminRole, collegeId: (row.college_id as string | null) ?? null } : null;
     },
   });
+  // Phase 1: only Super Admins get the full portal; college scoping lands in Phase 2.
+  const isAdmin = adminRole?.role === "super_admin";
 
   async function signOut() {
     await queryClient.cancelQueries();
