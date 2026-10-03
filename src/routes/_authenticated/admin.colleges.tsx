@@ -64,7 +64,7 @@ function AdminColleges() {
   const { data: admins = [] } = useQuery({ queryKey: ["college-admins"], enabled: isAdmin, queryFn: () => listAdmins() });
 
   async function save() {
-    if (!draft || !draft.name.trim()) return toast.error("Add a college name");
+    if (!draft || !draft.name.trim()) { toast.error("Add a college name"); return; }
     const row = {
       name: draft.name.trim(),
       slug: draft.slug.trim() || slugify(draft.name),
@@ -75,7 +75,7 @@ function AdminColleges() {
     const { error } = draft.id
       ? await supabase.from("colleges").update(row).eq("id", draft.id)
       : await supabase.from("colleges").insert(row);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     await logAdminAction(userId, draft.id ? "Updated college" : "Added college", row.name);
     toast.success("College saved");
     setDraft(null);
@@ -84,7 +84,7 @@ function AdminColleges() {
 
   async function toggle(id: string, name: string, active: boolean) {
     const { error } = await supabase.from("colleges").update({ active }).eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     await logAdminAction(userId, active ? "Activated college" : "Deactivated college", name);
     qc.invalidateQueries({ queryKey: ["admin-colleges"] });
   }
