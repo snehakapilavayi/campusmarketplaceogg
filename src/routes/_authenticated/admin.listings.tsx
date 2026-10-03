@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Star } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,6 +9,7 @@ import { useAuth } from "@/lib/auth";
 import {
   campusOptions,
   logAdminActions,
+  REMOVAL_REASONS,
   notifyUsers,
   useAdminCategories,
   useAdminListings,
@@ -65,6 +67,8 @@ function AdminListings() {
   const [campus, setCampus] = useState("all");
   const [selected, setSelected] = useState<string[]>([]);
   const [rejecting, setRejecting] = useState<string[] | null>(null);
+  const [removing, setRemoving] = useState<string[] | null>(null);
+  const [removeReason, setRemoveReason] = useState<string>("");
   const { data, isLoading, error } = useAdminListings(isAdmin, filter);
   const { data: categories = [] } = useAdminCategories(isAdmin);
   const listings = (data ?? []) as unknown as Row[];
@@ -166,15 +170,28 @@ function AdminListings() {
     toast.success(`Moved to ${name}`);
   }
 
-  async function remove(ids: string[]) {
-    const { error: err } = await supabase.from("listings").delete().in("id", ids);
+  async function remove(ids: string[], reason: string) {
+    const { error: err } = await supabase
+      .from("listings")
+      .update({ status: "archived", removal_reason: reason, featured: false })
+      .in("id", ids);
     if (err) {
       toast.error(err.message);
       return;
     }
-    await logAdminActions(userId, "listing.deleted", ids);
+    await logAdminActions(userId, `listing.removed — ${reason}`, ids);
+    await notifyUsers(
+      listings
+        .filter((l) => ids.includes(l.id))
+        .map((l) => ({
+          userId: l.seller_id,
+          title: "Listing removed",
+          message: `"${l.title}" was removed by the moderation team: ${reason}.`,
+          icon: "flag",
+        })),
+    );
     refresh();
-    toast.success(`${ids.length} listing${ids.length > 1 ? "s" : ""} deleted`);
+    toast.success(`${ids.length} listing${ids.length > 1 ? "s" : ""} removed`);
   }
 
   async function toggleFeatured(l: Row) {
@@ -336,9 +353,9 @@ function AdminListings() {
                       size="sm"
                       variant="ghost"
                       className="h-8 rounded-full text-destructive hover:text-destructive"
-                      onClick={() => void remove([l.id])}
+                      onClick={() => setRemoving([l.id])}
                     >
-                      Delete
+                      Remove
                     </Button>
                   </div>
                 </div>
@@ -354,9 +371,48 @@ function AdminListings() {
         actions={[
           { label: "Approve", run: async () => { await moderate(selected, "approved"); } },
           { label: "Reject", run: () => setRejecting(selected) },
-          { label: "Delete", destructive: true, description: "Deleted listings cannot be restored.", run: async () => { await remove(selected); } },
+          { label: "Remove", destructive: true, run: () => setRemoving(selected) },
         ]}
       />
+
+      <Dialog open={removing !== null} onOpenChange={(v) => { if (!v) { setRemoving(null); setRemoveReason(""); } }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Remove {removing?.length ?? 0} listing{(removing?.length ?? 0) > 1 ? "s" : ""}</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground">Pick a reason. The seller is told why.</p>
+          <div className="flex flex-wrap gap-2">
+            {REMOVAL_REASONS.map((r) => (
+              <button
+                key={r}
+                type="button"
+                onClick={() => setRemoveReason(r)}
+                className={cn(
+                  "rounded-full border px-3 py-1.5 text-xs font-semibold",
+                  removeReason === r ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground",
+                )}
+              >
+                {r}
+              </button>
+            ))}
+          </div>
+          <DialogFooter>
+            <Button
+              variant="destructive"
+              className="rounded-full"
+              disabled={!removeReason}
+              onClick={async () => {
+                if (removing) await remove(removing, removeReason);
+                setRemoving(null);
+                setRemoveReason("");
+                setSelected([]);
+              }}
+            >
+              Remove
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <RejectDialog
         open={rejecting !== null}
