@@ -7,14 +7,22 @@ export type AdminListingFilter = ListingStatus | "all" | "featured";
 
 /* ------------------------------------------------------------------ audit */
 
+/** College scope stamped on audit entries (null for Super Admins). Set by AuthProvider. */
+let auditCollege: string | null = null;
+export function setAuditCollege(id: string | null) {
+  auditCollege = id;
+}
+
+export const REMOVAL_REASONS = ["Fake listing", "Wrong category", "Spam", "Offensive content", "Scam", "Duplicate"] as const;
+
 export async function logAdminAction(adminId: string | null, action: string, target?: string | null) {
   if (!adminId) return;
-  await supabase.from("admin_logs").insert({ admin_id: adminId, action, target: target ?? null });
+  await supabase.from("admin_logs").insert({ admin_id: adminId, action, target: target ?? null, college_id: auditCollege });
 }
 
 export async function logAdminActions(adminId: string | null, action: string, targets: string[]) {
   if (!adminId || targets.length === 0) return;
-  await supabase.from("admin_logs").insert(targets.map((t) => ({ admin_id: adminId, action, target: t })));
+  await supabase.from("admin_logs").insert(targets.map((t) => ({ admin_id: adminId, action, target: t, college_id: auditCollege })));
 }
 
 /* ---------------------------------------------------------- notifications */
@@ -89,7 +97,7 @@ export function useAdminStudents(enabled: boolean) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("profiles")
-        .select("id,full_name,verification,swapcoin_rating,transactions_count,suspended,campus,created_at,account_type")
+        .select("id,full_name,verification,swapcoin_rating,transactions_count,suspended,campus,created_at,account_type,trusted_seller")
         .order("created_at", { ascending: false })
         .limit(500);
       if (error) throw error;

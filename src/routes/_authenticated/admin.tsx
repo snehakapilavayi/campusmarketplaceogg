@@ -3,6 +3,7 @@ import {
   BarChart3,
   Building2,
   Flag,
+  Gavel,
   LayoutGrid,
   Megaphone,
   MessagesSquare,
@@ -34,22 +35,23 @@ export const Route = createFileRoute("/_authenticated/admin")({
 
 export const adminNav = [
   { to: "/admin", label: "Dashboard", icon: BarChart3, exact: true },
-  { to: "/admin/colleges", label: "Colleges", icon: Building2, exact: false },
-  { to: "/admin/listings", label: "Listings", icon: LayoutGrid, exact: false },
-  { to: "/admin/categories", label: "Categories", icon: Tags, exact: false },
+  { to: "/admin/colleges", label: "Colleges", icon: Building2, exact: false, superOnly: true },
+  { to: "/admin/listings", label: "Listings", icon: LayoutGrid, exact: false, superOnly: false },
+  { to: "/admin/categories", label: "Categories", icon: Tags, exact: false, superOnly: true },
   { to: "/admin/banners", label: "Banners", icon: Megaphone, exact: false },
   { to: "/admin/reports", label: "Reports", icon: Flag, exact: false },
-  { to: "/admin/chats", label: "Chats", icon: MessagesSquare, exact: false },
+  { to: "/admin/chats", label: "Chats", icon: MessagesSquare, exact: false, superOnly: true },
   { to: "/admin/students", label: "Students", icon: Users, exact: false },
-  { to: "/admin/broadcast", label: "Announcements", icon: Megaphone, exact: false },
-  { to: "/admin/settings", label: "Settings", icon: Settings, exact: false },
+  { to: "/admin/broadcast", label: "Announcements", icon: Megaphone, exact: false, superOnly: true },
+  { to: "/admin/settings", label: "Settings", icon: Settings, exact: false, superOnly: true },
+  { to: "/admin/policies", label: "Policies", icon: Gavel, exact: false, superOnly: true },
   { to: "/admin/logs", label: "Audit log", icon: ScrollText, exact: false },
 ] as const;
 
 
 
 function AdminLayout() {
-  const { isAdmin, loading } = useAuth();
+  const { isAdmin, isSuperAdmin, loading } = useAuth();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   if (loading) {
@@ -76,16 +78,19 @@ function AdminLayout() {
     );
   }
 
+  const nav = adminNav.filter((i) => isSuperAdmin || !("superOnly" in i && i.superOnly));
+  const blocked = !isSuperAdmin && adminNav.some((i) => "superOnly" in i && i.superOnly && isActive(pathname, i.to, i.exact));
+
   return (
-    <AppShell title="Admin portal" nav={false}>
+    <AppShell title={isSuperAdmin ? "Super Admin portal" : "College Admin portal"} nav={false}>
       <div className="flex gap-5 pt-4">
         <aside className="sticky top-20 hidden h-fit w-52 shrink-0 rounded-2xl border border-border bg-card p-2 md:block">
           <div className="flex items-center gap-2 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             <ShieldCheck className="h-4 w-4 text-primary" />
-            Moderation
+            {isSuperAdmin ? "Super Admin" : "College Admin"}
           </div>
           <nav className="space-y-1">
-            {adminNav.map((item) => (
+            {nav.map((item) => (
               <Link
                 key={item.to}
                 to={item.to}
@@ -105,7 +110,7 @@ function AdminLayout() {
 
         <div className="min-w-0 flex-1">
           <nav className="mb-4 flex gap-2 overflow-x-auto pb-1 md:hidden">
-            {adminNav.map((item) => (
+            {nav.map((item) => (
               <Link
                 key={item.to}
                 to={item.to}
@@ -121,7 +126,11 @@ function AdminLayout() {
               </Link>
             ))}
           </nav>
-          <Outlet />
+          {blocked ? (
+            <EmptyState title="Super Admin only" description="This section is managed by the SwapSpace platform team." />
+          ) : (
+            <Outlet />
+          )}
         </div>
       </div>
     </AppShell>

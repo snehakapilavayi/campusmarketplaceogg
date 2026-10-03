@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import { setAuditCollege } from "@/lib/admin";
 
 export type Profile = {
   id: string;
@@ -26,6 +27,7 @@ type AuthValue = {
   loading: boolean;
   profile: Profile | null;
   isAdmin: boolean;
+  isSuperAdmin: boolean;
   signOut: () => Promise<void>;
 };
 
@@ -35,6 +37,7 @@ const AuthContext = createContext<AuthValue>({
   loading: true,
   profile: null,
   isAdmin: false,
+  isSuperAdmin: false,
   adminRole: null,
   signOut: async () => {},
 });
@@ -80,8 +83,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return row ? { role: row.role as AdminRole, collegeId: (row.college_id as string | null) ?? null } : null;
     },
   });
-  // Phase 1: only Super Admins get the full portal; college scoping lands in Phase 2.
-  const isAdmin = adminRole?.role === "super_admin";
+  const isAdmin = !!adminRole;
+  const isSuperAdmin = adminRole?.role === "super_admin";
+  setAuditCollege(isSuperAdmin ? null : adminRole?.collegeId ?? null);
 
   async function signOut() {
     await queryClient.cancelQueries();
@@ -97,6 +101,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         loading,
         profile: profile ?? null,
         isAdmin,
+        isSuperAdmin,
         adminRole: adminRole ?? null,
         signOut,
       }}

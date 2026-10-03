@@ -332,6 +332,7 @@ export type Database = {
           id: string
           price: number
           rejection_reason: string | null
+          removal_reason: string | null
           rent_period: Database["public"]["Enums"]["rent_period"] | null
           resubmit_by: string | null
           seller_id: string
@@ -356,6 +357,7 @@ export type Database = {
           id?: string
           price?: number
           rejection_reason?: string | null
+          removal_reason?: string | null
           rent_period?: Database["public"]["Enums"]["rent_period"] | null
           resubmit_by?: string | null
           seller_id: string
@@ -380,6 +382,7 @@ export type Database = {
           id?: string
           price?: number
           rejection_reason?: string | null
+          removal_reason?: string | null
           rent_period?: Database["public"]["Enums"]["rent_period"] | null
           resubmit_by?: string | null
           seller_id?: string
@@ -496,6 +499,7 @@ export type Database = {
           suspended: boolean
           swapcoin_rating: number
           transactions_count: number
+          trusted_seller: boolean
           updated_at: string
           verification: Database["public"]["Enums"]["verification_status"]
         }
@@ -513,6 +517,7 @@ export type Database = {
           suspended?: boolean
           swapcoin_rating?: number
           transactions_count?: number
+          trusted_seller?: boolean
           updated_at?: string
           verification?: Database["public"]["Enums"]["verification_status"]
         }
@@ -530,6 +535,7 @@ export type Database = {
           suspended?: boolean
           swapcoin_rating?: number
           transactions_count?: number
+          trusted_seller?: boolean
           updated_at?: string
           verification?: Database["public"]["Enums"]["verification_status"]
         }
@@ -773,6 +779,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_college_admin_of: { Args: { _college: string }; Returns: boolean }
     }
     Enums: {
       app_role:

@@ -43,7 +43,7 @@ const emptyDraft = {
 };
 
 function AdminBanners() {
-  const { isAdmin, userId } = useAuth();
+  const { isAdmin, userId, adminRole } = useAuth();
   const queryClient = useQueryClient();
   const [filter, setFilter] = useState<Filter>("all");
   const [draft, setDraft] = useState(emptyDraft);
@@ -115,6 +115,7 @@ function AdminBanners() {
     }
     setSaving(true);
     const { error: err } = await supabase.from("event_banners").insert({
+      college_id: adminRole?.role === "super_admin" ? null : adminRole?.collegeId ?? null,
       title: draft.title.trim(),
       description: draft.description.trim() || null,
       image_url: draft.image_url.trim() || null,
