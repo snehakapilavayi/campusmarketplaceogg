@@ -17,7 +17,10 @@ export type Profile = {
   profile_complete: boolean;
 };
 
+export type AdminRole = "super_admin" | "college_admin" | "moderator";
+
 type AuthValue = {
+  adminRole: { role: AdminRole; collegeId: string | null } | null;
   session: Session | null;
   userId: string | null;
   loading: boolean;
@@ -32,6 +35,7 @@ const AuthContext = createContext<AuthValue>({
   loading: true,
   profile: null,
   isAdmin: false,
+  adminRole: null,
   signOut: async () => {},
 });
 
@@ -67,19 +71,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
   });
 
-  const { data: isAdmin } = useQuery({
-    queryKey: ["is-admin", userId],
+  const { data: adminRole } = useQuery({
+    queryKey: ["admin-role", userId],
     enabled: !!userId,
     queryFn: async () => {
-      const { data } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", userId!)
-        .eq("role", "admin")
-        .maybeSingle();
-      return !!data;
+      const { data } = await supabase.rpc("get_my_admin_role");
+      const row = Array.isArray(data) ? data[0] : data;
+      return row ? { role: row.role as AdminRole, collegeId: (row.college_id as string | null) ?? null } : null;
     },
   });
+  // Phase 1: only Super Admins get the full portal; college scoping lands in Phase 2.
+  const isAdmin = adminRole?.role === "super_admin";
 
   async function signOut() {
     await queryClient.cancelQueries();
@@ -94,7 +96,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         userId,
         loading,
         profile: profile ?? null,
-        isAdmin: !!isAdmin,
+        isAdmin,
+        adminRole: adminRole ?? null,
         signOut,
       }}
     >
@@ -104,3 +107,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 }
 
 export const useAuth = () => useContext(AuthContext);
+
+/** Server-resolved admin role + college scope for the signed-in user. */
+export const useAdminRole = () => useContext(AuthContext).adminRole;

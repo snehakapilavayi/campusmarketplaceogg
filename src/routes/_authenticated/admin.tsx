@@ -1,6 +1,7 @@
 import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
 import {
   BarChart3,
+  Building2,
   Flag,
   LayoutGrid,
   Megaphone,
@@ -33,6 +34,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
 
 export const adminNav = [
   { to: "/admin", label: "Dashboard", icon: BarChart3, exact: true },
+  { to: "/admin/colleges", label: "Colleges", icon: Building2, exact: false },
   { to: "/admin/listings", label: "Listings", icon: LayoutGrid, exact: false },
   { to: "/admin/categories", label: "Categories", icon: Tags, exact: false },
   { to: "/admin/banners", label: "Banners", icon: Megaphone, exact: false },
