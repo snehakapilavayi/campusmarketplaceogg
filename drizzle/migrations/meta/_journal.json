@@ -15,6 +15,13 @@
       "when": 1791029391093,
       "tag": "0001_college_admin_scoping",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791566027036,
+      "tag": "0002_swapcoins_and_single_listing",
+      "breakpoints": true
     }
   ]
 }
