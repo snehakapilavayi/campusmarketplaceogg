@@ -48,6 +48,7 @@ function AdminStudents() {
   const { isAdmin, userId } = useAuth();
   const queryClient = useQueryClient();
   const [q, setQ] = useState("");
+  const [ratingsFor, setRatingsFor] = useState<{ id: string; full_name: string } | null>(null);
   const [tab, setTab] = useState<Tab>("all");
   const [campus, setCampus] = useState("all");
   const [selected, setSelected] = useState<string[]>([]);
@@ -390,6 +391,7 @@ function AdminStudents() {
           },
         ]}
       />
+      <AdminRatingsDialog student={ratingsFor} adminId={userId} onClose={() => setRatingsFor(null)} />
     </div>
   );
 }
