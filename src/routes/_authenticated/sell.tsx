@@ -7,6 +7,8 @@ import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { compressImage } from "@/lib/image-compress";
 import { useAuth } from "@/lib/auth";
+import { Link } from "@tanstack/react-router";
+import { EmptyState } from "@/components/brand";
 import { findBlockedTerm, useAppSettings } from "@/lib/settings";
 import { AppShell } from "@/components/app-shell";
 import { Mascot } from "@/components/brand";
@@ -44,6 +46,7 @@ const schema = z.object({
 });
 
 const BUCKET = "listing-photos";
+const CAP_MESSAGE = "You already have an item listed. Mark it sold, archive it or delete it to list something new.";
 const MAX_SIZE = 5 * 1024 * 1024;
 const SIGNED_TTL = 60 * 60 * 24 * 365 * 10;
 
@@ -89,8 +92,9 @@ function SellPage() {
     },
   });
 
-  const listingCap = limits.max_active_listings;
-  const capReached = activeCount >= listingCap;
+  const { isSuperAdmin } = useAuth();
+  const listingCap = Math.max(1, Number(limits.max_active_listings) || 1);
+  const capReached = !isSuperAdmin && activeCount >= listingCap;
 
   const { data: categories = [] } = useQuery({
     queryKey: ["categories"],
@@ -151,7 +155,7 @@ function SellPage() {
       return;
     }
     if (capReached) {
-      toast.error(`You've reached your limit of ${listingCap} active listings.`);
+      toast.error(CAP_MESSAGE);
       return;
     }
     if (!categoryId) {
@@ -208,6 +212,25 @@ function SellPage() {
     toast.success("Your listing is live 🎉");
     navigate({ to: "/my-listings" });
 
+  }
+
+  if (capReached) {
+    return (
+      <AppShell title="List an item">
+        <div className="pt-6">
+          <EmptyState
+            variant="idea"
+            title="One item at a time"
+            description={CAP_MESSAGE}
+            action={
+              <Button asChild className="mt-2 rounded-full">
+                <Link to="/my-listings">Go to My listings</Link>
+              </Button>
+            }
+          />
+        </div>
+      </AppShell>
+    );
   }
 
   return (
