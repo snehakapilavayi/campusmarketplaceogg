@@ -97,6 +97,7 @@ function MyListings() {
     }
     queryClient.invalidateQueries({ queryKey: ["my-listings"] });
     queryClient.invalidateQueries({ queryKey: ["listings"] });
+    queryClient.invalidateQueries({ queryKey: ["my-active-listing-count"] });
     toast.success("Listing is live again 🎉");
   }
 
@@ -108,6 +109,7 @@ function MyListings() {
     }
     queryClient.invalidateQueries({ queryKey: ["my-listings"] });
     queryClient.invalidateQueries({ queryKey: ["listings"] });
+    queryClient.invalidateQueries({ queryKey: ["my-active-listing-count"] });
     toast.success("Listing archived");
   }
 
@@ -124,6 +126,7 @@ function MyListings() {
     setPendingDelete(null);
     queryClient.invalidateQueries({ queryKey: ["my-listings"] });
     queryClient.invalidateQueries({ queryKey: ["listings"] });
+    queryClient.invalidateQueries({ queryKey: ["my-active-listing-count"] });
     toast.success("Listing deleted");
   }
 
