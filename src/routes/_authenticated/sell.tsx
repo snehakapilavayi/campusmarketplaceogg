@@ -194,9 +194,10 @@ function SellPage() {
     }
 
     if (images.length) {
-      await supabase
+      const { error: imgError } = await supabase
         .from("listing_images")
         .insert(images.map((img, i) => ({ listing_id: data.id, url: img.url, sort_order: i })));
+      if (imgError) toast.error("Listing posted, but the photos didn't save. Add them again from My listings.");
     }
 
     setBusy(false);
@@ -213,7 +214,7 @@ function SellPage() {
     <AppShell title="List an item">
       <form onSubmit={submit} className="space-y-6 pt-4">
         <div className="flex items-center gap-3 rounded-3xl bg-accent p-4">
-          <Mascot variant="idea" className="[&_img]:h-16" alt="" />
+          <Mascot variant="idea" size="sm" className="shrink-0" alt="" />
           <p className="text-sm text-accent-foreground">
             Clear photos and an honest condition get you replies within hours.
           </p>
