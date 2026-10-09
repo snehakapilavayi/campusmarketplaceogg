@@ -329,7 +329,7 @@ function Landing() {
             </Link>
             <span aria-hidden>·</span>
             <a
-              href={SUPPORT_MAILTO}
+              href={SUPPORT_MAILTO} target="_blank" rel="noopener noreferrer"
               className="text-muted-foreground underline-offset-2 hover:underline"
             >
               Contact Us

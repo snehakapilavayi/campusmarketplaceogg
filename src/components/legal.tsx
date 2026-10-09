@@ -32,7 +32,7 @@ export function LegalList({ items }: { items: ReactNode[] }) {
 
 export function SupportEmailLink() {
   return (
-    <a href={SUPPORT_MAILTO} className="font-semibold text-foreground underline underline-offset-2">
+    <a href={SUPPORT_MAILTO} target="_blank" rel="noopener noreferrer" className="font-semibold text-foreground underline underline-offset-2">
       {SUPPORT_EMAIL}
     </a>
   );
@@ -78,7 +78,7 @@ export function LegalPage({
             <Link to="/terms" className="text-muted-foreground underline-offset-2 hover:underline">
               Terms
             </Link>
-            <a href={SUPPORT_MAILTO} className="text-muted-foreground underline-offset-2 hover:underline">
+            <a href={SUPPORT_MAILTO} target="_blank" rel="noopener noreferrer" className="text-muted-foreground underline-offset-2 hover:underline">
               Contact us
             </a>
           </div>
