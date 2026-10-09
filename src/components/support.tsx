@@ -6,7 +6,7 @@ export const SUPPORT_EMAIL = "info.swapspace@gmail.com";
 export function SupportLink({ className }: { className?: string }) {
   return (
     <a
-      href={SUPPORT_MAILTO}
+      href={SUPPORT_MAILTO} target="_blank" rel="noopener noreferrer"
       className={cn("font-semibold text-primary underline-offset-2 hover:underline", className)}
     >
       Contact us
@@ -22,7 +22,7 @@ export const SUPPORT_MAILTO = `mailto:${SUPPORT_EMAIL}?subject=${encodeURICompon
 export function ContactUsButton({ className }: { className?: string }) {
   return (
     <a
-      href={SUPPORT_MAILTO}
+      href={SUPPORT_MAILTO} target="_blank" rel="noopener noreferrer"
       className={cn(
         "grid h-11 w-11 place-items-center rounded-full transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         className,

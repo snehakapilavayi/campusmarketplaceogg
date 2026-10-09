@@ -129,7 +129,7 @@ function SettingsPage() {
               Have a question? Tap below and your mail app will open straight to the SwapSpace team.
             </p>
             <Button asChild variant="outline" className="rounded-full">
-              <a href={SUPPORT_MAILTO}>Contact us</a>
+              <a href={SUPPORT_MAILTO} target="_blank" rel="noopener noreferrer">Contact us</a>
             </Button>
           </div>
         </Section>
