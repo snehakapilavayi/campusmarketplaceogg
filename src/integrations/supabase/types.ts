@@ -499,6 +499,8 @@ export type Database = {
           full_name: string
           id: string
           profile_complete: boolean
+          ratings_count: number
+          sales_count: number
           suspended: boolean
           swapcoin_rating: number
           transactions_count: number
@@ -517,6 +519,8 @@ export type Database = {
           full_name?: string
           id: string
           profile_complete?: boolean
+          ratings_count?: number
+          sales_count?: number
           suspended?: boolean
           swapcoin_rating?: number
           transactions_count?: number
@@ -535,6 +539,8 @@ export type Database = {
           full_name?: string
           id?: string
           profile_complete?: boolean
+          ratings_count?: number
+          sales_count?: number
           suspended?: boolean
           swapcoin_rating?: number
           transactions_count?: number
@@ -759,6 +765,8 @@ export type Database = {
           campus: string
           full_name: string
           id: string
+          ratings_count: number
+          sales_count: number
           swapcoin_rating: number
           verification: Database["public"]["Enums"]["verification_status"]
         }[]

@@ -29,6 +29,13 @@
       "when": 1791566044869,
       "tag": "0003_rating_reminder_cron",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1791566080148,
+      "tag": "0004_swapcoin_counters",
+      "breakpoints": true
     }
   ]
 }
