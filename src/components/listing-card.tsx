@@ -1,3 +1,4 @@
+import { SwapcoinBadges, SwapcoinScore } from "@/components/swapcoins";
 import { useRef } from "react";
 import { Link } from "@tanstack/react-router";
 import { motion, useMotionValue, useReducedMotion, useTransform } from "motion/react";
@@ -18,7 +19,7 @@ export type ListingCardData = {
   status?: string | null;
   sold_at?: string | null;
   listing_images?: { url: string; sort_order: number }[];
-  profiles?: { full_name: string; swapcoin_rating: number } | null;
+  profiles?: { full_name: string; swapcoin_rating: number; ratings_count?: number; sales_count?: number } | null;
 };
 
 export function ListingCard({
@@ -115,7 +116,7 @@ export function ListingCard({
             {listing.profiles && (
               <div className="flex items-center justify-between pt-0.5">
                 <span className="line-clamp-1 text-[11px] text-muted-foreground">{listing.profiles.full_name}</span>
-                <CoinRating value={listing.profiles.swapcoin_rating} showValue={false} className="text-[9px]" />
+                <span className="flex items-center gap-1"><SwapcoinBadges rating={listing.profiles.swapcoin_rating} ratingsCount={listing.profiles.ratings_count} salesCount={listing.profiles.sales_count} className="[&>span]:px-1.5 [&>span]:text-[8px]" /><SwapcoinScore compact rating={listing.profiles.swapcoin_rating} ratingsCount={listing.profiles.ratings_count} /></span>
               </div>
             )}
           </div>

@@ -1,3 +1,4 @@
+import { SwapcoinBadges, SwapcoinScore } from "@/components/swapcoins";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronLeft, Flag, Heart, MessageCircle, ShoppingBag } from "lucide-react";
@@ -124,6 +125,7 @@ function ListingDetail() {
         .from("ratings")
         .select("id,swapcoins,review,created_at,reviewer_id")
         .eq("reviewed_id", listing!.seller_id)
+        .eq("hidden", false)
         .order("created_at", { ascending: false })
         .limit(3);
       const rows = data ?? [];
@@ -287,7 +289,8 @@ function ListingDetail() {
               <div className="min-w-0 flex-1">
                 <p className="truncate font-semibold">{seller.full_name}</p>
                 <div className="flex items-center gap-2">
-                  <CoinRating value={Number(repStats?.avg_swapcoins ?? seller.swapcoin_rating) || 0} />
+                  <SwapcoinScore rating={Number(repStats?.avg_swapcoins ?? seller.swapcoin_rating) || 0} ratingsCount={repStats?.review_count ?? seller.ratings_count} />
+                  <SwapcoinBadges rating={Number(repStats?.avg_swapcoins ?? seller.swapcoin_rating) || 0} ratingsCount={repStats?.review_count ?? seller.ratings_count} salesCount={seller.sales_count} />
                   <span className="text-xs text-muted-foreground">
                     · {repStats?.review_count ?? 0} review{(repStats?.review_count ?? 0) === 1 ? "" : "s"}
                   </span>

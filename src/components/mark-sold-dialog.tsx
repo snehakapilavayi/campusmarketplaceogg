@@ -98,6 +98,7 @@ export function MarkSoldDialog({
       toast.error(error.message);
       return;
     }
+    void celebrate();
     toast.success("Thanks for rating your buyer!");
     reset();
   }

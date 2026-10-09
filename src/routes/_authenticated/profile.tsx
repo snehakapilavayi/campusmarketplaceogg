@@ -1,3 +1,4 @@
+import { SwapcoinBadges, SwapcoinScore, SwapcoinSummaryCard } from "@/components/swapcoins";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronRight, LogOut, Package, Settings as SettingsIcon, ShieldCheck } from "lucide-react";
@@ -62,18 +63,21 @@ function ProfilePage() {
           {profile?.bio && <p className="mt-1 text-sm text-muted-foreground">{profile.bio}</p>}
 
           <div className="mt-3 flex items-center justify-center gap-2">
-            <CoinRating value={profile?.swapcoin_rating ?? 0} />
+            <SwapcoinScore rating={profile?.swapcoin_rating} ratingsCount={profile?.ratings_count} />
             {profile?.verification === "verified" && <VerifiedBadge compact />}
           </div>
           <p className="mt-1 text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
             SwapCoins trust score
           </p>
+          <SwapcoinBadges rating={profile?.swapcoin_rating} ratingsCount={profile?.ratings_count} salesCount={profile?.sales_count} className="mt-2 justify-center" />
           <div className="mt-5 grid grid-cols-3 divide-x divide-border border-t border-border pt-4 text-center">
             <Stat label="Active" value={stats?.active ?? 0} />
             <Stat label="Completed" value={stats?.sold ?? 0} />
             <Stat label="Swaps" value={profile?.transactions_count ?? 0} />
           </div>
         </div>
+
+        <SwapcoinSummaryCard userId={userId} />
 
         <div className="overflow-hidden rounded-3xl border border-border bg-card shadow-[var(--shadow-soft)]">
           <Row to="/my-listings" icon={Package} label="My listings" />

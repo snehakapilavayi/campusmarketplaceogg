@@ -14,6 +14,8 @@ export type Profile = {
 
   verification: "pending" | "verified" | "rejected";
   swapcoin_rating: number;
+  ratings_count: number;
+  sales_count: number;
   transactions_count: number;
   profile_complete: boolean;
 };
