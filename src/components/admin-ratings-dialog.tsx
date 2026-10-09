@@ -50,7 +50,10 @@ export function AdminRatingsDialog({
       .update({ hidden: true, hidden_reason: reason.trim(), hidden_by: adminId })
       .eq("id", id);
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     await logAdminAction(adminId, `rating.hidden — ${reason.trim()}`, id);
     toast.success("Review hidden — it no longer counts toward their score");
     setHiding(null);
