@@ -53,7 +53,7 @@ export const defaultSettings: AppSettings = {
   },
   limits: {
     max_photos_per_listing: 6,
-    max_active_listings: 10,
+    max_active_listings: 1,
     max_price: 100000,
     min_price: 0,
   },

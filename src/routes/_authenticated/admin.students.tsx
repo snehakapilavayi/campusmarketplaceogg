@@ -27,6 +27,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { AdminRatingsDialog } from "@/components/admin-ratings-dialog";
 
 export const Route = createFileRoute("/_authenticated/admin/students")({
   component: AdminStudents,
@@ -47,6 +48,7 @@ function AdminStudents() {
   const { isAdmin, userId } = useAuth();
   const queryClient = useQueryClient();
   const [q, setQ] = useState("");
+  const [ratingsFor, setRatingsFor] = useState<{ id: string; full_name: string } | null>(null);
   const [tab, setTab] = useState<Tab>("all");
   const [campus, setCampus] = useState("all");
   const [selected, setSelected] = useState<string[]>([]);
@@ -288,6 +290,9 @@ function AdminStudents() {
                   </div>
                 </div>
                 <div className="mt-2 flex flex-wrap gap-2">
+                  <Button size="sm" variant="outline" className="h-8 rounded-full" onClick={() => setRatingsFor({ id: s.id, full_name: s.full_name })}>
+                    <SwapCoin size={12} className="mr-1" /> Ratings
+                  </Button>
                   <Button
                     size="sm"
                     variant="outline"
@@ -386,6 +391,7 @@ function AdminStudents() {
           },
         ]}
       />
+      <AdminRatingsDialog student={ratingsFor} adminId={userId} onClose={() => setRatingsFor(null)} />
     </div>
   );
 }

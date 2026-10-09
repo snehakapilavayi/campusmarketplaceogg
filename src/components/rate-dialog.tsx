@@ -1,3 +1,4 @@
+import { celebrate } from "@/lib/motion";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -54,6 +55,7 @@ export function RateDialog({
     }
     queryClient.invalidateQueries({ queryKey: ["my-rating"] });
     queryClient.invalidateQueries({ queryKey: ["deals"] });
+    void celebrate();
     toast.success("Thanks for rating your swap!");
     onClose();
   }

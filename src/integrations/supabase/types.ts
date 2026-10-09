@@ -331,6 +331,7 @@ export type Database = {
           featured: boolean
           id: string
           price: number
+          rating_reminded_at: string | null
           rejection_reason: string | null
           removal_reason: string | null
           rent_period: Database["public"]["Enums"]["rent_period"] | null
@@ -356,6 +357,7 @@ export type Database = {
           featured?: boolean
           id?: string
           price?: number
+          rating_reminded_at?: string | null
           rejection_reason?: string | null
           removal_reason?: string | null
           rent_period?: Database["public"]["Enums"]["rent_period"] | null
@@ -381,6 +383,7 @@ export type Database = {
           featured?: boolean
           id?: string
           price?: number
+          rating_reminded_at?: string | null
           rejection_reason?: string | null
           removal_reason?: string | null
           rent_period?: Database["public"]["Enums"]["rent_period"] | null
@@ -496,6 +499,8 @@ export type Database = {
           full_name: string
           id: string
           profile_complete: boolean
+          ratings_count: number
+          sales_count: number
           suspended: boolean
           swapcoin_rating: number
           transactions_count: number
@@ -514,6 +519,8 @@ export type Database = {
           full_name?: string
           id: string
           profile_complete?: boolean
+          ratings_count?: number
+          sales_count?: number
           suspended?: boolean
           swapcoin_rating?: number
           transactions_count?: number
@@ -532,6 +539,8 @@ export type Database = {
           full_name?: string
           id?: string
           profile_complete?: boolean
+          ratings_count?: number
+          sales_count?: number
           suspended?: boolean
           swapcoin_rating?: number
           transactions_count?: number
@@ -555,6 +564,9 @@ export type Database = {
           communication: number
           created_at: string
           experience: number
+          hidden: boolean
+          hidden_by: string | null
+          hidden_reason: string | null
           id: string
           listing_id: string | null
           review: string | null
@@ -567,6 +579,9 @@ export type Database = {
           communication?: number
           created_at?: string
           experience?: number
+          hidden?: boolean
+          hidden_by?: string | null
+          hidden_reason?: string | null
           id?: string
           listing_id?: string | null
           review?: string | null
@@ -579,6 +594,9 @@ export type Database = {
           communication?: number
           created_at?: string
           experience?: number
+          hidden?: boolean
+          hidden_by?: string | null
+          hidden_reason?: string | null
           id?: string
           listing_id?: string | null
           review?: string | null
@@ -747,6 +765,8 @@ export type Database = {
           campus: string
           full_name: string
           id: string
+          ratings_count: number
+          sales_count: number
           swapcoin_rating: number
           verification: Database["public"]["Enums"]["verification_status"]
         }[]
@@ -772,6 +792,19 @@ export type Database = {
           review_count: number
         }[]
       }
+      get_swapcoin_summary: {
+        Args: { _id: string }
+        Returns: {
+          accuracy: number
+          avg_swapcoins: number
+          communication: number
+          completed_sales: number
+          completed_swaps: number
+          experience: number
+          recent: Json
+          review_count: number
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -780,6 +813,7 @@ export type Database = {
         Returns: boolean
       }
       is_college_admin_of: { Args: { _college: string }; Returns: boolean }
+      send_rating_reminders: { Args: never; Returns: undefined }
     }
     Enums: {
       app_role:

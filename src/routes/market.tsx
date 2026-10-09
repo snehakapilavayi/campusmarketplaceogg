@@ -40,7 +40,7 @@ export const Route = createFileRoute("/market")({
 });
 
 const LISTING_SELECT =
-  "id,title,price,type,rent_period,badge,condition,created_at,featured,category_id,listing_images(url,sort_order),profiles(full_name,swapcoin_rating)";
+  "id,title,price,type,rent_period,badge,condition,created_at,featured,category_id,listing_images(url,sort_order),profiles(full_name,swapcoin_rating,ratings_count,sales_count)";
 
 type Filter = "all" | "sell" | "rent";
 

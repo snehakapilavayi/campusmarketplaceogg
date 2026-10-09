@@ -74,6 +74,7 @@ export function MarkSoldDialog({
     haptic([10, 40, 10]);
     queryClient.invalidateQueries({ queryKey: ["my-listings"] });
     queryClient.invalidateQueries({ queryKey: ["listings"] });
+    queryClient.invalidateQueries({ queryKey: ["my-active-listing-count"] });
     toast.success("Marked as sold 🎉");
     if (buyerId) setStep("rate");
     else reset();
@@ -98,6 +99,7 @@ export function MarkSoldDialog({
       toast.error(error.message);
       return;
     }
+    void celebrate();
     toast.success("Thanks for rating your buyer!");
     reset();
   }

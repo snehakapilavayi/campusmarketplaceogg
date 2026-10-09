@@ -180,6 +180,21 @@ function Conversation() {
   const sold = !!listing && (listing.status === "completed" || !!listing.sold_at);
   const isBuyer = conversation?.buyer_id === userId;
   const [rateOpen, setRateOpen] = useState(false);
+  // Only the actual buyer of this deal and its seller can rate each other — once.
+  const dealParty = sold && !!conversation && (listing as { buyer_id?: string | null } | null)?.buyer_id === conversation.buyer_id;
+  const rateeId = conversation ? (isBuyer ? conversation.seller_id : conversation.buyer_id) : null;
+  const { data: alreadyRated = false } = useQuery({
+    queryKey: ["my-rating", listing?.id, userId],
+    enabled: !!listing?.id && !!userId && dealParty,
+    queryFn: async () => {
+      const { count } = await supabase
+        .from("ratings")
+        .select("id", { count: "exact", head: true })
+        .eq("listing_id", listing!.id)
+        .eq("reviewer_id", userId!);
+      return (count ?? 0) > 0;
+    },
+  });
 
   return (
     <div className="relative flex min-h-[100dvh] flex-col overscroll-none bg-background">
@@ -224,11 +239,13 @@ function Conversation() {
             <p className="text-xs text-muted-foreground">
               This swap is complete. Meet safely and keep it kind.
             </p>
-            {isBuyer && conversation && (
+            {dealParty && conversation && (alreadyRated ? (
+              <p className="text-xs font-semibold text-primary">You've rated this swap — thanks!</p>
+            ) : (
               <Button size="sm" className="rounded-full" onClick={() => setRateOpen(true)}>
-                Rate with SwapCoins
+                Rate {isBuyer ? "the seller" : "the buyer"} with SwapCoins
               </Button>
-            )}
+            ))}
           </div>
         )}
 
@@ -358,8 +375,8 @@ function Conversation() {
           open={rateOpen}
           onClose={() => setRateOpen(false)}
           reviewerId={userId}
-          reviewedId={conversation.seller_id}
-          reviewedName={conversation.other?.full_name ?? "the seller"}
+          reviewedId={rateeId ?? conversation.seller_id}
+          reviewedName={conversation.other?.full_name ?? (isBuyer ? "the seller" : "the buyer")}
           listingId={listing?.id ?? null}
         />
       )}
